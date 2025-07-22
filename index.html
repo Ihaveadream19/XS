@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Xalostore</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f5f5f7;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #4C4BFD;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    header img {
+      width: 60px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+    h1 {
+      margin: 5px 0;
+      font-size: 24px;
+    }
+    h2 {
+      margin: 0;
+      font-weight: normal;
+      font-size: 16px;
+    }
+    .app-list {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+    .app-card {
+      background: white;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .app-card img {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      margin-right: 15px;
+    }
+    .app-info {
+      flex: 1;
+    }
+    .app-info h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+    .app-info p {
+      margin: 5px 0;
+      color: #555;
+    }
+    .install-btn {
+      background: #4C4BFD;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .install-btn:hover {
+      background: #3a39d6;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="logo.png" alt="Xalostore Logo">
+  <h1>Xalostore</h1>
+  <h2>Sideload Apps. Simple. Secure.</h2>
+</header>
+
+<div class="app-list" id="appList">
+  <!-- Apps werden hier geladen -->
+</div>
+
+<script>
+  async function loadApps() {
+    const response = await fetch('source.json');
+    const data = await response.json();
+    const appList = document.getElementById('appList');
+
+    data.apps.forEach(app => {
+      let version = app.versions[0] || {};
+      let downloadURL = version.downloadURL || '#';
+
+      const appCard = document.createElement('div');
+      appCard.className = 'app-card';
+
+      appCard.innerHTML = `
+        <img src="${app.iconURL}" alt="${app.name}">
+        <div class="app-info">
+          <h3>${app.name.trim()}</h3>
+          <p>${app.subtitle}</p>
+        </div>
+        <a href="${downloadURL}" class="install-btn">Installieren</a>
+      `;
+
+      appList.appendChild(appCard);
+    });
+  }
+
+  loadApps();
+</script>
+
+</body>
+</html>
