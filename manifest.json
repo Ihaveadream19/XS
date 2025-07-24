@@ -1,0 +1,21 @@
+{
+  "name": "Xalostore",
+  "short_name": "Xalostore",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#4C4BFD",
+  "theme_color": "#4C4BFD",
+  "description": "Sideload Apps. Simple. Secure.",
+  "icons": [
+    {
+      "src": "logo.PNG",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo.PNG",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
