@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Xalostore</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
   <link rel="manifest" href="manifest.json" />
@@ -11,6 +11,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Xalostore" />
   <meta name="theme-color" content="#4C4BFD" />
+
   <style>
     :root {
       --bg: #f5f5f7;
@@ -18,6 +19,9 @@
       --card: #fff;
       --accent: #4C4BFD;
       --card-shadow: rgba(0, 0, 0, 0.1);
+      --tabbar-bg: #1f1f1f;
+      --tabbar-icon: #999;
+      --tabbar-icon-active: #4C4BFD;
     }
 
     body.dark {
@@ -25,6 +29,8 @@
       --text: #f0f0f0;
       --card: #1e1e1e;
       --card-shadow: rgba(255, 255, 255, 0.1);
+      --tabbar-bg: #0f0f0f;
+      --tabbar-icon: #888;
     }
 
     body {
@@ -32,7 +38,7 @@
       background: var(--bg);
       color: var(--text);
       margin: 0;
-      padding-bottom: 60px; /* Platz für Tabbar */
+      padding-bottom: 80px;
       transition: background 0.3s, color 0.3s;
     }
 
@@ -47,6 +53,17 @@
       width: 60px;
       border-radius: 12px;
       margin-bottom: 10px;
+    }
+
+    h1 {
+      margin: 5px 0;
+      font-size: 24px;
+    }
+
+    h2 {
+      margin: 0;
+      font-weight: normal;
+      font-size: 16px;
     }
 
     #pwaBanner {
@@ -68,10 +85,12 @@
     }
 
     .top-bar {
+      max-width: 800px;
+      margin: 10px auto;
+      padding: 0 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 10px 20px;
     }
 
     .top-bar input {
@@ -93,6 +112,8 @@
     }
 
     .app-list {
+      max-width: 800px;
+      margin: 20px auto;
       padding: 0 20px;
     }
 
@@ -151,7 +172,7 @@
       top: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
+      background-color: rgba(0,0,0,0.5);
       justify-content: center;
       align-items: center;
     }
@@ -174,91 +195,29 @@
       font-size: 18px;
       cursor: pointer;
     }
-
-    /* Tab Navigation */
-    .tabbar {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      display: flex;
-      justify-content: space-around;
-      background: var(--card);
-      border-top: 1px solid #ccc;
-      z-index: 99;
-    }
-
-    .tabbar button {
-      flex: 1;
-      padding: 10px;
-      background: none;
-      border: none;
-      font-size: 16px;
-      color: var(--text);
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .tabbar button.active {
-      color: var(--accent);
-    }
-
-    .tab {
-      display: none;
-      animation: fade 0.3s ease;
-    }
-
-    .tab.active {
-      display: block;
-    }
-
-    @keyframes fade {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .profile-placeholder {
-      padding: 20px;
-      text-align: center;
-      font-size: 16px;
-    }
-  </style>
+      </style>
 </head>
 <body>
 
 <header>
-  <img src="logo.PNG" alt="Xalostore Logo" />
+  <img src="logo.PNG" alt="Xalostore Logo">
   <h1>Xalostore</h1>
   <h2>Sideload Apps. Simple. Secure.</h2>
 </header>
 
+<!-- 📲 iOS App-Info-Banner -->
 <div id="pwaBanner">
-  📲 <strong>Tipp:</strong> Du kannst <strong>Xalostore</strong> wie eine echte App nutzen!<br />
-  Tippe unten auf das <strong>Teilen-Symbol</strong> und wähle <em>"Zum Home-Bildschirm hinzufügen"</em>.<br />
+  📲 <strong>Tipp:</strong> Du kannst <strong>Xalostore</strong> wie eine echte App nutzen!<br>
+  Tippe unten auf das <strong>Teilen-Symbol</strong> und wähle <em>"Zum Home-Bildschirm hinzufügen"</em>.<br>
   <button onclick="hideBanner()">Nicht mehr anzeigen</button>
 </div>
 
-<!-- Tabs -->
-<div id="homeTab" class="tab active">
-  <div class="top-bar">
-    <input type="text" id="search" placeholder="App suchen..." />
-    <button class="toggle-mode" onclick="toggleMode()">🌙</button>
-  </div>
-  <div class="app-list" id="appList"></div>
+<div class="top-bar">
+  <input type="text" id="search" placeholder="App suchen...">
+  <button class="toggle-mode" onclick="toggleMode()">🌙</button>
 </div>
 
-<div id="searchTab" class="tab">
-  <div class="top-bar">
-    <input type="text" id="search2" placeholder="App suchen..." />
-    <button class="toggle-mode" onclick="toggleMode()">🌙</button>
-  </div>
-  <div class="app-list" id="searchResults"></div>
-</div>
-
-<div id="profileTab" class="tab">
-  <div class="profile-placeholder">
-    👤 Dein Profilbereich<br /><small>(Funktionen folgen später)</small>
-  </div>
-</div>
+<div class="app-list" id="appList"></div>
 
 <!-- Modal -->
 <div class="modal" id="appModal">
@@ -267,18 +226,46 @@
   </div>
 </div>
 
-<!-- Tabbar -->
-<div class="tabbar">
-  <button onclick="switchTab('homeTab', this)" class="active">🏠 Home</button>
-  <button onclick="switchTab('searchTab', this)">🔍 Suche</button>
-  <button onclick="switchTab('profileTab', this)">👤 Profil</button>
+<!-- Floating Tabbar -->
+<div id="tabbar" style="
+  position: fixed;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  background: var(--tabbar-bg);
+  border-radius: 18px;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  z-index: 100;">
+  
+  <div onclick="goTab('home')" style="text-align:center; flex:1;">
+    <svg width="24" height="24" fill="currentColor" style="color:var(--tabbar-icon-active)">
+      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+    </svg>
+    <div style="font-size:12px;color:var(--tabbar-icon-active);margin-top:3px;">Explore</div>
+  </div>
+
+  <div onclick="goTab('search')" style="text-align:center; flex:1;">
+    <svg width="24" height="24" fill="currentColor" style="color:var(--tabbar-icon)">
+      <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+    </svg>
+    <div style="font-size:12px;color:var(--tabbar-icon);margin-top:3px;">Search</div>
+  </div>
+
+  <div onclick="goTab('profile')" style="text-align:center; flex:1;">
+    <svg width="24" height="24" fill="currentColor" style="color:var(--tabbar-icon)">
+      <path d="M12 12c2.7 0 4.7-2 4.7-4.7S14.7 2.6 12 2.6 7.3 4.6 7.3 7.3 9.3 12 12 12zm0 2.4c-3.1 0-9.2 1.6-9.2 4.7V22h18.5v-2.9c0-3.1-6.1-4.7-9.3-4.7z"/>
+    </svg>
+    <div style="font-size:12px;color:var(--tabbar-icon);margin-top:3px;">Profile</div>
+  </div>
 </div>
 
 <script>
   const appList = document.getElementById('appList');
   const searchInput = document.getElementById('search');
-  const search2 = document.getElementById('search2');
-  const searchResults = document.getElementById('searchResults');
   const appModal = document.getElementById('appModal');
   const modalContent = document.getElementById('modalContent');
 
@@ -286,7 +273,8 @@
 
   function formatSize(bytes) {
     if (!bytes) return "";
-    return (bytes / 1024 / 1024).toFixed(1) + " MB";
+    const mb = (bytes / 1024 / 1024).toFixed(1);
+    return `${mb} MB`;
   }
 
   function createCard(app) {
@@ -295,6 +283,7 @@
     let size = formatSize(version.size);
     const card = document.createElement('div');
     card.className = 'app-card';
+
     card.innerHTML = `
       <img src="${app.iconURL}" alt="${app.name}">
       <div class="app-info">
@@ -303,6 +292,7 @@
       </div>
       <a href="${downloadURL}" class="install-btn" onclick="event.stopPropagation()">Installieren</a>
     `;
+
     card.onclick = () => {
       appModal.style.display = 'flex';
       modalContent.innerHTML = `
@@ -314,6 +304,7 @@
         <a href="${downloadURL}" class="install-btn">Jetzt installieren</a>
       `;
     };
+
     return card;
   }
 
@@ -325,33 +316,29 @@
     document.body.classList.toggle("dark");
   }
 
+  function goTab(tab) {
+    alert(`"${tab.charAt(0).toUpperCase() + tab.slice(1)}" Tab (funktioniert bald)`);
+  }
+
   async function loadApps() {
-    const res = await fetch('source.json');
-    const data = await res.json();
+    const response = await fetch('source.json');
+    const data = await response.json();
     apps = data.apps;
     renderApps(apps);
   }
 
   function renderApps(list) {
     appList.innerHTML = '';
-    list.forEach(app => appList.appendChild(createCard(app)));
+    list.forEach(app => {
+      appList.appendChild(createCard(app));
+    });
   }
 
-  function renderSearch(q) {
-    const result = apps.filter(app => app.name.toLowerCase().includes(q));
-    searchResults.innerHTML = '';
-    result.forEach(app => searchResults.appendChild(createCard(app)));
-  }
-
-  searchInput.addEventListener('input', () => renderApps(apps.filter(a => a.name.toLowerCase().includes(searchInput.value.toLowerCase()))));
-  search2.addEventListener('input', () => renderSearch(search2.value.toLowerCase()));
-
-  function switchTab(tabId, btn) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tabbar button').forEach(b => b.classList.remove('active'));
-    document.getElementById(tabId).classList.add('active');
-    btn.classList.add('active');
-  }
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.toLowerCase();
+    const filtered = apps.filter(app => app.name.toLowerCase().includes(q));
+    renderApps(filtered);
+  });
 
   function hideBanner() {
     document.getElementById("pwaBanner").style.display = "none";
@@ -360,11 +347,16 @@
 
   window.addEventListener('load', () => {
     const isIOS = /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
-    const isInStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    const isInStandalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      window.navigator.standalone;
+
     const hideTemp = sessionStorage.getItem("hidePWABannerTemp");
+
     if (isIOS && !isInStandalone && !hideTemp) {
       document.getElementById("pwaBanner").style.display = "block";
     }
+
     loadApps();
   });
 </script>
