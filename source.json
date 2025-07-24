@@ -1,0 +1,180 @@
+{
+  "name": "Xalostore ",
+  "subtitle": "A source for all of my apps",
+  "description": "Welcome to my source! Here you'll find all of my apps.",
+  "iconURL": "https://i.imgur.com/oWyf5VR.png",
+  "website": "https://altstudio.app",
+  "patreonURL": "https://patreon.com/altstudio",
+  "tintColor": "#6156e2",
+  "featuredApps": [
+    "com.burbn.instagram",
+    "com.elven.video"
+  ],
+  "headerURL": "https://i.imgur.com/vFyAEQt.png",
+  "apps": [
+    {
+      "name": "Xalo MyFitnessPal",
+      "bundleIdentifier": "com.myfitnesspal.mfp",
+      "marketplaceID": "",
+      "developerName": "Example Developer",
+      "subtitle": "An awesome app.",
+      "localizedDescription": "This is an awesome app only available on Xalostore.",
+      "iconURL": "https://i.imgur.com/ZfFzw1Q.png",
+      "tintColor": "#0464ec",
+      "category": "other",
+      "screenshots": [],
+      "versions": [
+        {
+          "version": "25.28.0",
+          "date": "2025-07-24T08:30:00+02:00",
+          "localizedDescription": null,
+          "downloadURL": "https://github.com/Ihaveadream19/xalostore/releases/download/untagged-3a220d8c37214071c5a9/MyFitnessPal_25.28.0_3Xalo.ipa",
+          "size": 117200000,
+          "buildVersion": null,
+          "minOSVersion": null
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {
+          "NSBluetoothPeripheralUsageDescription": "Allows MyFitnessPal to use Bluetooth.",
+          "NSCalendarsUsageDescription": "Allows MyFitnessPal to add class reservations to your calendar.",
+          "NSCameraUsageDescription": "We use your camera to allow you to scan barcodes, foods, and add photos to your weight entries and custom meals.",
+          "NSHealthShareUsageDescription": "Allows MyFitnessPal to read data from the Health app.",
+          "NSHealthUpdateUsageDescription": "Allows MyFitnessPal to write data to the Health app.",
+          "NSMicrophoneUsageDescription": "We use your microphone to allow you to log food with your voice.",
+          "NSPhotoLibraryUsageDescription": "We need photo library access in order to scan meals, log using barcodes, and add photos to weight entries/custom meals.",
+          "NSSpeechRecognitionUsageDescription": "Voice Log uses speech recognition technology to understand and interpret what you're saying.",
+          "NSUserTrackingUsageDescription": "This info will be used to show you ads that are more relevant to you."
+        }
+      },
+      "patreon": {}
+    },
+    {
+      "name": "Xalo Truecaller",
+      "bundleIdentifier": "com.truesoftware.TrueCallerOther",
+      "marketplaceID": "",
+      "developerName": "Example Developer",
+      "subtitle": "An awesome app.",
+      "localizedDescription": "This is an awesome app only available on Xalostore.",
+      "iconURL": "https://i.imgur.com/j5pTxhp.png",
+      "tintColor": "#0424fc",
+      "category": "other",
+      "screenshots": [],
+      "versions": [
+        {
+          "version": "14.21.5",
+          "date": "2025-07-24T06:25:00+02:00",
+          "localizedDescription": null,
+          "downloadURL": "https://github.com/Ihaveadream19/xalostore/releases/download/untagged-16c296fa5c1e64d7a745/Truecaller_Caller_ID_Lookup_v14_21_Xalo.ipa",
+          "size": 71100000,
+          "buildVersion": null,
+          "minOSVersion": null
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {
+          "NSAdvertisingAttributionReportEndpoint": "https://appsflyer-skadnetwork.com/",
+          "NSCameraUsageDescription": "This lets you take a photo and set it as your profile picture.",
+          "NSContactsUsageDescription": "We need this permission to allow you to save contacts or check which of your contacts use Truecaller. We never upload your phonebook.",
+          "NSMicrophoneUsageDescription": "Truecaller needs access to your microphone to answer calls",
+          "NSPhotoLibraryUsageDescription": "Photo Library access is required for selecting photos",
+          "NSUserTrackingUsageDescription": "This allows us to give you a more personalized experience."
+        }
+      },
+      "patreon": {}
+    },
+    {
+      "name": "Xalo AIVideo",
+      "bundleIdentifier": "com.elven.video",
+      "marketplaceID": "",
+      "developerName": "Example Developer",
+      "subtitle": "An awesome app.",
+      "localizedDescription": "This is an awesome app only available on Xalostore.",
+      "iconURL": "https://i.imgur.com/VWN8fih.png",
+      "tintColor": "#7f7f7f",
+      "category": "other",
+      "screenshots": [],
+      "versions": [
+        {
+          "version": "1.0.0",
+          "date": "2025-07-13T21:48:00+02:00",
+          "localizedDescription": null,
+          "downloadURL": "https://github.com/Ihaveadream19/Xalstor/releases/download/untagged-77154b797db3a85ea0c2/VideoGPT_AI_Video_Generator_v3_1_Subscription_Unlocked_blatant_patched.ipa",
+          "size": 170400000,
+          "buildVersion": "",
+          "minOSVersion": null
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {
+          "NSCameraUsageDescription": "Allow to save video in library",
+          "NSMicrophoneUsageDescription": "Allow microphone permission to record voice",
+          "NSPhotoLibraryUsageDescription": "Allow to save video in library",
+          "NSSpeechRecognitionUsageDescription": "We need access to speech recognition to transcribe audio input for voice cloning.",
+          "NSUserTrackingUsageDescription": "Your data will be used to deliver personalized ads to you"
+        }
+      },
+      "patreon": {}
+    },
+    {
+      "name": "Xalo Instagram",
+      "bundleIdentifier": "com.burbn.instagram",
+      "marketplaceID": "",
+      "developerName": "Example Developer",
+      "subtitle": "An awesome app.",
+      "localizedDescription": "This is an awesome app only available on Xalostore.",
+      "iconURL": "https://i.imgur.com/YynrWtw.png",
+      "tintColor": "#a204fc",
+      "category": "other",
+      "screenshots": [],
+      "versions": [
+        {
+          "version": "388.0.0",
+          "date": "2025-07-09T12:11:00+02:00",
+          "localizedDescription": null,
+          "downloadURL": "https://github.com/Ihaveadream19/Xalstor/releases/download/untagged-7d3a53b40a8c14f36cae/Instagram--Xalo.ipa",
+          "size": 203200000,
+          "buildVersion": null,
+          "minOSVersion": null
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {
+          "NSAdvertisingAttributionReportEndpoint": "https://facebook.com",
+          "NSBluetoothAlwaysUsageDescription": "This allows your phone to find and connect to the glasses using a Bluetooth connection.",
+          "NSCalendarsUsageDescription": "This will let Instagram sync events to your calendar.",
+          "NSCalendarsWriteOnlyAccessUsageDescription": "This will let Instagram sync events to your calendar.",
+          "NSCameraUsageDescription": "Instagram uses your device's camera to do things like help you take photos, record videos and use effects.",
+          "NSContactsUsageDescription": "Instagram will use your contacts to suggest people and things you care about, and offer a better service. Your contacts will be periodically synced and securely stored on Instagram’s servers.",
+          "NSFaceIDUsageDescription": "Enable Face ID for quick and secure authentication on Instagram.",
+          "NSFocusStatusUsageDescription": "This allows Instagram to check to see if you’ve been missing notifications from friends. You can always change this later in settings.",
+          "NSLocationAlwaysAndWhenInUseUsageDescription": "Instagram uses this to make some features work, personalize content and help people find places. You can change your preferences at any time in your device settings.",
+          "NSLocationUsageDescription": "Instagram uses this to make some features work, personalize content and help people find places. You can change your preferences at any time in your device settings.",
+          "NSLocationWhenInUseUsageDescription": "Instagram uses this to make some features work, personalize content and help people find places. You can change your preferences at any time in your device settings.",
+          "NSMicrophoneUsageDescription": "Instagram uses your device's microphone to do things like help you record videos and preview audio effects.",
+          "NSPhotoLibraryAddUsageDescription": "This lets you save photos and videos to your Camera Roll.",
+          "NSPhotoLibraryUsageDescription": "Instagram uses access to your camera roll to do things like help you share photos and videos to Instagram, apply effects and suggest photos and videos to share.",
+          "NSUserTrackingUsageDescription": "This allows Instagram to provide you with a better ads experience."
+        }
+      },
+      "patreon": {}
+    }
+  ],
+  "news": [
+    {
+      "title": "Now MyFitnessPal Available only on Xalostore!!!",
+      "identifier": "news_xzjd5woljx",
+      "caption": "",
+      "date": "2025-07-09T16:36",
+      "tintColor": "#6156e2",
+      "imageURL": "https://i.imgur.com/RpOc83t.png",
+      "notify": true,
+      "url": "https://example.com/new_feature_details",
+      "appID": "com.myfitnesspal.mfp"
+    }
+  ]
+}
