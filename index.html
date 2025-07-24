@@ -1,3 +1,4 @@
+<!-- GESAMTE DATEI: index.html – erweitert mit allen gewünschten Features -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,66 +7,126 @@
   <title>Xalostore</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg: #f5f5f7;
+      --text: #333;
+      --card: #fff;
+      --accent: #4C4BFD;
+      --card-shadow: rgba(0, 0, 0, 0.1);
+    }
+
+    body.dark {
+      --bg: #121212;
+      --text: #f0f0f0;
+      --card: #1e1e1e;
+      --card-shadow: rgba(255, 255, 255, 0.1);
+    }
+
     body {
       font-family: 'Inter', sans-serif;
-      background: #f5f5f7;
-      color: #333;
+      background: var(--bg);
+      color: var(--text);
       margin: 0;
       padding: 0;
+      transition: background 0.3s, color 0.3s;
     }
+
     header {
-      background: #4C4BFD;
+      background: var(--accent);
       color: white;
       padding: 20px;
       text-align: center;
     }
+
     header img {
       width: 60px;
       border-radius: 12px;
       margin-bottom: 10px;
     }
+
     h1 {
       margin: 5px 0;
       font-size: 24px;
     }
+
     h2 {
       margin: 0;
       font-weight: normal;
       font-size: 16px;
     }
+
+    .top-bar {
+      max-width: 800px;
+      margin: 10px auto;
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .top-bar input {
+      flex: 1;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-right: 10px;
+    }
+
+    .toggle-mode {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
     .app-list {
       max-width: 800px;
       margin: 20px auto;
       padding: 0 20px;
     }
+
     .app-card {
-      background: white;
+      background: var(--card);
       border-radius: 12px;
       padding: 15px;
       margin-bottom: 15px;
       display: flex;
       align-items: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 5px var(--card-shadow);
+      cursor: pointer;
+      transition: background 0.2s;
     }
+
+    .app-card:hover {
+      background: #e0e0ff10;
+    }
+
     .app-card img {
       width: 60px;
       height: 60px;
       border-radius: 12px;
       margin-right: 15px;
     }
+
     .app-info {
       flex: 1;
     }
+
     .app-info h3 {
       margin: 0;
       font-size: 18px;
     }
+
     .app-info p {
       margin: 5px 0;
-      color: #555;
+      color: #888;
     }
+
     .install-btn {
-      background: #4C4BFD;
+      background: var(--accent);
       color: white;
       border: none;
       padding: 8px 16px;
@@ -73,8 +134,38 @@
       cursor: pointer;
       font-size: 14px;
     }
-    .install-btn:hover {
-      background: #3a39d6;
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 99;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: var(--card);
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 90%;
+      width: 400px;
+      color: var(--text);
+    }
+
+    .modal-content h3 {
+      margin-top: 0;
+    }
+
+    .close-modal {
+      float: right;
+      font-size: 18px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -86,35 +177,92 @@
   <h2>Sideload Apps. Simple. Secure.</h2>
 </header>
 
-<div class="app-list" id="appList">
-  <!-- Apps werden hier geladen -->
+<div class="top-bar">
+  <input type="text" id="search" placeholder="App suchen...">
+  <button class="toggle-mode" onclick="toggleMode()">🌙</button>
+</div>
+
+<div class="app-list" id="appList"></div>
+
+<!-- Modal -->
+<div class="modal" id="appModal">
+  <div class="modal-content" id="modalContent">
+    <span class="close-modal" onclick="closeModal()">&times;</span>
+  </div>
 </div>
 
 <script>
+  const appList = document.getElementById('appList');
+  const searchInput = document.getElementById('search');
+  const appModal = document.getElementById('appModal');
+  const modalContent = document.getElementById('modalContent');
+
+  let apps = [];
+
+  function formatSize(bytes) {
+    if (!bytes) return "";
+    const mb = (bytes / 1024 / 1024).toFixed(1);
+    return `${mb} MB`;
+  }
+
+  function createCard(app) {
+    let version = app.versions[0] || {};
+    let downloadURL = version.downloadURL || '#';
+    let size = formatSize(version.size);
+    const card = document.createElement('div');
+    card.className = 'app-card';
+
+    card.innerHTML = `
+      <img src="${app.iconURL}" alt="${app.name}">
+      <div class="app-info">
+        <h3>${app.name.trim()}</h3>
+        <p>${app.subtitle}</p>
+      </div>
+      <a href="${downloadURL}" class="install-btn" onclick="event.stopPropagation()">Installieren</a>
+    `;
+
+    card.onclick = () => {
+      appModal.style.display = 'flex';
+      modalContent.innerHTML = `
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <h3>${app.name}</h3>
+        <p>${app.localizedDescription || "This app lets you do awesome things!"}</p>
+        <p><strong>Version:</strong> ${version.version || "?"}</p>
+        <p><strong>Größe:</strong> ${size || "?"}</p>
+        <a href="${downloadURL}" class="install-btn">Jetzt installieren</a>
+      `;
+    };
+
+    return card;
+  }
+
+  function closeModal() {
+    appModal.style.display = 'none';
+  }
+
+  function toggleMode() {
+    document.body.classList.toggle("dark");
+  }
+
   async function loadApps() {
     const response = await fetch('source.json');
     const data = await response.json();
-    const appList = document.getElementById('appList');
+    apps = data.apps;
+    renderApps(apps);
+  }
 
-    data.apps.forEach(app => {
-      let version = app.versions[0] || {};
-      let downloadURL = version.downloadURL || '#';
-
-      const appCard = document.createElement('div');
-      appCard.className = 'app-card';
-
-      appCard.innerHTML = `
-        <img src="${app.iconURL}" alt="${app.name}">
-        <div class="app-info">
-          <h3>${app.name.trim()}</h3>
-          <p>${app.subtitle}</p>
-        </div>
-        <a href="${downloadURL}" class="install-btn">Installieren</a>
-      `;
-
-      appList.appendChild(appCard);
+  function renderApps(list) {
+    appList.innerHTML = '';
+    list.forEach(app => {
+      appList.appendChild(createCard(app));
     });
   }
+
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.toLowerCase();
+    const filtered = apps.filter(app => app.name.toLowerCase().includes(q));
+    renderApps(filtered);
+  });
 
   loadApps();
 </script>
