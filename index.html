@@ -4,33 +4,37 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Xalostore</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="logo.PNG" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Xalostore" />
-  <meta name="theme-color" content="#4C4BFD" />
-
-  <style>
+  <meta name="theme-color" content="#1A1A1A" /> <style>
+    /* New Dark, Modern Theme Variables */
     :root {
-      --bg: #f5f5f7;
-      --text: #333;
-      --card: #fff;
-      --accent: #4C4BFD;
-      --card-shadow: rgba(0, 0, 0, 0.1);
-      --tabbar-bg: #1f1f1f;
-      --tabbar-icon: #999;
-      --tabbar-icon-active: #4C4BFD;
+      --bg: #1A1A1A; /* Dark background */
+      --text: #E0E0E0; /* Light text for contrast */
+      --card: #282828; /* Slightly lighter card background */
+      --accent: #007AFF; /* A professional blue, similar to iOS system blue */
+      --card-shadow: rgba(0, 0, 0, 0.3); /* Stronger shadow for depth */
+      --tabbar-bg: #1C1C1C; /* Darker tabbar background */
+      --tabbar-icon: #8E8E93; /* Desaturated icon color */
+      --tabbar-icon-active: #007AFF; /* Accent color for active icon */
+      --border-color: #3A3A3C; /* Subtle border for elements */
     }
 
-    body.dark {
-      --bg: #121212;
-      --text: #f0f0f0;
-      --card: #1e1e1e;
-      --card-shadow: rgba(255, 255, 255, 0.1);
-      --tabbar-bg: #0f0f0f;
-      --tabbar-icon: #888;
+    /* Keep light mode as an option, though dark is default now */
+    body.light { /* Renamed 'dark' to 'light' for default dark */
+      --bg: #F5F5F7;
+      --text: #333;
+      --card: #FFFFFF;
+      --accent: #4C4BFD;
+      --card-shadow: rgba(0, 0, 0, 0.1);
+      --tabbar-bg: #F5F5F7;
+      --tabbar-icon: #999;
+      --tabbar-icon-active: #4C4BFD;
+      --border-color: #E0E0E0;
     }
 
     body {
@@ -43,45 +47,51 @@
     }
 
     header {
-      background: var(--accent);
-      color: white;
-      padding: 20px;
+      background: var(--bg); /* Header matches background for a sleek look */
+      color: var(--text);
+      padding: 30px 20px 20px; /* More padding top */
       text-align: center;
+      box-shadow: 0 2px 10px var(--card-shadow); /* Subtle header shadow */
     }
 
     header img {
-      width: 60px;
-      border-radius: 12px;
+      width: 80px; /* Slightly larger logo */
+      border-radius: 18px; /* More rounded corners */
       margin-bottom: 10px;
+      border: 1px solid var(--border-color); /* Subtle border for logo */
     }
 
     h1 {
       margin: 5px 0;
-      font-size: 24px;
+      font-size: 28px; /* Larger title */
+      font-weight: 700; /* Bolder font */
     }
 
     h2 {
       margin: 0;
-      font-weight: normal;
-      font-size: 16px;
+      font-weight: 400; /* Lighter weight for subtitle */
+      font-size: 18px; /* Slightly larger subtitle */
+      color: var(--tabbar-icon); /* More muted subtitle color */
     }
 
     #pwaBanner {
       display: none;
-      background: #fff4c4;
-      color: #333;
+      background: #333; /* Darker banner */
+      color: #FFF;
       padding: 15px;
       text-align: center;
+      border-bottom: 1px solid var(--border-color);
     }
 
     #pwaBanner button {
       margin-top: 10px;
-      background: #4C4BFD;
+      background: var(--accent);
       color: white;
       border: none;
-      padding: 6px 12px;
-      border-radius: 8px;
+      padding: 8px 16px;
+      border-radius: 10px; /* More rounded */
       cursor: pointer;
+      font-weight: 600;
     }
 
     .top-bar {
@@ -95,20 +105,27 @@
 
     .top-bar input {
       flex: 1;
-      padding: 10px;
-      font-size: 14px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
+      padding: 12px; /* More padding */
+      font-size: 16px;
+      border-radius: 10px; /* More rounded */
+      border: 1px solid var(--border-color); /* Matches new border color */
+      background: var(--card); /* Input background matches card */
+      color: var(--text);
       margin-right: 10px;
     }
 
+    .top-bar input::placeholder {
+        color: var(--tabbar-icon); /* Muted placeholder text */
+    }
+
     .toggle-mode {
-      background: var(--accent);
-      color: white;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 8px;
+      background: var(--card); /* Button background matches card */
+      color: var(--accent); /* Icon color */
+      border: 1px solid var(--border-color); /* Subtle border */
+      padding: 10px 16px; /* More padding */
+      border-radius: 10px;
       cursor: pointer;
+      font-size: 18px; /* Larger icon */
     }
 
     .app-list {
@@ -119,49 +136,64 @@
 
     .app-card {
       background: var(--card);
-      border-radius: 12px;
-      padding: 15px;
+      border-radius: 16px; /* More rounded cards */
+      padding: 18px; /* More padding */
       margin-bottom: 15px;
       display: flex;
       align-items: center;
-      box-shadow: 0 2px 5px var(--card-shadow);
+      box-shadow: 0 4px 12px var(--card-shadow); /* Deeper shadow */
       cursor: pointer;
-      transition: background 0.2s;
+      transition: transform 0.2s ease, box-shadow 0.2s ease; /* Subtle hover effect */
+      border: 1px solid var(--border-color); /* Subtle border */
     }
 
     .app-card:hover {
-      background: #e0e0ff10;
+      transform: translateY(-3px); /* Lift effect on hover */
+      box-shadow: 0 6px 15px var(--card-shadow);
     }
 
     .app-card img {
-      width: 60px;
-      height: 60px;
-      border-radius: 12px;
-      margin-right: 15px;
+      width: 70px; /* Slightly larger icons */
+      height: 70px;
+      border-radius: 16px; /* Match card radius */
+      margin-right: 18px;
+      flex-shrink: 0; /* Prevent shrinking */
     }
 
     .app-info {
       flex: 1;
+      min-width: 0; /* Allow content to shrink */
     }
 
     .app-info h3 {
       margin: 0;
-      font-size: 18px;
+      font-size: 20px; /* Larger app title */
+      font-weight: 600; /* Bolder */
+      white-space: nowrap; /* Prevent wrapping */
+      overflow: hidden; /* Hide overflow */
+      text-overflow: ellipsis; /* Add ellipsis */
     }
 
     .app-info p {
-      margin: 5px 0;
-      color: #888;
+      margin: 5px 0 0;
+      color: var(--tabbar-icon); /* Muted subtitle */
+      font-size: 15px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .install-btn {
       background: var(--accent);
       color: white;
       border: none;
-      padding: 8px 16px;
-      border-radius: 8px;
+      padding: 10px 20px; /* Larger button */
+      border-radius: 10px;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      flex-shrink: 0; /* Prevent shrinking */
+      margin-left: 15px; /* Spacing from app info */
     }
 
     .modal {
@@ -172,60 +204,96 @@
       top: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0,0,0,0.5);
+      background-color: rgba(0,0,0,0.7); /* Darker overlay */
       justify-content: center;
       align-items: center;
     }
 
     .modal-content {
       background: var(--card);
-      padding: 20px;
-      border-radius: 12px;
+      padding: 25px; /* More padding */
+      border-radius: 20px; /* More rounded */
       max-width: 90%;
-      width: 400px;
+      width: 450px; /* Slightly wider modal */
       color: var(--text);
+      box-shadow: 0 8px 25px var(--card-shadow); /* Deeper shadow */
+      position: relative;
     }
 
     .modal-content h3 {
       margin-top: 0;
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .modal-content p {
+        font-size: 16px;
+        line-height: 1.5;
+        color: var(--tabbar-icon);
+        margin-bottom: 8px;
     }
 
     .close-modal {
-      float: right;
-      font-size: 18px;
+      position: absolute; /* Position relative to modal-content */
+      top: 15px;
+      right: 15px;
+      font-size: 28px; /* Larger close button */
       cursor: pointer;
+      color: var(--tabbar-icon); /* Muted color */
+    }
+
+    .close-modal:hover {
+        color: var(--text); /* Brighter on hover */
     }
 
     /* Styles for tab content */
     .tab-content {
-      display: none; /* Hide all tab content by default */
+      display: none;
       max-width: 800px;
       margin: 20px auto;
       padding: 0 20px;
+      box-sizing: border-box; /* Include padding in width */
     }
 
     .tab-content.active {
-      display: block; /* Show active tab content */
+      display: block;
     }
 
     .tab-item {
       text-align:center;
       flex:1;
-      cursor: pointer; /* Make tab items clickable */
+      cursor: pointer;
+      padding: 5px 0; /* Add some padding for clickable area */
     }
 
     .tab-item svg {
-      transition: color 0.2s; /* Smooth transition for icon color */
+      transition: color 0.2s;
     }
 
     .tab-item div {
-      transition: color 0.2s; /* Smooth transition for text color */
+      transition: color 0.2s;
+    }
+
+    /* Specific styling for search tab input and list if needed */
+    #searchTab .top-bar {
+        margin-top: 20px; /* More space for search bar */
+    }
+
+    #searchTab .app-list {
+        margin-top: 20px;
+    }
+
+    /* Style for no apps message */
+    .no-apps-message {
+        text-align: center;
+        margin-top: 50px;
+        color: var(--tabbar-icon);
+        font-size: 18px;
     }
   </style>
 </head>
-<body>
-
-<header>
+<body class="dark"> <header>
   <img src="logo.PNG" alt="Xalostore Logo">
   <h1>Xalostore</h1>
   <h2>Sideload Apps. Simple. Secure.</h2>
@@ -239,30 +307,23 @@
 
 <div id="mainContent">
   <div id="exploreTab" class="tab-content active">
-    <div class="top-bar">
-      <input type="text" id="search" placeholder="App suchen...">
-      <button class="toggle-mode" onclick="toggleMode()">🌙</button>
-    </div>
     <div class="app-list" id="appList"></div>
   </div>
 
   <div id="searchTab" class="tab-content">
     <div class="top-bar">
-      <input type="text" id="searchAlt" placeholder="App suchen...">
-      <button class="toggle-mode" onclick="toggleMode()">🌙</button>
+      <input type="text" id="search" placeholder="App suchen..."> <button class="toggle-mode" onclick="toggleMode()">☀️</button> </div>
+    <div class="app-list" id="appListSearch"> <p class="no-apps-message">Beginne mit der Suche, um Apps zu finden.</p>
     </div>
-    <div class="app-list" id="appListAlt">
-        <p style="text-align: center; margin-top: 50px; color: var(--text);">Hier kannst du Apps finden.</p>
-        </div>
   </div>
 
   <div id="profileTab" class="tab-content">
     <div style="padding: 20px; text-align: center; max-width: 800px; margin: auto;">
       <h3 style="color: var(--text);">Willkommen bei Xalostore!</h3>
-      <p style="color: var(--text);">Dies ist dein einfacher und sicherer Ort, um Sideload-Apps zu finden und zu installieren.</p>
-      <p style="color: var(--text);">Wir arbeiten ständig daran, dir neue Funktionen und die besten Apps zur Verfügung zu stellen.</p>
-      <p style="color: var(--text);">Schau bald wieder vorbei für Updates und neue Inhalte!</p>
-      <img src="logo.PNG" alt="Xalostore Logo" style="width: 100px; border-radius: 15px; margin-top: 20px;">
+      <p style="color: var(--tabbar-icon);">Dies ist dein einfacher und sicherer Ort, um Sideload-Apps zu finden und zu installieren.</p>
+      <p style="color: var(--tabbar-icon);">Wir arbeiten ständig daran, dir neue Funktionen und die besten Apps zur Verfügung zu stellen.</p>
+      <p style="color: var(--tabbar-icon);">Schau bald wieder vorbei für Updates und neue Inhalte!</p>
+      <img src="logo.PNG" alt="Xalostore Logo" style="width: 120px; border-radius: 20px; margin-top: 25px; border: 1px solid var(--border-color);">
     </div>
   </div>
 </div>
@@ -275,17 +336,20 @@
 
 <div id="tabbar" style="
   position: fixed;
-  bottom: 25px;
+  bottom: 20px; /* Slightly higher from bottom */
   left: 50%;
   transform: translateX(-50%);
-  width: 90%;
+  width: 92%; /* Slightly wider */
+  max-width: 500px; /* Max width for larger screens */
   background: var(--tabbar-bg);
-  border-radius: 18px;
+  border-radius: 22px; /* More rounded tabbar */
   display: flex;
   justify-content: space-around;
-  padding: 10px 0;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-  z-index: 100;">
+  padding: 12px 0; /* More padding */
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4); /* Deeper shadow */
+  z-index: 100;
+  border: 1px solid var(--border-color); /* Subtle border */
+  ">
   
   <div class="tab-item" id="tabExplore" onclick="goTab('explore')">
     <svg width="24" height="24" fill="currentColor" class="tab-icon active-icon">
@@ -310,23 +374,20 @@
 </div>
 
 <script>
-  const appList = document.getElementById('appList');
-  const searchInput = document.getElementById('search');
-  const searchInputAlt = document.getElementById('searchAlt'); // New search input for search tab
-  const appListAlt = document.getElementById('appListAlt'); // New app list for search tab
+  const appList = document.getElementById('appList'); // For Explore Tab
+  const searchInput = document.getElementById('search'); // For Search Tab
+  const appListSearch = document.getElementById('appListSearch'); // For Search Tab
   const appModal = document.getElementById('appModal');
   const modalContent = document.getElementById('modalContent');
 
   let apps = [];
 
-  // Function to format file size
   function formatSize(bytes) {
     if (!bytes) return "";
     const mb = (bytes / 1024 / 1024).toFixed(1);
     return `${mb} MB`;
   }
 
-  // Function to create an app card HTML element
   function createCard(app) {
     let version = app.versions[0] || {};
     let downloadURL = version.downloadURL || '#';
@@ -351,24 +412,27 @@
         <p>${app.localizedDescription || "This app lets you do awesome things!"}</p>
         <p><strong>Version:</strong> ${version.version || "?"}</p>
         <p><strong>Größe:</strong> ${size || "?"}</p>
-        <a href="${downloadURL}" class="install-btn">Jetzt installieren</a>
+        <a href="${downloadURL}" class="install-btn" style="display: block; width: fit-content; margin: 20px auto 0;">Jetzt installieren</a>
       `;
     };
 
     return card;
   }
 
-  // Function to close the app details modal
   function closeModal() {
     appModal.style.display = 'none';
   }
 
-  // Function to toggle dark/light mode
   function toggleMode() {
-    document.body.classList.toggle("dark");
+    document.body.classList.toggle("light"); // Toggles to 'light' class
+    const button = document.querySelector('.toggle-mode');
+    if (document.body.classList.contains("light")) {
+        button.innerHTML = '🌙'; // Moon for dark mode
+    } else {
+        button.innerHTML = '☀️'; // Sun for light mode
+    }
   }
 
-  // ** NEW: Function to switch tabs **
   function goTab(tabName) {
     // Hide all tab content
     document.querySelectorAll('.tab-content').forEach(tabContent => {
@@ -378,25 +442,36 @@
     // Deactivate all tab icons and text
     document.querySelectorAll('.tab-icon').forEach(icon => {
       icon.style.color = 'var(--tabbar-icon)';
+      icon.classList.remove('active-icon');
     });
     document.querySelectorAll('.tab-text').forEach(text => {
       text.style.color = 'var(--tabbar-icon)';
+      text.classList.remove('active-text');
     });
 
     // Show the selected tab content and activate its icon/text
-    document.getElementById(`${tabName}Tab`).classList.add('active');
-    document.querySelector(`#tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)} .tab-icon`).style.color = 'var(--tabbar-icon-active)';
-    document.querySelector(`#tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)} .tab-text`).style.color = 'var(--tabbar-icon-active)';
+    const selectedTabContent = document.getElementById(`${tabName}Tab`);
+    if (selectedTabContent) {
+      selectedTabContent.classList.add('active');
+    }
+    
+    const selectedTabItem = document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
+    if (selectedTabItem) {
+        selectedTabItem.querySelector('.tab-icon').style.color = 'var(--tabbar-icon-active)';
+        selectedTabItem.querySelector('.tab-icon').classList.add('active-icon');
+        selectedTabItem.querySelector('.tab-text').style.color = 'var(--tabbar-icon-active)';
+        selectedTabItem.querySelector('.tab-text').classList.add('active-text');
+    }
 
     // Special handling for the search tab to display all apps when first selected
     if (tabName === 'search') {
-      renderApps(apps, appListAlt); // Render all apps in the search tab's list
+      renderApps(apps, appListSearch); // Render all apps in the search tab's list
+      searchInput.value = ''; // Clear search input on tab switch
     } else if (tabName === 'explore') {
       renderApps(apps, appList); // Ensure explore tab shows all apps
     }
   }
 
-  // Function to load app data from source.json
   async function loadApps() {
     try {
       const response = await fetch('source.json');
@@ -408,16 +483,16 @@
       renderApps(apps, appList); // Render initial apps for the explore tab
     } catch (error) {
       console.error("Fehler beim Laden der Apps:", error);
-      appList.innerHTML = '<p style="text-align: center; color: var(--text);">Apps konnten nicht geladen werden. Bitte versuche es später noch einmal.</p>';
-      appListAlt.innerHTML = '<p style="text-align: center; color: var(--text);">Apps konnten nicht geladen werden. Bitte versuche es später noch einmal.</p>';
+      const errorMessage = '<p class="no-apps-message">Apps konnten nicht geladen werden. Bitte versuche es später noch einmal.</p>';
+      appList.innerHTML = errorMessage;
+      appListSearch.innerHTML = errorMessage;
     }
   }
 
-  // Function to render apps into a given app list container
   function renderApps(list, container) {
-    container.innerHTML = ''; // Clear existing content
+    container.innerHTML = '';
     if (list.length === 0) {
-      container.innerHTML = '<p style="text-align: center; color: var(--text);">Keine Apps gefunden.</p>';
+      container.innerHTML = '<p class="no-apps-message">Keine Apps gefunden.</p>';
       return;
     }
     list.forEach(app => {
@@ -425,27 +500,22 @@
     });
   }
 
-  // Event listener for the search input on the explore tab
+  // Only one search input now, tied to the Search tab
   searchInput.addEventListener('input', () => {
     const q = searchInput.value.toLowerCase();
-    const filtered = apps.filter(app => app.name.toLowerCase().includes(q));
-    renderApps(filtered, appList);
+    const filtered = apps.filter(app => 
+        app.name.toLowerCase().includes(q) || 
+        app.subtitle.toLowerCase().includes(q) ||
+        (app.localizedDescription && app.localizedDescription.toLowerCase().includes(q))
+    );
+    renderApps(filtered, appListSearch);
   });
 
-  // Event listener for the search input on the search tab
-  searchInputAlt.addEventListener('input', () => {
-    const q = searchInputAlt.value.toLowerCase();
-    const filtered = apps.filter(app => app.name.toLowerCase().includes(q));
-    renderApps(filtered, appListAlt);
-  });
-
-  // Function to hide the PWA banner
   function hideBanner() {
     document.getElementById("pwaBanner").style.display = "none";
     sessionStorage.setItem("hidePWABannerTemp", "1");
   }
 
-  // Initialize on page load
   window.addEventListener('load', () => {
     const isIOS = /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
     const isInStandalone =
@@ -460,6 +530,14 @@
 
     loadApps();
     goTab('explore'); // Set 'explore' as the default active tab on load
+
+    // Initialize toggle button icon based on current mode
+    const toggleButton = document.querySelector('.toggle-mode');
+    if (document.body.classList.contains("light")) {
+        toggleButton.innerHTML = '🌙';
+    } else {
+        toggleButton.innerHTML = '☀️';
+    }
   });
 </script>
 
