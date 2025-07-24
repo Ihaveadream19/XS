@@ -299,18 +299,21 @@
     renderApps(filtered);
   });
 
-  // 📲 iOS "Zum Home-Bildschirm" Banner
+  // 📲 iOS "Zum Home-Bildschirm" Banner Logik
   function hideBanner() {
     document.getElementById("pwaBanner").style.display = "none";
-    localStorage.setItem("hidePWABanner", "1");
+    sessionStorage.setItem("hidePWABannerTemp", "1"); // Nur für diese Session
   }
 
   window.addEventListener('load', () => {
     const isIOS = /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
-    const isInStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    const hide = localStorage.getItem("hidePWABanner");
+    const isInStandalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      window.navigator.standalone;
 
-    if (isIOS && !isInStandalone && !hide) {
+    const hideTemp = sessionStorage.getItem("hidePWABannerTemp");
+
+    if (isIOS && !isInStandalone && !hideTemp) {
       document.getElementById("pwaBanner").style.display = "block";
     }
 
