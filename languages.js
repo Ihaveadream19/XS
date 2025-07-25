@@ -37,9 +37,15 @@ const translations = {
     profileWelcomeText2: "Wir arbeiten ständig daran, dir neue Funktionen und die besten Apps zur Verfügung zu stellen.",
     profileWelcomeText3: "Schau bald wieder vorbei für Updates und neue Inhalte!",
     
-    // Language Selection (New)
-    languageSettingsTitle: "Spracheinstellungen",
-    selectLanguage: "Sprache wählen:"
+    // Language Settings (New)
+    settingsTitle: "Einstellungen", // General settings title
+    languageSettingLabel: "Sprache", // Label for the language setting button
+    languageSelectionTitle: "Sprache wählen", // Title for the language modal
+    languageGerman: "Deutsch",
+    languageEnglish: "English",
+    darkModeSettingLabel: "Dark Mode", // Label for the dark mode setting
+    darkModeOn: "An",
+    darkModeOff: "Aus"
   },
   en: {
     // Header
@@ -79,26 +85,36 @@ const translations = {
     profileWelcomeText2: "We are constantly working to provide you with new features and the best apps.",
     profileWelcomeText3: "Check back soon for updates and new content!",
 
-    // Language Selection (New)
-    languageSettingsTitle: "Language Settings",
-    selectLanguage: "Select Language:"
+    // Language Settings (New)
+    settingsTitle: "Settings", // General settings title
+    languageSettingLabel: "Language", // Label for the language setting button
+    languageSelectionTitle: "Select Language", // Title for the language modal
+    languageGerman: "German",
+    languageEnglish: "English",
+    darkModeSettingLabel: "Dark Mode", // Label for the dark mode setting
+    darkModeOn: "On",
+    darkModeOff: "Off"
   }
 };
 
-// Standard-Sprache, wenn keine gespeichert ist oder erkannt wird
 let currentLanguage = 'de'; 
+let currentDarkModeState = true; // true = dark, false = light
 
-// Funktion zum Laden der gespeicherten Sprache
-function loadLanguagePreference() {
+// Funktion zum Laden der gespeicherten Sprache und des Dark Mode Zustands
+function loadPreferences() {
   const savedLang = localStorage.getItem('xalostore_language');
   if (savedLang && translations[savedLang]) {
     currentLanguage = savedLang;
   } else {
-    // Erkennen der Browsersprache, falls keine gespeichert ist
-    const browserLang = navigator.language.split('-')[0]; // z.B. "de" aus "de-DE"
+    const browserLang = navigator.language.split('-')[0];
     if (translations[browserLang]) {
       currentLanguage = browserLang;
     }
+  }
+
+  const savedDarkMode = localStorage.getItem('xalostore_dark_mode');
+  if (savedDarkMode !== null) {
+    currentDarkModeState = (savedDarkMode === 'true'); // String zu Boolean konvertieren
   }
 }
 
@@ -107,63 +123,65 @@ function translateUI() {
   const langData = translations[currentLanguage];
 
   // Header
-  document.querySelector('h1').textContent = langData.headerTitle;
-  document.querySelector('h2').textContent = langData.headerSubtitle;
+  document.getElementById('header-title').textContent = langData.headerTitle;
+  document.getElementById('header-subtitle').textContent = langData.headerSubtitle;
 
   // PWA Banner
-  document.querySelector('#pwaBanner strong').textContent = langData.pwaBannerTip;
-  // Der Text im PWA-Banner enthält HTML, daher innerHTML verwenden
-  document.querySelector('#pwaBanner').childNodes[2].nodeValue = langData.pwaBannerText.split('<br>')[0]; // Erster Teil vor <br>
-  document.querySelector('#pwaBanner').childNodes[4].nodeValue = langData.pwaBannerText.split('<br>')[1]; // Zweiter Teil nach <br>
-  document.querySelector('#pwaBanner button').textContent = langData.pwaBannerButton;
-
+  document.getElementById('pwa-banner-tip').textContent = langData.pwaBannerTip;
+  // Den innerHTML direkt setzen, da es HTML-Tags enthält
+  document.getElementById('pwa-banner-text').innerHTML = langData.pwaBannerText;
+  document.getElementById('pwa-banner-button').textContent = langData.pwaBannerButton;
 
   // Search Bar
   document.getElementById('search').placeholder = langData.searchPlaceholder;
-  // Toggle Button Text / Icon (abhängig vom Modus, wird in toggleMode() gesetzt)
-  // Das erledigt toggleMode() automatisch, wenn es aufgerufen wird.
+  // Toggle Button Text / Icon wird von toggleMode() gehandhabt
 
-  // App List / Search Results (Meldungen für leere Listen)
-  // Diese werden dynamisch in renderApps() und searchInput.addEventListener gesetzt.
-  // Hier setzen wir die Initialtexte für den Search-Prompt
-  if(document.querySelector('#appListSearch .no-apps-message')) {
-    document.querySelector('#appListSearch .no-apps-message').textContent = langData.searchPrompt;
-  }
-  
   // Tabbar
-  document.getElementById('tabExplore').querySelector('.tab-text').textContent = langData.tabExplore;
-  document.getElementById('tabSearch').querySelector('.tab-text').textContent = langData.tabSearch;
-  document.getElementById('tabProfile').querySelector('.tab-text').textContent = langData.tabProfile;
+  document.getElementById('tab-explore-text').textContent = langData.tabExplore;
+  document.getElementById('tab-search-text').textContent = langData.tabSearch;
+  document.getElementById('tab-profile-text').textContent = langData.tabProfile;
 
-  // Profile Tab
-  document.querySelector('#profileTab h3').textContent = langData.profileWelcomeTitle;
-  // Hier verwenden wir querySelectorAll, um alle Paragraphen im Profil-Tab zu aktualisieren
-  const profileParagraphs = document.querySelectorAll('#profileTab p');
-  if (profileParagraphs.length >= 3) { // Sicherstellen, dass die Paragraphen existieren
-    profileParagraphs[0].textContent = langData.profileWelcomeText1;
-    profileParagraphs[1].textContent = langData.profileWelcomeText2;
-    profileParagraphs[2].textContent = langData.profileWelcomeText3;
+  // Profile Tab Welcome
+  document.getElementById('profile-welcome-title').textContent = langData.profileWelcomeTitle;
+  document.getElementById('profile-text-1').textContent = langData.profileWelcomeText1;
+  document.getElementById('profile-text-2').textContent = langData.profileWelcomeText2;
+  document.getElementById('profile-text-3').textContent = langData.profileWelcomeText3;
+
+  // Profile Settings
+  document.getElementById('settings-title').textContent = langData.settingsTitle;
+  document.getElementById('language-setting-label').textContent = langData.languageSettingLabel;
+  document.getElementById('dark-mode-setting-label').textContent = langData.darkModeSettingLabel;
+
+  // Update Dark Mode Button text
+  updateDarkModeButtonText();
+
+  // Update language labels in the modal (if open) or main profile
+  const languageOptionGerman = document.querySelector('#lang-de span');
+  const languageOptionEnglish = document.querySelector('#lang-en span');
+  if (languageOptionGerman) languageOptionGerman.textContent = langData.languageGerman;
+  if (languageOptionEnglish) languageOptionEnglish.textContent = langData.languageEnglish;
+
+  // Special handling for search messages
+  if (document.getElementById('searchTab').classList.contains('active')) {
+      const q = searchInput.value;
+      if (q.length === 0) {
+          appListSearch.innerHTML = `<p class="no-apps-message">${langData.searchPrompt}</p>`;
+      } else {
+          // Re-render apps to update "No apps found" message if applicable
+          const filtered = apps.filter(app => 
+              app.name.toLowerCase().includes(q.toLowerCase()) || 
+              app.subtitle.toLowerCase().includes(q.toLowerCase()) ||
+              (app.localizedDescription && app.localizedDescription.toLowerCase().includes(q.toLowerCase()))
+          );
+          renderApps(filtered, appListSearch);
+      }
+  } else if (document.getElementById('exploreTab').classList.contains('active')) {
+      renderApps(apps, appList); // Re-render apps in explore to update install buttons
   }
 
-  // Für App-Karten und Modals: Diese werden bei der Erstellung bzw. Öffnung übersetzt,
-  // daher müssen wir hier keine vorhandenen übersetzen, nur sicherstellen, dass
-  // createCard() und die Modal-Generierung die korrekten Texte verwenden.
-  // Wir müssen die 'apps' bei Bedarf neu rendern, damit die "Installieren" Buttons aktualisiert werden.
-  if (document.getElementById('exploreTab').classList.contains('active')) {
-      renderApps(apps, appList);
-  } else if (document.getElementById('searchTab').classList.contains('active')) {
-      const q = searchInput.value.toLowerCase();
-      const filtered = apps.filter(app => 
-          app.name.toLowerCase().includes(q) || 
-          app.subtitle.toLowerCase().includes(q) ||
-          (app.localizedDescription && app.localizedDescription.toLowerCase().includes(q))
-      );
-      renderApps(filtered, appListSearch);
-  }
-
-  // Aktualisiere den Text für den "Apps konnten nicht geladen werden"-Fehler, falls vorhanden
+  // Update "Apps konnten nicht geladen werden" message if it's currently displayed
   const errorMessageElement = document.querySelector('.no-apps-message');
-  if (errorMessageElement && errorMessageElement.textContent === translations['de'].appsLoadError || errorMessageElement.textContent === translations['en'].appsLoadError) {
+  if (errorMessageElement && errorMessageElement.dataset.type === 'loadError') {
       errorMessageElement.textContent = langData.appsLoadError;
   }
 }
@@ -174,8 +192,14 @@ function setLanguage(lang) {
     currentLanguage = lang;
     localStorage.setItem('xalostore_language', lang); // Sprache im Local Storage speichern
     translateUI(); // UI neu übersetzen
-    goTab(document.querySelector('.tab-content.active').id.replace('Tab', '')); // Aktuellen Tab neu laden, um dynamische Inhalte (z.B. App-Karten) zu aktualisieren
-    toggleMode(); // Sicherstellen, dass das Toggle-Icon korrekt ist
+    updateLanguageButtonsState(); // Aktiven Button hervorheben
+
+    // Re-render current tab content to update dynamic elements like "Install" buttons
+    const activeTab = document.querySelector('.tab-content.active');
+    if (activeTab) {
+      const tabName = activeTab.id.replace('Tab', '');
+      goTab(tabName); // Simuliert das erneute Laden des Tabs
+    }
   }
 }
 
@@ -184,5 +208,24 @@ function getTranslation(key) {
     return translations[currentLanguage][key] || key; // Fallback zu Schlüssel, falls Übersetzung fehlt
 }
 
-// Vor dem Laden der Seite die gespeicherte Sprache laden
-loadLanguagePreference();
+// Aktualisiert den Text des Dark Mode Buttons
+function updateDarkModeButtonText() {
+    const darkModeToggleBtn = document.getElementById('dark-mode-toggle-btn');
+    if (darkModeToggleBtn) {
+        darkModeToggleBtn.textContent = currentDarkModeState ? getTranslation('darkModeOn') : getTranslation('darkModeOff');
+    }
+}
+
+// Aktualisiert den visuellen Zustand der Sprach-Buttons
+function updateLanguageButtonsState() {
+    document.querySelectorAll('.language-option').forEach(button => {
+        button.classList.remove('active-lang');
+    });
+    const activeLangButton = document.getElementById(`lang-${currentLanguage}`);
+    if (activeLangButton) {
+        activeLangButton.classList.add('active-lang');
+    }
+}
+
+// Initialisierung der Einstellungen
+loadPreferences();
