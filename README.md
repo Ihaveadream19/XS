@@ -1,1 +1,1 @@
-# xalostore
+# xalosto
