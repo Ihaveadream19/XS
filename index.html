@@ -10,7 +10,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="Xalostore" />
-  <meta name="theme-color" content="#1A1A1A" /> <style>
+  <meta name="theme-color" content="#1A1A1A" />
+
+  <style>
     /* New Dark, Modern Theme Variables */
     :root {
       --bg: #1A1A1A; /* Dark background */
@@ -42,35 +44,35 @@
       background: var(--bg);
       color: var(--text);
       margin: 0;
-      padding-bottom: 80px;
+      padding-bottom: 100px; /* More space at the bottom for tabbar */
       transition: background 0.3s, color 0.3s;
     }
 
     header {
       background: var(--bg); /* Header matches background for a sleek look */
       color: var(--text);
-      padding: 30px 20px 20px; /* More padding top */
+      padding: 40px 20px 30px; /* More padding top and bottom */
       text-align: center;
       box-shadow: 0 2px 10px var(--card-shadow); /* Subtle header shadow */
     }
 
     header img {
-      width: 80px; /* Slightly larger logo */
-      border-radius: 18px; /* More rounded corners */
-      margin-bottom: 10px;
+      width: 90px; /* Slightly larger logo */
+      border-radius: 20px; /* More rounded corners */
+      margin-bottom: 15px; /* More space below logo */
       border: 1px solid var(--border-color); /* Subtle border for logo */
     }
 
     h1 {
       margin: 5px 0;
-      font-size: 28px; /* Larger title */
+      font-size: 32px; /* Larger title */
       font-weight: 700; /* Bolder font */
     }
 
     h2 {
       margin: 0;
       font-weight: 400; /* Lighter weight for subtitle */
-      font-size: 18px; /* Slightly larger subtitle */
+      font-size: 19px; /* Slightly larger subtitle */
       color: var(--tabbar-icon); /* More muted subtitle color */
     }
 
@@ -78,26 +80,27 @@
       display: none;
       background: #333; /* Darker banner */
       color: #FFF;
-      padding: 15px;
+      padding: 20px; /* More padding */
       text-align: center;
       border-bottom: 1px solid var(--border-color);
     }
 
     #pwaBanner button {
-      margin-top: 10px;
+      margin-top: 15px; /* More space above button */
       background: var(--accent);
       color: white;
       border: none;
-      padding: 8px 16px;
-      border-radius: 10px; /* More rounded */
+      padding: 10px 20px; /* More padding */
+      border-radius: 12px; /* More rounded */
       cursor: pointer;
       font-weight: 600;
+      font-size: 16px; /* Slightly larger font */
     }
 
     .top-bar {
-      max-width: 800px;
-      margin: 10px auto;
-      padding: 0 20px;
+      max-width: 900px; /* Wider top bar */
+      margin: 20px auto; /* More margin */
+      padding: 0 30px; /* More padding */
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -105,13 +108,13 @@
 
     .top-bar input {
       flex: 1;
-      padding: 12px; /* More padding */
-      font-size: 16px;
-      border-radius: 10px; /* More rounded */
+      padding: 14px; /* More padding */
+      font-size: 17px; /* Larger font */
+      border-radius: 12px; /* More rounded */
       border: 1px solid var(--border-color); /* Matches new border color */
       background: var(--card); /* Input background matches card */
       color: var(--text);
-      margin-right: 10px;
+      margin-right: 15px; /* More space */
     }
 
     .top-bar input::placeholder {
@@ -122,41 +125,41 @@
       background: var(--card); /* Button background matches card */
       color: var(--accent); /* Icon color */
       border: 1px solid var(--border-color); /* Subtle border */
-      padding: 10px 16px; /* More padding */
-      border-radius: 10px;
+      padding: 12px 18px; /* More padding */
+      border-radius: 12px;
       cursor: pointer;
-      font-size: 18px; /* Larger icon */
+      font-size: 20px; /* Larger icon */
     }
 
     .app-list {
-      max-width: 800px;
-      margin: 20px auto;
-      padding: 0 20px;
+      max-width: 900px; /* Wider app list */
+      margin: 30px auto; /* More margin */
+      padding: 0 30px; /* More padding */
     }
 
     .app-card {
       background: var(--card);
-      border-radius: 16px; /* More rounded cards */
-      padding: 18px; /* More padding */
-      margin-bottom: 15px;
+      border-radius: 20px; /* More rounded cards */
+      padding: 22px; /* More padding */
+      margin-bottom: 20px; /* More space between cards */
       display: flex;
       align-items: center;
-      box-shadow: 0 4px 12px var(--card-shadow); /* Deeper shadow */
+      box-shadow: 0 6px 15px var(--card-shadow); /* Deeper shadow */
       cursor: pointer;
       transition: transform 0.2s ease, box-shadow 0.2s ease; /* Subtle hover effect */
       border: 1px solid var(--border-color); /* Subtle border */
     }
 
     .app-card:hover {
-      transform: translateY(-3px); /* Lift effect on hover */
-      box-shadow: 0 6px 15px var(--card-shadow);
+      transform: translateY(-5px); /* Lift effect on hover */
+      box-shadow: 0 8px 20px var(--card-shadow);
     }
 
     .app-card img {
-      width: 70px; /* Slightly larger icons */
-      height: 70px;
-      border-radius: 16px; /* Match card radius */
-      margin-right: 18px;
+      width: 80px; /* Larger icons */
+      height: 80px;
+      border-radius: 18px; /* Match card radius */
+      margin-right: 20px; /* More space */
       flex-shrink: 0; /* Prevent shrinking */
     }
 
@@ -167,7 +170,7 @@
 
     .app-info h3 {
       margin: 0;
-      font-size: 20px; /* Larger app title */
+      font-size: 22px; /* Larger app title */
       font-weight: 600; /* Bolder */
       white-space: nowrap; /* Prevent wrapping */
       overflow: hidden; /* Hide overflow */
@@ -175,9 +178,9 @@
     }
 
     .app-info p {
-      margin: 5px 0 0;
+      margin: 8px 0 0; /* More space */
       color: var(--tabbar-icon); /* Muted subtitle */
-      font-size: 15px;
+      font-size: 16px; /* Slightly larger font */
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -187,13 +190,13 @@
       background: var(--accent);
       color: white;
       border: none;
-      padding: 10px 20px; /* Larger button */
-      border-radius: 10px;
+      padding: 12px 25px; /* Larger button */
+      border-radius: 12px;
       cursor: pointer;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 600;
       flex-shrink: 0; /* Prevent shrinking */
-      margin-left: 15px; /* Spacing from app info */
+      margin-left: 20px; /* More spacing from app info */
     }
 
     .modal {
@@ -204,41 +207,50 @@
       top: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0,0,0,0.7); /* Darker overlay */
+      background-color: rgba(0,0,0,0.8); /* Darker overlay */
       justify-content: center;
       align-items: center;
     }
 
     .modal-content {
       background: var(--card);
-      padding: 25px; /* More padding */
-      border-radius: 20px; /* More rounded */
+      padding: 30px; /* More padding */
+      border-radius: 25px; /* More rounded */
       max-width: 90%;
-      width: 450px; /* Slightly wider modal */
+      width: 500px; /* Wider modal */
       color: var(--text);
-      box-shadow: 0 8px 25px var(--card-shadow); /* Deeper shadow */
+      box-shadow: 0 10px 30px var(--card-shadow); /* Deeper shadow */
       position: relative;
     }
 
     .modal-content h3 {
       margin-top: 0;
-      font-size: 24px;
+      font-size: 26px; /* Larger font */
       font-weight: 700;
-      margin-bottom: 10px;
+      margin-bottom: 12px; /* More space */
     }
 
     .modal-content p {
-        font-size: 16px;
-        line-height: 1.5;
+        font-size: 17px; /* Slightly larger font */
+        line-height: 1.6; /* More line height for readability */
         color: var(--tabbar-icon);
-        margin-bottom: 8px;
+        margin-bottom: 10px; /* More space */
+    }
+
+    .modal-content .install-btn {
+        display: block;
+        width: fit-content;
+        margin: 30px auto 0; /* More margin */
+        padding: 15px 30px; /* Larger button */
+        font-size: 18px; /* Larger font */
+        border-radius: 14px; /* More rounded */
     }
 
     .close-modal {
-      position: absolute; /* Position relative to modal-content */
-      top: 15px;
-      right: 15px;
-      font-size: 28px; /* Larger close button */
+      position: absolute;
+      top: 20px; /* More space */
+      right: 20px; /* More space */
+      font-size: 32px; /* Larger close button */
       cursor: pointer;
       color: var(--tabbar-icon); /* Muted color */
     }
@@ -250,10 +262,10 @@
     /* Styles for tab content */
     .tab-content {
       display: none;
-      max-width: 800px;
-      margin: 20px auto;
-      padding: 0 20px;
-      box-sizing: border-box; /* Include padding in width */
+      max-width: 900px; /* Wider tab content */
+      margin: 30px auto; /* More margin */
+      padding: 0 30px; /* More padding */
+      box-sizing: border-box;
     }
 
     .tab-content.active {
@@ -264,7 +276,7 @@
       text-align:center;
       flex:1;
       cursor: pointer;
-      padding: 5px 0; /* Add some padding for clickable area */
+      padding: 8px 0; /* More padding for clickable area */
     }
 
     .tab-item svg {
@@ -277,19 +289,23 @@
 
     /* Specific styling for search tab input and list if needed */
     #searchTab .top-bar {
-        margin-top: 20px; /* More space for search bar */
+        margin-top: 30px; /* More space for search bar */
     }
 
     #searchTab .app-list {
-        margin-top: 20px;
+        margin-top: 30px; /* More space for app list */
     }
 
     /* Style for no apps message */
     .no-apps-message {
         text-align: center;
-        margin-top: 50px;
+        margin-top: 80px; /* More space */
         color: var(--tabbar-icon);
-        font-size: 18px;
+        font-size: 19px; /* Slightly larger font */
+        line-height: 1.6;
+    }
+    #profileTab > div { /* Target the inner div for profile content */
+        padding: 30px; /* More padding */
     }
   </style>
 </head>
@@ -312,18 +328,20 @@
 
   <div id="searchTab" class="tab-content">
     <div class="top-bar">
-      <input type="text" id="search" placeholder="App suchen..."> <button class="toggle-mode" onclick="toggleMode()">☀️</button> </div>
-    <div class="app-list" id="appListSearch"> <p class="no-apps-message">Beginne mit der Suche, um Apps zu finden.</p>
+      <input type="text" id="search" placeholder="App suchen...">
+      <button class="toggle-mode" onclick="toggleMode()">☀️</button> </div>
+    <div class="app-list" id="appListSearch">
+        <p class="no-apps-message">Beginne mit der Suche, um Apps zu finden.</p>
     </div>
   </div>
 
   <div id="profileTab" class="tab-content">
-    <div style="padding: 20px; text-align: center; max-width: 800px; margin: auto;">
+    <div style="padding: 30px; text-align: center; max-width: 800px; margin: auto;">
       <h3 style="color: var(--text);">Willkommen bei Xalostore!</h3>
       <p style="color: var(--tabbar-icon);">Dies ist dein einfacher und sicherer Ort, um Sideload-Apps zu finden und zu installieren.</p>
       <p style="color: var(--tabbar-icon);">Wir arbeiten ständig daran, dir neue Funktionen und die besten Apps zur Verfügung zu stellen.</p>
       <p style="color: var(--tabbar-icon);">Schau bald wieder vorbei für Updates und neue Inhalte!</p>
-      <img src="logo.PNG" alt="Xalostore Logo" style="width: 120px; border-radius: 20px; margin-top: 25px; border: 1px solid var(--border-color);">
+      <img src="logo.PNG" alt="Xalostore Logo" style="width: 140px; border-radius: 25px; margin-top: 30px; border: 1px solid var(--border-color);">
     </div>
   </div>
 </div>
@@ -336,41 +354,35 @@
 
 <div id="tabbar" style="
   position: fixed;
-  bottom: 20px; /* Slightly higher from bottom */
+  bottom: 30px; /* Slightly higher from bottom */
   left: 50%;
   transform: translateX(-50%);
-  width: 92%; /* Slightly wider */
-  max-width: 500px; /* Max width for larger screens */
+  width: 95%; /* Even wider */
+  max-width: 550px; /* Max width for larger screens */
   background: var(--tabbar-bg);
-  border-radius: 22px; /* More rounded tabbar */
+  border-radius: 28px; /* More rounded tabbar */
   display: flex;
   justify-content: space-around;
-  padding: 12px 0; /* More padding */
-  box-shadow: 0 4px 20px rgba(0,0,0,0.4); /* Deeper shadow */
+  padding: 15px 0; /* More padding */
+  box-shadow: 0 6px 25px rgba(0,0,0,0.5); /* Deeper shadow */
   z-index: 100;
   border: 1px solid var(--border-color); /* Subtle border */
   ">
   
   <div class="tab-item" id="tabExplore" onclick="goTab('explore')">
-    <svg width="24" height="24" fill="currentColor" class="tab-icon active-icon">
-      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+    <svg width="28" height="28" fill="currentColor" class="tab-icon active-icon"> <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
     </svg>
-    <div class="tab-text active-text" style="font-size:12px;margin-top:3px;">Explore</div>
-  </div>
+    <div class="tab-text active-text" style="font-size:13px;margin-top:4px;">Explore</div> </div>
 
   <div class="tab-item" id="tabSearch" onclick="goTab('search')">
-    <svg width="24" height="24" fill="currentColor" class="tab-icon">
-      <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+    <svg width="28" height="28" fill="currentColor" class="tab-icon"> <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
     </svg>
-    <div class="tab-text" style="font-size:12px;margin-top:3px;">Search</div>
-  </div>
+    <div class="tab-text" style="font-size:13px;margin-top:4px;">Search</div> </div>
 
   <div class="tab-item" id="tabProfile" onclick="goTab('profile')">
-    <svg width="24" height="24" fill="currentColor" class="tab-icon">
-      <path d="M12 12c2.7 0 4.7-2 4.7-4.7S14.7 2.6 12 2.6 7.3 4.6 7.3 7.3 9.3 12 12 12zm0 2.4c-3.1 0-9.2 1.6-9.2 4.7V22h18.5v-2.9c0-3.1-6.1-4.7-9.3-4.7z"/>
+    <svg width="28" height="28" fill="currentColor" class="tab-icon"> <path d="M12 12c2.7 0 4.7-2 4.7-4.7S14.7 2.6 12 2.6 7.3 4.6 7.3 7.3 9.3 12 12 12zm0 2.4c-3.1 0-9.2 1.6-9.2 4.7V22h18.5v-2.9c0-3.1-6.1-4.7-9.3-4.7z"/>
     </svg>
-    <div class="tab-text" style="font-size:12px;margin-top:3px;">Profile</div>
-  </div>
+    <div class="tab-text" style="font-size:13px;margin-top:4px;">Profile</div> </div>
 </div>
 
 <script>
@@ -412,7 +424,7 @@
         <p>${app.localizedDescription || "This app lets you do awesome things!"}</p>
         <p><strong>Version:</strong> ${version.version || "?"}</p>
         <p><strong>Größe:</strong> ${size || "?"}</p>
-        <a href="${downloadURL}" class="install-btn" style="display: block; width: fit-content; margin: 20px auto 0;">Jetzt installieren</a>
+        <a href="${downloadURL}" class="install-btn">Jetzt installieren</a>
       `;
     };
 
