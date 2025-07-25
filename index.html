@@ -199,6 +199,7 @@
       margin-left: 15px;
     }
 
+    /* General Modal Styles */
     .modal {
       display: none;
       position: fixed;
@@ -313,23 +314,67 @@
       margin-top: 20px;
     }
 
-    /* Styles for language selection */
-    .language-selection {
+    /* Styles for general settings in Profile Tab */
+    .settings-section {
       margin-top: 30px;
       padding-top: 20px;
       border-top: 1px solid var(--border-color);
-      text-align: center;
+      text-align: left; /* Align text left within settings section */
     }
-    .language-selection h4 {
-      margin-bottom: 15px;
+    .settings-section h4 {
+      margin-bottom: 20px;
       color: var(--text);
       font-size: 18px;
+      text-align: center; /* Title centered */
     }
-    .language-options {
+    .setting-item {
+      background: var(--card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 12px 15px;
+      margin-bottom: 10px;
       display: flex;
-      justify-content: center;
-      gap: 15px;
-      flex-wrap: wrap; /* Erlaubt Umbruch auf kleineren Bildschirmen */
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+    .setting-item:hover {
+      background: var(--border-color);
+      transform: translateY(-2px);
+    }
+    .setting-item span {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text);
+    }
+    .setting-item .value-text {
+        color: var(--accent);
+        font-weight: 600;
+    }
+
+    /* Styles for language selection modal */
+    .language-selection-modal-content {
+      background: var(--card);
+      padding: 20px;
+      border-radius: 15px;
+      max-width: 90%;
+      width: 400px;
+      color: var(--text);
+      box-shadow: 0 4px 15px var(--card-shadow);
+      position: relative;
+      text-align: center; /* Center content in modal */
+    }
+    .language-selection-modal-content h3 {
+        margin-top: 0;
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+    .language-option-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
     .language-option {
       background: var(--card);
@@ -342,22 +387,20 @@
       font-size: 16px;
       font-weight: 600;
       color: var(--text);
-      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+      transition: background 0.2s ease, border-color 0.2s ease;
     }
     .language-option:hover {
       background: var(--border-color);
-      transform: translateY(-2px);
     }
     .language-option.active-lang {
       border-color: var(--accent);
-      box-shadow: 0 0 0 2px var(--accent);
       background: var(--accent); /* Hintergrundfarbe für aktive Sprache */
       color: white; /* Textfarbe für aktive Sprache */
     }
     .language-option img {
       width: 24px;
       height: 24px;
-      margin-right: 10px;
+      margin-right: 15px;
       border-radius: 4px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
@@ -386,7 +429,7 @@
       <button class="toggle-mode" onclick="toggleMode()">☀️</button>
     </div>
     <div class="app-list" id="appListSearch">
-        <p class="no-apps-message" id="search-prompt">Beginne mit der Suche, um Apps zu finden.</p>
+        <p class="no-apps-message" id="search-prompt" data-type="searchPrompt">Beginne mit der Suche, um Apps zu finden.</p>
     </div>
   </div>
 
@@ -398,19 +441,14 @@
       <p id="profile-text-3" style="color: var(--tabbar-icon);">Schau bald wieder vorbei für Updates und neue Inhalte!</p>
       <img src="logo.PNG" alt="Xalostore Logo" style="width: 90px; border-radius: 18px; margin-top: 20px; border: 1px solid var(--border-color);">
 
-      <div class="language-selection">
-        <h4 id="language-settings-title">Spracheinstellungen</h4>
-        <p id="select-language-text" style="color: var(--tabbar-icon); margin-bottom: 10px;">Sprache wählen:</p>
-        <div class="language-options">
-          <div class="language-option" id="lang-de" onclick="setLanguage('de')">
-            <img src="https://flagcdn.com/w20/de.png" alt="German Flag">
-            <span>Deutsch</span>
-          </div>
-          <div class="language-option" id="lang-en" onclick="setLanguage('en')">
-            <img src="https://flagcdn.com/w20/us.png" alt="US Flag">
-            <span>English</span>
-          </div>
-          </div>
+      <div class="settings-section">
+        <h4 id="settings-title">Einstellungen</h4>
+        <div class="setting-item" onclick="openLanguageModal()">
+            <span id="language-setting-label">Sprache</span>
+            <span class="value-text" id="current-language-display">Deutsch</span> </div>
+        <div class="setting-item" onclick="toggleDarkModeFromSettings()">
+            <span id="dark-mode-setting-label">Dark Mode</span>
+            <span class="value-text" id="dark-mode-toggle-btn">An</span> </div>
       </div>
       </div>
   </div>
@@ -422,6 +460,22 @@
   </div>
 </div>
 
+<div class="modal" id="languageModal">
+    <div class="language-selection-modal-content">
+        <span class="close-modal" onclick="closeLanguageModal()">&times;</span>
+        <h3 id="language-selection-title">Sprache wählen</h3>
+        <div class="language-option-list">
+            <div class="language-option" id="lang-de" onclick="setLanguage('de')">
+                <img src="https://flagcdn.com/w20/de.png" alt="German Flag">
+                <span>Deutsch</span>
+            </div>
+            <div class="language-option" id="lang-en" onclick="setLanguage('en')">
+                <img src="https://flagcdn.com/w20/us.png" alt="US Flag">
+                <span>English</span>
+            </div>
+            </div>
+    </div>
+</div>
 <div id="tabbar" style="
   position: fixed;
   bottom: 15px; /* Back to a very compact position */
@@ -469,6 +523,7 @@
   const appListSearch = document.getElementById('appListSearch'); // For Search Tab
   const appModal = document.getElementById('appModal');
   const modalContent = document.getElementById('modalContent');
+  const languageModal = document.getElementById('languageModal'); // New language modal
 
   let apps = [];
 
@@ -513,15 +568,34 @@
     appModal.style.display = 'none';
   }
 
-  function toggleMode() {
-    document.body.classList.toggle("light"); // Toggles to 'light' class
-    const button = document.querySelector('.toggle-mode');
-    if (document.body.classList.contains("light")) {
-        button.innerHTML = getTranslation('toggleModeButtonLight');
+  // Dark Mode Funktionen
+  function applyDarkModeState() {
+    if (currentDarkModeState) {
+      document.body.classList.remove('light');
+      document.body.classList.add('dark'); // Sicherstellen, dass dark da ist
     } else {
-        button.innerHTML = getTranslation('toggleModeButtonDark');
+      document.body.classList.remove('dark');
+      document.body.classList.add('light');
+    }
+    updateDarkModeButtonText(); // Text im Setting anpassen
+    // Icon in Search Bar anpassen
+    const searchModeToggle = document.querySelector('.top-bar .toggle-mode');
+    if (searchModeToggle) {
+        searchModeToggle.innerHTML = currentDarkModeState ? getTranslation('toggleModeButtonDark') : getTranslation('toggleModeButtonLight');
     }
   }
+
+  function toggleMode() {
+    currentDarkModeState = !currentDarkModeState;
+    localStorage.setItem('xalostore_dark_mode', currentDarkModeState);
+    applyDarkModeState();
+  }
+
+  // Diese Funktion wird vom Dark Mode Toggle im Profile Tab aufgerufen
+  function toggleDarkModeFromSettings() {
+      toggleMode(); // Ruft die gleiche Logik auf
+  }
+
 
   function goTab(tabName) {
     // Hide all tab content
@@ -557,18 +631,31 @@
     if (tabName === 'search') {
       renderApps(apps, appListSearch); // Render all apps in the search tab's list
       searchInput.value = ''; // Clear search input on tab switch
+      document.getElementById('search-prompt').textContent = getTranslation('searchPrompt'); // Set initial search prompt
     } else if (tabName === 'explore') {
       renderApps(apps, appList); // Ensure explore tab shows all apps
+    } else if (tabName === 'profile') {
+      // Update language display in profile settings
+      document.getElementById('current-language-display').textContent = translations[currentLanguage][`language${currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1)}`];
+      updateDarkModeButtonText();
     }
+  }
 
-    // Sprache in den Sprachoptionen markieren
-    document.querySelectorAll('.language-option').forEach(option => {
-        option.classList.remove('active-lang');
+  // Sprachauswahl Modal Funktionen
+  function openLanguageModal() {
+    languageModal.style.display = 'flex';
+    // Aktuellen Sprachbutton im Modal hervorheben
+    document.querySelectorAll('.language-option').forEach(button => {
+        button.classList.remove('active-lang');
     });
-    const activeLangOption = document.getElementById(`lang-${currentLanguage}`);
-    if (activeLangOption) {
-        activeLangOption.classList.add('active-lang');
+    const activeLangButton = document.getElementById(`lang-${currentLanguage}`);
+    if (activeLangButton) {
+        activeLangButton.classList.add('active-lang');
     }
+  }
+
+  function closeLanguageModal() {
+    languageModal.style.display = 'none';
   }
 
   async function loadApps() {
@@ -582,7 +669,7 @@
       renderApps(apps, appList); // Render initial apps for the explore tab
     } catch (error) {
       console.error("Fehler beim Laden der Apps:", error);
-      const errorMessage = `<p class="no-apps-message">${getTranslation('appsLoadError')}</p>`;
+      const errorMessage = `<p class="no-apps-message" data-type="loadError">${getTranslation('appsLoadError')}</p>`;
       appList.innerHTML = errorMessage;
       appListSearch.innerHTML = errorMessage;
     }
@@ -621,9 +708,9 @@
   }
 
   window.addEventListener('load', () => {
-    // Sicherstellen, dass die Sprache vor dem Rendern geladen wird
-    loadLanguagePreference();
-    translateUI(); // UI direkt nach dem Laden übersetzen
+    loadPreferences(); // Sprache und Dark Mode Zustand laden
+    applyDarkModeState(); // Dark Mode direkt anwenden
+    translateUI(); // UI-Texte übersetzen
 
     const isIOS = /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
     const isInStandalone =
@@ -638,9 +725,9 @@
 
     loadApps();
     goTab('explore'); // Set 'explore' as the default active tab on load
-    toggleMode(); // Ensure toggle button icon is correct
   });
 </script>
 
 </body>
 </html>
+
