@@ -436,6 +436,52 @@
     @keyframes fadeOutSplash {
       to { opacity: 0; visibility: hidden; }
     }
+    /* New Feature: Featured App Card */
+    .featured-app-card {
+      background: var(--card);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 4px 15px var(--card-shadow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 1px solid var(--accent);
+      cursor: pointer;
+    }
+
+    .featured-app-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px var(--card-shadow);
+    }
+    .featured-app-card img {
+      width: 90px;
+      height: 90px;
+      border-radius: 20px;
+      margin-bottom: 15px;
+      border: 1px solid var(--border-color);
+    }
+    .featured-app-card h3 {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0;
+    }
+    .featured-app-card p {
+      font-size: 16px;
+      color: var(--tabbar-icon);
+      margin: 8px 0 15px;
+    }
+    .featured-app-card .install-btn {
+      padding: 10px 25px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    #featuredAppContainer {
+      margin-bottom: 25px;
+      padding: 0 15px;
+    }
   </style>
 </head>
 <body class="dark">
@@ -455,6 +501,7 @@
 
 <div id="mainContent">
   <div id="exploreTab" class="tab-content active">
+    <div id="featuredAppContainer"></div>
     <div class="app-list" id="appList"></div>
   </div>
 
@@ -554,6 +601,7 @@
 
 <script>
   const appList = document.getElementById('appList'); // For Explore Tab
+  const featuredAppContainer = document.getElementById('featuredAppContainer'); // New container for featured app
   const searchInput = document.getElementById('search'); // For Search Tab
   const appListSearch = document.getElementById('appListSearch'); // For Search Tab
   const appModal = document.getElementById('appModal');
@@ -598,6 +646,37 @@
 
     return card;
   }
+  
+  // New function for creating the Featured App Card
+  function createFeaturedCard(app) {
+      let version = app.versions[0] || {};
+      let downloadURL = version.downloadURL || '#';
+      let size = formatSize(version.size);
+      const card = document.createElement('div');
+      card.className = 'featured-app-card';
+
+      card.innerHTML = `
+        <img src="${app.iconURL}" alt="${app.name}">
+        <h3>${app.name.trim()}</h3>
+        <p>${app.subtitle}</p>
+        <a href="${downloadURL}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
+      `;
+
+      card.onclick = () => {
+        appModal.style.display = 'flex';
+        modalContent.innerHTML = `
+          <span class="close-modal" onclick="closeModal()">&times;</span>
+          <h3>${app.name}</h3>
+          <p>${app.localizedDescription || getTranslation('modalDefaultDescription')}</p>
+          <p><strong>${getTranslation('modalVersion')}</strong> ${version.version || "?"}</p>
+          <p><strong>${getTranslation('modalSize')}</strong> ${size || "?"}</p>
+          <a href="${downloadURL}" class="install-btn">${getTranslation('modalInstallButton')}</a>
+        `;
+      };
+      
+      return card;
+  }
+
 
   function closeModal() {
     appModal.style.display = 'none';
@@ -668,7 +747,7 @@
       searchInput.value = ''; // Clear search input on tab switch
       document.getElementById('search-prompt').textContent = getTranslation('searchPrompt'); // Set initial search prompt
     } else if (tabName === 'explore') {
-      renderApps(apps, appList); // Ensure explore tab shows all apps
+        renderExploreApps(apps); // Ensure explore tab shows all apps with the featured card
     } else if (tabName === 'profile') {
       // Update language display in profile settings
       document.getElementById('current-language-display').textContent = translations[currentLanguage][`language${currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1)}`];
@@ -693,6 +772,7 @@
     languageModal.style.display = 'none';
   }
 
+  // Updated loadApps to handle the new featured app logic
   async function loadApps() {
     try {
       const response = await fetch('source.json');
@@ -701,7 +781,7 @@
       }
       const data = await response.json();
       apps = data.apps;
-      renderApps(apps, appList); // Render initial apps for the explore tab
+      renderExploreApps(apps); // Render apps for the explore tab, including featured app
     } catch (error) {
       console.error("Fehler beim Laden der Apps:", error);
       const errorMessage = `<p class="no-apps-message" data-type="loadError">${getTranslation('appsLoadError')}</p>`;
@@ -709,6 +789,32 @@
       appListSearch.innerHTML = errorMessage;
     }
   }
+  
+  // New function to render apps for the explore tab
+  function renderExploreApps(list) {
+      appList.innerHTML = ''; // Clear the regular app list
+      featuredAppContainer.innerHTML = ''; // Clear the featured app container
+      
+      if (list.length === 0) {
+          appList.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
+          return;
+      }
+      
+      // Select a random app to be the "featured" app
+      const featuredAppIndex = Math.floor(Math.random() * list.length);
+      const featuredApp = list[featuredAppIndex];
+      
+      featuredAppContainer.appendChild(createFeaturedCard(featuredApp));
+      
+      // Render all other apps
+      list.forEach((app, index) => {
+          // Skip the featured app from the regular list
+          if (index !== featuredAppIndex) {
+              appList.appendChild(createCard(app));
+          }
+      });
+  }
+
 
   function renderApps(list, container) {
     container.innerHTML = '';
