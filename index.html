@@ -609,6 +609,7 @@
   const languageModal = document.getElementById('languageModal'); // New language modal
 
   let apps = [];
+  let sourceData = {}; // Speichert die gesamten Source-Daten
 
   function formatSize(bytes) {
     if (!bytes) return "";
@@ -779,8 +780,8 @@
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const data = await response.json();
-      apps = data.apps;
+      sourceData = await response.json(); // Gesamte Daten speichern
+      apps = sourceData.apps; // App-Liste extrahieren
       renderExploreApps(apps); // Render apps for the explore tab, including featured app
     } catch (error) {
       console.error("Fehler beim Laden der Apps:", error);
@@ -795,23 +796,35 @@
       appList.innerHTML = ''; // Clear the regular app list
       featuredAppContainer.innerHTML = ''; // Clear the featured app container
       
-      if (list.length === 0) {
+      if (!sourceData.apps || sourceData.apps.length === 0) {
           appList.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
           return;
       }
       
-      // Select a random app to be the "featured" app
-      const featuredAppIndex = Math.floor(Math.random() * list.length);
-      const featuredApp = list[featuredAppIndex];
-      
-      featuredAppContainer.appendChild(createFeaturedCard(featuredApp));
+      // Select the featured app based on the source.json featuredApps array
+      let featuredApp = null;
+      if (sourceData.featuredApps && sourceData.featuredApps.length > 0) {
+          // Finde die erste App, die als featuredApp markiert ist
+          featuredApp = sourceData.apps.find(app => app.bundleIdentifier === sourceData.featuredApps[0]);
+      }
+
+      const otherApps = [];
+      if (featuredApp) {
+          featuredAppContainer.appendChild(createFeaturedCard(featuredApp));
+          // Filtere die Featured App aus der Liste der normalen Apps heraus
+          list.forEach(app => {
+              if (app.bundleIdentifier !== featuredApp.bundleIdentifier) {
+                  otherApps.push(app);
+              }
+          });
+      } else {
+          // Falls keine Featured App gefunden wurde, zeige alle Apps an
+          otherApps.push(...list);
+      }
       
       // Render all other apps
-      list.forEach((app, index) => {
-          // Skip the featured app from the regular list
-          if (index !== featuredAppIndex) {
-              appList.appendChild(createCard(app));
-          }
+      otherApps.forEach(app => {
+          appList.appendChild(createCard(app));
       });
   }
 
