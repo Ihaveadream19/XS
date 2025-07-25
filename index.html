@@ -27,7 +27,7 @@
     }
 
     /* Keep light mode as an option, though dark is default now */
-    body.light { /* Renamed 'dark' to 'light' for default dark */
+    body.light {
       --bg: #F5F5F7;
       --text: #333;
       --card: #FFFFFF;
@@ -44,63 +44,63 @@
       background: var(--bg);
       color: var(--text);
       margin: 0;
-      padding-bottom: 100px; /* More space at the bottom for tabbar */
+      padding-bottom: 75px; /* Smaller padding for a more compact feel */
       transition: background 0.3s, color 0.3s;
     }
 
     header {
-      background: var(--bg); /* Header matches background for a sleek look */
+      background: var(--bg);
       color: var(--text);
-      padding: 40px 20px 30px; /* More padding top and bottom */
+      padding: 25px 15px 15px; /* Reduced padding */
       text-align: center;
-      box-shadow: 0 2px 10px var(--card-shadow); /* Subtle header shadow */
+      box-shadow: 0 1px 8px var(--card-shadow); /* Slightly lighter shadow */
     }
 
     header img {
-      width: 90px; /* Slightly larger logo */
-      border-radius: 20px; /* More rounded corners */
-      margin-bottom: 15px; /* More space below logo */
-      border: 1px solid var(--border-color); /* Subtle border for logo */
+      width: 60px; /* Smaller logo */
+      border-radius: 12px; /* Smaller border-radius */
+      margin-bottom: 8px;
+      border: 1px solid var(--border-color);
     }
 
     h1 {
       margin: 5px 0;
-      font-size: 32px; /* Larger title */
-      font-weight: 700; /* Bolder font */
+      font-size: 24px; /* Smaller title */
+      font-weight: 700;
     }
 
     h2 {
       margin: 0;
-      font-weight: 400; /* Lighter weight for subtitle */
-      font-size: 19px; /* Slightly larger subtitle */
-      color: var(--tabbar-icon); /* More muted subtitle color */
+      font-weight: 400;
+      font-size: 16px; /* Smaller subtitle */
+      color: var(--tabbar-icon);
     }
 
     #pwaBanner {
       display: none;
-      background: #333; /* Darker banner */
+      background: #333;
       color: #FFF;
-      padding: 20px; /* More padding */
+      padding: 12px; /* Reduced padding */
       text-align: center;
       border-bottom: 1px solid var(--border-color);
     }
 
     #pwaBanner button {
-      margin-top: 15px; /* More space above button */
+      margin-top: 10px;
       background: var(--accent);
       color: white;
       border: none;
-      padding: 10px 20px; /* More padding */
-      border-radius: 12px; /* More rounded */
+      padding: 8px 15px; /* Reduced padding */
+      border-radius: 8px; /* Smaller border-radius */
       cursor: pointer;
       font-weight: 600;
-      font-size: 16px; /* Slightly larger font */
+      font-size: 14px; /* Smaller font size */
     }
 
     .top-bar {
-      max-width: 900px; /* Wider top bar */
-      margin: 20px auto; /* More margin */
-      padding: 0 30px; /* More padding */
+      max-width: 700px; /* Narrower content area */
+      margin: 10px auto; /* Reduced margin */
+      padding: 0 15px; /* Reduced padding */
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -108,79 +108,79 @@
 
     .top-bar input {
       flex: 1;
-      padding: 14px; /* More padding */
-      font-size: 17px; /* Larger font */
-      border-radius: 12px; /* More rounded */
-      border: 1px solid var(--border-color); /* Matches new border color */
-      background: var(--card); /* Input background matches card */
+      padding: 10px; /* Reduced padding */
+      font-size: 14px; /* Smaller font size */
+      border-radius: 8px; /* Smaller border-radius */
+      border: 1px solid var(--border-color);
+      background: var(--card);
       color: var(--text);
-      margin-right: 15px; /* More space */
+      margin-right: 10px;
     }
 
     .top-bar input::placeholder {
-        color: var(--tabbar-icon); /* Muted placeholder text */
+        color: var(--tabbar-icon);
     }
 
     .toggle-mode {
-      background: var(--card); /* Button background matches card */
-      color: var(--accent); /* Icon color */
-      border: 1px solid var(--border-color); /* Subtle border */
-      padding: 12px 18px; /* More padding */
-      border-radius: 12px;
+      background: var(--card);
+      color: var(--accent);
+      border: 1px solid var(--border-color);
+      padding: 8px 14px; /* Reduced padding */
+      border-radius: 8px;
       cursor: pointer;
-      font-size: 20px; /* Larger icon */
+      font-size: 16px; /* Smaller icon size */
     }
 
     .app-list {
-      max-width: 900px; /* Wider app list */
-      margin: 30px auto; /* More margin */
-      padding: 0 30px; /* More padding */
+      max-width: 700px; /* Narrower content area */
+      margin: 15px auto; /* Reduced margin */
+      padding: 0 15px; /* Reduced padding */
     }
 
     .app-card {
       background: var(--card);
-      border-radius: 20px; /* More rounded cards */
-      padding: 22px; /* More padding */
-      margin-bottom: 20px; /* More space between cards */
+      border-radius: 12px; /* Smaller border-radius */
+      padding: 15px; /* Reduced padding */
+      margin-bottom: 12px; /* Reduced space between cards */
       display: flex;
       align-items: center;
-      box-shadow: 0 6px 15px var(--card-shadow); /* Deeper shadow */
+      box-shadow: 0 2px 8px var(--card-shadow); /* Lighter shadow */
       cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease; /* Subtle hover effect */
-      border: 1px solid var(--border-color); /* Subtle border */
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border: 1px solid var(--border-color);
     }
 
     .app-card:hover {
-      transform: translateY(-5px); /* Lift effect on hover */
-      box-shadow: 0 8px 20px var(--card-shadow);
+      transform: translateY(-2px); /* Smaller lift effect on hover */
+      box-shadow: 0 3px 10px var(--card-shadow);
     }
 
     .app-card img {
-      width: 80px; /* Larger icons */
-      height: 80px;
-      border-radius: 18px; /* Match card radius */
-      margin-right: 20px; /* More space */
-      flex-shrink: 0; /* Prevent shrinking */
+      width: 60px; /* Smaller icons */
+      height: 60px;
+      border-radius: 12px; /* Match card border-radius */
+      margin-right: 15px;
+      flex-shrink: 0;
     }
 
     .app-info {
       flex: 1;
-      min-width: 0; /* Allow content to shrink */
+      min-width: 0;
     }
 
     .app-info h3 {
       margin: 0;
-      font-size: 22px; /* Larger app title */
-      font-weight: 600; /* Bolder */
-      white-space: nowrap; /* Prevent wrapping */
-      overflow: hidden; /* Hide overflow */
-      text-overflow: ellipsis; /* Add ellipsis */
+      font-size: 18px; /* Smaller app title */
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .app-info p {
-      margin: 8px 0 0; /* More space */
-      color: var(--tabbar-icon); /* Muted subtitle */
-      font-size: 16px; /* Slightly larger font */
+      margin: 4px 0 0; /* Reduced space below title */
+      color: var(--tabbar-icon);
+      font-size: 14px; /* Smaller subtitle */
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -190,13 +190,13 @@
       background: var(--accent);
       color: white;
       border: none;
-      padding: 12px 25px; /* Larger button */
-      border-radius: 12px;
+      padding: 8px 16px; /* Reduced button padding */
+      border-radius: 8px; /* Smaller border-radius */
       cursor: pointer;
-      font-size: 16px;
+      font-size: 14px; /* Smaller font size */
       font-weight: 600;
-      flex-shrink: 0; /* Prevent shrinking */
-      margin-left: 20px; /* More spacing from app info */
+      flex-shrink: 0;
+      margin-left: 15px;
     }
 
     .modal {
@@ -207,64 +207,64 @@
       top: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0,0,0,0.8); /* Darker overlay */
+      background-color: rgba(0,0,0,0.7); /* Slightly lighter overlay */
       justify-content: center;
       align-items: center;
     }
 
     .modal-content {
       background: var(--card);
-      padding: 30px; /* More padding */
-      border-radius: 25px; /* More rounded */
+      padding: 20px; /* Reduced padding */
+      border-radius: 15px; /* Smaller border-radius */
       max-width: 90%;
-      width: 500px; /* Wider modal */
+      width: 400px; /* Narrower modal */
       color: var(--text);
-      box-shadow: 0 10px 30px var(--card-shadow); /* Deeper shadow */
+      box-shadow: 0 4px 15px var(--card-shadow); /* Lighter shadow */
       position: relative;
     }
 
     .modal-content h3 {
       margin-top: 0;
-      font-size: 26px; /* Larger font */
+      font-size: 22px; /* Smaller font size */
       font-weight: 700;
-      margin-bottom: 12px; /* More space */
+      margin-bottom: 8px; /* Reduced space */
     }
 
     .modal-content p {
-        font-size: 17px; /* Slightly larger font */
-        line-height: 1.6; /* More line height for readability */
+        font-size: 15px; /* Smaller font size */
+        line-height: 1.5; /* Adjusted line height */
         color: var(--tabbar-icon);
-        margin-bottom: 10px; /* More space */
+        margin-bottom: 8px;
     }
 
     .modal-content .install-btn {
         display: block;
         width: fit-content;
-        margin: 30px auto 0; /* More margin */
-        padding: 15px 30px; /* Larger button */
-        font-size: 18px; /* Larger font */
-        border-radius: 14px; /* More rounded */
+        margin: 18px auto 0; /* Reduced margin */
+        padding: 10px 20px; /* Reduced button padding */
+        font-size: 15px; /* Reduced font size */
+        border-radius: 10px; /* Reduced border-radius */
     }
 
     .close-modal {
       position: absolute;
-      top: 20px; /* More space */
-      right: 20px; /* More space */
-      font-size: 32px; /* Larger close button */
+      top: 10px; /* Reduced space */
+      right: 15px; /* Reduced space */
+      font-size: 28px; /* Smaller close button */
       cursor: pointer;
-      color: var(--tabbar-icon); /* Muted color */
+      color: var(--tabbar-icon);
     }
 
     .close-modal:hover {
-        color: var(--text); /* Brighter on hover */
+        color: var(--text);
     }
 
     /* Styles for tab content */
     .tab-content {
       display: none;
-      max-width: 900px; /* Wider tab content */
-      margin: 30px auto; /* More margin */
-      padding: 0 30px; /* More padding */
+      max-width: 700px; /* Narrower content area */
+      margin: 15px auto; /* Reduced margin */
+      padding: 0 15px; /* Reduced padding */
       box-sizing: border-box;
     }
 
@@ -276,7 +276,7 @@
       text-align:center;
       flex:1;
       cursor: pointer;
-      padding: 8px 0; /* More padding for clickable area */
+      padding: 5px 0; /* Reduced padding for clickable area */
     }
 
     .tab-item svg {
@@ -289,23 +289,28 @@
 
     /* Specific styling for search tab input and list if needed */
     #searchTab .top-bar {
-        margin-top: 30px; /* More space for search bar */
+        margin-top: 15px;
     }
 
     #searchTab .app-list {
-        margin-top: 30px; /* More space for app list */
+        margin-top: 15px;
     }
 
     /* Style for no apps message */
     .no-apps-message {
         text-align: center;
-        margin-top: 80px; /* More space */
+        margin-top: 40px; /* Reduced space */
         color: var(--tabbar-icon);
-        font-size: 19px; /* Slightly larger font */
-        line-height: 1.6;
+        font-size: 16px; /* Smaller font size */
+        line-height: 1.4;
     }
-    #profileTab > div { /* Target the inner div for profile content */
-        padding: 30px; /* More padding */
+    #profileTab > div {
+        padding: 20px; /* Reduced padding */
+    }
+    #profileTab img {
+      width: 90px; /* Smaller profile logo */
+      border-radius: 18px;
+      margin-top: 20px;
     }
   </style>
 </head>
@@ -336,12 +341,12 @@
   </div>
 
   <div id="profileTab" class="tab-content">
-    <div style="padding: 30px; text-align: center; max-width: 800px; margin: auto;">
+    <div style="padding: 20px; text-align: center; max-width: 800px; margin: auto;">
       <h3 style="color: var(--text);">Willkommen bei Xalostore!</h3>
       <p style="color: var(--tabbar-icon);">Dies ist dein einfacher und sicherer Ort, um Sideload-Apps zu finden und zu installieren.</p>
       <p style="color: var(--tabbar-icon);">Wir arbeiten ständig daran, dir neue Funktionen und die besten Apps zur Verfügung zu stellen.</p>
       <p style="color: var(--tabbar-icon);">Schau bald wieder vorbei für Updates und neue Inhalte!</p>
-      <img src="logo.PNG" alt="Xalostore Logo" style="width: 140px; border-radius: 25px; margin-top: 30px; border: 1px solid var(--border-color);">
+      <img src="logo.PNG" alt="Xalostore Logo" style="width: 90px; border-radius: 18px; margin-top: 20px; border: 1px solid var(--border-color);">
     </div>
   </div>
 </div>
@@ -354,35 +359,35 @@
 
 <div id="tabbar" style="
   position: fixed;
-  bottom: 30px; /* Slightly higher from bottom */
+  bottom: 15px; /* Back to a very compact position */
   left: 50%;
   transform: translateX(-50%);
-  width: 95%; /* Even wider */
-  max-width: 550px; /* Max width for larger screens */
+  width: 90%; /* Original width */
+  max-width: 400px; /* Max width to keep it small on large screens */
   background: var(--tabbar-bg);
-  border-radius: 28px; /* More rounded tabbar */
+  border-radius: 18px; /* Smaller border-radius for compactness */
   display: flex;
   justify-content: space-around;
-  padding: 15px 0; /* More padding */
-  box-shadow: 0 6px 25px rgba(0,0,0,0.5); /* Deeper shadow */
+  padding: 10px 0; /* Smaller padding */
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2); /* Lighter shadow */
   z-index: 100;
-  border: 1px solid var(--border-color); /* Subtle border */
+  border: 1px solid var(--border-color);
   ">
   
   <div class="tab-item" id="tabExplore" onclick="goTab('explore')">
-    <svg width="28" height="28" fill="currentColor" class="tab-icon active-icon"> <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+    <svg width="24" height="24" fill="currentColor" class="tab-icon active-icon"> <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
     </svg>
-    <div class="tab-text active-text" style="font-size:13px;margin-top:4px;">Explore</div> </div>
+    <div class="tab-text active-text" style="font-size:12px;margin-top:3px;">Explore</div> </div>
 
   <div class="tab-item" id="tabSearch" onclick="goTab('search')">
-    <svg width="28" height="28" fill="currentColor" class="tab-icon"> <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+    <svg width="24" height="24" fill="currentColor" class="tab-icon"> <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
     </svg>
-    <div class="tab-text" style="font-size:13px;margin-top:4px;">Search</div> </div>
+    <div class="tab-text" style="font-size:12px;margin-top:3px;">Search</div> </div>
 
   <div class="tab-item" id="tabProfile" onclick="goTab('profile')">
-    <svg width="28" height="28" fill="currentColor" class="tab-icon"> <path d="M12 12c2.7 0 4.7-2 4.7-4.7S14.7 2.6 12 2.6 7.3 4.6 7.3 7.3 9.3 12 12 12zm0 2.4c-3.1 0-9.2 1.6-9.2 4.7V22h18.5v-2.9c0-3.1-6.1-4.7-9.3-4.7z"/>
+    <svg width="24" height="24" fill="currentColor" class="tab-icon"> <path d="M12 12c2.7 0 4.7-2 4.7-4.7S14.7 2.6 12 2.6 7.3 4.6 7.3 7.3 9.3 12 12 12zm0 2.4c-3.1 0-9.2 1.6-9.2 4.7V22h18.5v-2.9c0-3.1-6.1-4.7-9.3-4.7z"/>
     </svg>
-    <div class="tab-text" style="font-size:13px;margin-top:4px;">Profile</div> </div>
+    <div class="tab-text" style="font-size:12px;margin-top:3px;">Profile</div> </div>
 </div>
 
 <script>
