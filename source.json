@@ -1,6 +1,19 @@
-.
 {
-  "lo AiChatBot",
+  "name": "Xalostore ",
+  "subtitle": "A source for all of my apps",
+  "description": "Welcome to my source! Here you'll find all of my apps.",
+  "iconURL": "https://i.imgur.com/oWyf5VR.png",
+  "website": "https://altstudio.app",
+  "patreonURL": "https://patreon.com/altstudio",
+  "tintColor": "#6156e2",
+  "featuredApps": [
+    "com.burbn.instagram",
+    "com.elven.video"
+  ],
+  "headerURL": "https://i.imgur.com/vFyAEQt.png",
+  "apps": [
+    {
+      "name": "Xalo AiChatBot",
       "bundleIdentifier": "com.aichatbot.assistant",
       "marketplaceID": "",
       "developerName": "Example Developer",
@@ -28,7 +41,20 @@
           "NSCameraUsageDescription": "To take a photo with your camera and extract or generate text for it, please allow access to Camera in your device Settings.",
           "NSMicrophoneUsageDescription": "We would like to access your microphone to allow the application create voice memos for you during theory test",
           "NSPhotoLibraryAddUsageDescription": "To enter text from a photo or to generate text for an image, please allow access to Photos in your device Settings.",
-          "NSPhotoLibraryUsageDescription": "To enter text from a photo or to generate text for an image, please allow access to Photos in your device Settings.",    "localizedDescription": "This is an awesome app only available on Xalostore.",
+          "NSPhotoLibraryUsageDescription": "To enter text from a photo or to generate text for an image, please allow access to Photos in your device Settings.",
+          "NSSpeechRecognitionUsageDescription": "We would like to recognize your speech to use the app in hands-free mode",
+          "NSUserTrackingUsageDescription": "Your data will be used to bring you timely and relevant content and make your experience with the app more personalized."
+        }
+      },
+      "patreon": {}
+    },
+    {
+      "name": "Xalo MyFitnessPal",
+      "bundleIdentifier": "com.myfitnesspal.mfp",
+      "marketplaceID": "",
+      "developerName": "Example Developer",
+      "subtitle": "An awesome app.",
+      "localizedDescription": "This is an awesome app only available on Xalostore.",
       "iconURL": "https://i.imgur.com/ZfFzw1Q.png",
       "tintColor": "#0464ec",
       "category": "other",
