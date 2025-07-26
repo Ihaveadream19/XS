@@ -1,3 +1,611 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Xalostore</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="https://i.imgur.com/oWyf5VR.png">
+    <style>
+        :root {
+            --light-bg-primary: #ffffff;
+            --light-bg-secondary: #f0f0f0;
+            --light-text-primary: #000000;
+            --light-text-secondary: #666666;
+            --light-card-bg: #ffffff;
+            --light-install-btn-bg: #007aff;
+            --light-install-btn-text: #ffffff;
+            --light-card-shadow: rgba(0, 0, 0, 0.1);
+            --light-header-bg: #ffffff;
+            --light-tabbar-bg: #ffffff;
+            --light-tabbar-border: #e0e0e0;
+            --light-tabbar-icon: #8e8e93;
+            --light-tabbar-icon-active: #007aff;
+            --light-modal-bg: rgba(255, 255, 255, 0.9);
+            --light-modal-content-bg: #ffffff;
+            --light-input-bg: #e5e5e5;
+            --light-input-text: #000000;
+            --light-splash-bg: #ffffff;
+            --light-search-bar-bg: #e5e5e5;
+            --light-search-bar-text: #000000;
+            --light-pwa-banner-bg: #f0f0f0;
+        }
+        .dark {
+            --dark-bg-primary: #1c1c1e;
+            --dark-bg-secondary: #2c2c2e;
+            --dark-text-primary: #ffffff;
+            --dark-text-secondary: #aaaaaa;
+            --dark-card-bg: #2c2c2e;
+            --dark-install-btn-bg: #0a84ff;
+            --dark-install-btn-text: #ffffff;
+            --dark-card-shadow: rgba(0, 0, 0, 0.3);
+            --dark-header-bg: #1c1c1e;
+            --dark-tabbar-bg: #1c1c1e;
+            --dark-tabbar-border: #38383a;
+            --dark-tabbar-icon: #8e8e93;
+            --dark-tabbar-icon-active: #0a84ff;
+            --dark-modal-bg: rgba(0, 0, 0, 0.9);
+            --dark-modal-content-bg: #2c2c2e;
+            --dark-input-bg: #3a3a3c;
+            --dark-input-text: #ffffff;
+            --dark-splash-bg: #000000;
+            --dark-search-bar-bg: #3a3a3c;
+            --dark-search-bar-text: #ffffff;
+            --dark-pwa-banner-bg: #3a3a3c;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            transition: background-color 0.3s, color 0.3s;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        body.light {
+            background-color: var(--light-bg-primary);
+            color: var(--light-text-primary);
+        }
+        body.dark {
+            background-color: var(--dark-bg-primary);
+            color: var(--dark-text-primary);
+        }
+        .app-container {
+            padding: 0 16px;
+            padding-bottom: 80px;
+        }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 16px 0 16px;
+            position: sticky;
+            top: env(safe-area-inset-top);
+            z-index: 1000;
+            background: transparent;
+            transition: background-color 0.3s;
+        }
+        body.light .top-bar {
+            background-color: var(--light-header-bg);
+        }
+        body.dark .top-bar {
+            background-color: var(--dark-header-bg);
+        }
+        .top-bar .title-block {
+            display: flex;
+            align-items: center;
+        }
+        .top-bar img {
+            width: 40px;
+            height: 40px;
+            margin-right: 12px;
+            border-radius: 10px;
+        }
+        .top-bar h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text-primary);
+        }
+        .top-bar h2 {
+            font-size: 14px;
+            font-weight: 400;
+            margin: -5px 0 0 0;
+            color: var(--text-secondary);
+        }
+        .top-bar .toggle-mode {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+        .app-section {
+            margin-top: 16px;
+        }
+        .app-section h2 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        #featuredAppContainer {
+            overflow-x: scroll;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 16px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        #featuredAppContainer::-webkit-scrollbar {
+            display: none;
+        }
+        .featured-app-card {
+            display: inline-block;
+            vertical-align: top;
+            width: 150px;
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 4px 10px var(--card-shadow);
+            padding: 15px;
+            margin-right: 10px;
+            text-align: center;
+            white-space: normal;
+        }
+        .featured-app-card:last-child {
+            margin-right: 0;
+        }
+        .featured-app-card img {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+        }
+        .featured-app-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+            color: var(--text-primary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .featured-app-card p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin: 2px 0 10px 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .app-card {
+            display: flex;
+            align-items: center;
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 4px 10px var(--card-shadow);
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+        .app-card:active {
+            transform: scale(0.98);
+        }
+        .app-card img {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            margin-right: 12px;
+        }
+        .app-info {
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        .app-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .app-info p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin: 2px 0 0 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .install-btn {
+            background-color: var(--install-btn-bg);
+            color: var(--install-btn-text);
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .tab-bar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--tabbar-bg);
+            border-top: 1px solid var(--tabbar-border);
+            padding-bottom: env(safe-area-inset-bottom);
+            z-index: 1001;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            padding: 10px 0;
+            cursor: pointer;
+        }
+        .tab-icon {
+            font-size: 24px;
+            color: var(--tabbar-icon);
+        }
+        .tab-text {
+            font-size: 12px;
+            margin-top: 4px;
+            color: var(--tabbar-icon);
+        }
+        .active-icon {
+            color: var(--tabbar-icon-active) !important;
+        }
+        .active-text {
+            color: var(--tabbar-icon-active) !important;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        #searchTab .search-container {
+            padding: 16px;
+            position: sticky;
+            top: env(safe-area-inset-top);
+            z-index: 999;
+            background-color: var(--bg-primary);
+            transition: background-color 0.3s;
+        }
+        #search {
+            width: 100%;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            background-color: var(--search-bar-bg);
+            color: var(--search-bar-text);
+            box-sizing: border-box;
+            -webkit-appearance: none;
+        }
+        .no-apps-message {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--text-secondary);
+        }
+        .modal {
+            position: fixed;
+            z-index: 1002;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--modal-bg);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: var(--modal-content-bg);
+            padding: 20px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        .close-modal {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+        .modal-content h3 {
+            font-size: 24px;
+            margin: 0 0 10px;
+        }
+        .modal-content p {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+        .pwa-banner {
+            position: fixed;
+            bottom: calc(env(safe-area-inset-bottom) + 60px);
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 32px);
+            background-color: var(--pwa-banner-bg);
+            color: var(--text-primary);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 1000;
+        }
+        .pwa-banner p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .pwa-banner button {
+            background: none;
+            border: none;
+            color: var(--install-btn-bg);
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 10px;
+            padding: 0;
+            cursor: pointer;
+        }
+        #profileTab .settings-list {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+        #profileTab .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px var(--card-shadow);
+        }
+        .settings-item p {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .settings-item span {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+        .settings-item button {
+            background-color: var(--install-btn-bg);
+            color: var(--install-btn-text);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .language-modal-content {
+            padding: 20px;
+            background-color: var(--modal-content-bg);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 300px;
+        }
+        .language-modal-content h3 {
+            margin-top: 0;
+            color: var(--text-primary);
+        }
+        .language-option {
+            display: block;
+            padding: 10px 15px;
+            margin: 8px 0;
+            background-color: var(--bg-secondary);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .language-option:hover {
+            background-color: var(--card-bg);
+        }
+        .language-option.active-lang {
+            background-color: var(--install-btn-bg);
+            color: var(--install-btn-text);
+        }
+        .language-option.active-lang span {
+            color: var(--install-btn-text);
+        }
+        .language-option span {
+            color: var(--text-primary);
+        }
+        .language-modal-content .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+        }
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--splash-bg);
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+        .splash-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .splash-logo {
+            width: 100px;
+            height: 100px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        @media (prefers-color-scheme: dark) {
+            body:not(.light) {
+                background-color: var(--dark-bg-primary);
+                color: var(--dark-text-primary);
+            }
+            body:not(.light) .top-bar {
+                background-color: var(--dark-header-bg);
+            }
+            body:not(.light) .app-card {
+                background-color: var(--dark-card-bg);
+            }
+            body:not(.light) .install-btn {
+                background-color: var(--dark-install-btn-bg);
+            }
+            body:not(.light) .tab-bar {
+                background-color: var(--dark-tabbar-bg);
+                border-color: var(--dark-tabbar-border);
+            }
+            body:not(.light) .tab-icon, body:not(.light) .tab-text {
+                color: var(--dark-tabbar-icon);
+            }
+            body:not(.light) .active-icon, body:not(.light) .active-text {
+                color: var(--dark-tabbar-icon-active) !important;
+            }
+            body:not(.light) #search {
+                background-color: var(--dark-search-bar-bg);
+                color: var(--dark-search-bar-text);
+            }
+            body:not(.light) .modal-content {
+                background-color: var(--dark-modal-content-bg);
+            }
+            body:not(.light) .settings-item {
+                background-color: var(--dark-card-bg);
+            }
+            body:not(.light) .pwa-banner {
+                background-color: var(--dark-pwa-banner-bg);
+            }
+            body:not(.light) .language-option {
+                background-color: var(--dark-bg-secondary);
+            }
+            body:not(.light) .language-option.active-lang {
+                background-color: var(--dark-install-btn-bg);
+                color: var(--dark-install-btn-text);
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+</head>
+<body class="light">
+
+<div id="splash-screen" class="splash-screen">
+    <img src="https://i.imgur.com/oWyf5VR.png" alt="Xalostore Logo" class="splash-logo">
+</div>
+
+<div class="top-bar">
+    <div class="title-block">
+        <img src="https://i.imgur.com/oWyf5VR.png" alt="Xalostore Logo">
+        <div>
+            <h1 id="header-title">Xalostore</h1>
+            <h2 id="header-subtitle">Sideload Apps. Simple. Secure.</h2>
+        </div>
+    </div>
+    <div class="toggle-mode" onclick="toggleMode()">🌙</div>
+</div>
+
+<div class="app-container">
+    <div id="exploreTab" class="tab-content active">
+        <div class="app-section">
+            <h2 data-type="featured">Featured</h2>
+            <div id="featuredAppContainer"></div>
+        </div>
+        <div class="app-section">
+            <h2 data-type="apps">Apps</h2>
+            <div id="appList"></div>
+        </div>
+    </div>
+
+    <div id="searchTab" class="tab-content">
+        <div class="search-container">
+            <input type="text" id="search" placeholder="App suchen...">
+        </div>
+        <div id="appListSearch" class="app-section">
+            <p id="search-prompt" class="no-apps-message">Beginne mit der Suche, um Apps zu finden.</p>
+        </div>
+    </div>
+
+    <div id="profileTab" class="tab-content">
+        <div class="app-section">
+            <h2 data-type="profileTitle">Profil</h2>
+            <p id="profile-welcome-title">Willkommen bei Xalostore!</p>
+            <p id="profile-text-1">Dies ist dein einfacher und sicherer Ort, um Sideload-Apps zu finden und zu installieren.</p>
+            <p id="profile-text-2">Wir arbeiten ständig daran, dir neue Funktionen und die besten Apps zur Verfügung zu stellen.</p>
+            <p id="profile-text-3">Schau bald wieder vorbei für Updates und neue Inhalte!</p>
+        </div>
+        <div class="app-section">
+            <h2 id="settings-title">Einstellungen</h2>
+            <ul class="settings-list">
+                <li class="settings-item" onclick="openLanguageModal()">
+                    <p id="language-setting-label">Sprache</p>
+                    <span id="current-language-display">Deutsch</span>
+                </li>
+                <li class="settings-item">
+                    <p id="dark-mode-setting-label">Dark Mode</p>
+                    <button id="dark-mode-toggle-btn" onclick="toggleDarkModeFromSettings()">Aus</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="tab-bar">
+    <div id="tabExplore" class="tab-item" onclick="goTab('explore')">
+        <i class="fas fa-compass tab-icon active-icon"></i>
+        <span class="tab-text active-text" id="tab-explore-text">Explore</span>
+    </div>
+    <div id="tabSearch" class="tab-item" onclick="goTab('search')">
+        <i class="fas fa-search tab-icon"></i>
+        <span class="tab-text" id="tab-search-text">Suchen</span>
+    </div>
+    <div id="tabProfile" class="tab-item" onclick="goTab('profile')">
+        <i class="fas fa-user tab-icon"></i>
+        <span class="tab-text" id="tab-profile-text">Profil</span>
+    </div>
+</div>
+
+<div id="appModal" class="modal">
+    <div id="modalContent" class="modal-content"></div>
+</div>
+
+<div id="languageModal" class="modal" onclick="if(event.target.id === 'languageModal') closeLanguageModal()">
+    <div class="language-modal-content">
+        <span class="close-modal" onclick="closeLanguageModal()">&times;</span>
+        <h3 id="language-selection-title">Sprache wählen</h3>
+        <div id="lang-de" class="language-option active-lang" onclick="setLanguage('de')">
+            <span>Deutsch</span>
+        </div>
+        <div id="lang-en" class="language-option" onclick="setLanguage('en')">
+            <span>English</span>
+        </div>
+    </div>
+</div>
+
+<div id="pwaBanner" class="pwa-banner">
+    <p><span id="pwa-banner-tip">📲 Tipp:</span> <span id="pwa-banner-text">Du kannst <strong>Xalostore</strong> wie eine echte App nutzen!<br>Tippe unten auf das <strong>Teilen-Symbol</strong> und wähle <em>"Zum Home-Bildschirm hinzufügen"</em>.</span></p>
+    <button id="pwa-banner-button" onclick="hideBanner()">Nicht mehr anzeigen</button>
+</div>
+
 <script>
     // Languages.js Content
     const translations = {
@@ -131,7 +739,7 @@
     // Dynamically load Source.json Content
     let sourceData = null;
     let apps = [];
-    
+
     function loadAppsFromSource() {
         fetch('source.json')
             .then(response => {
@@ -147,8 +755,11 @@
             })
             .catch(error => {
                 console.error("Could not load source.json:", error);
-                document.getElementById('appsLoadError').textContent = getTranslation('appsLoadError');
-                document.getElementById('appsLoadError').style.display = 'block';
+                const errorMessageElement = document.createElement('p');
+                errorMessageElement.id = 'appsLoadError';
+                errorMessageElement.className = 'no-apps-message';
+                errorMessageElement.textContent = getTranslation('appsLoadError');
+                document.getElementById('exploreTab').appendChild(errorMessageElement);
             });
     }
 
@@ -159,7 +770,7 @@
     const appModal = document.getElementById('appModal');
     const modalContent = document.getElementById('modalContent');
     const languageModal = document.getElementById('languageModal');
-    
+
     function formatSize(bytes) {
       if (!bytes) return "";
       const mb = (bytes / 1024 / 1024).toFixed(1);
@@ -192,7 +803,7 @@
       };
       return card;
     }
-    
+
     function createFeaturedCard(app) {
         let version = app.versions[0] || {};
         let downloadURL = version.downloadURL || '#';
@@ -240,7 +851,7 @@
       localStorage.setItem('xalostore_dark_mode', currentDarkModeState);
       applyDarkModeState();
     }
-    
+
     function toggleDarkModeFromSettings() {
       toggleMode();
     }
@@ -365,7 +976,7 @@
       if (isIOS && !isInStandalone && !hideTemp) {
         document.getElementById("pwaBanner").style.display = "block";
       }
-      
+
       loadAppsFromSource();
       goTab('explore');
     });
