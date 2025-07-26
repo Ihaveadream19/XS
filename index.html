@@ -1,1 +1,1152 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0"/>
+  <title>Xalostore</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="logo.PNG" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Xalostore" />
+  <meta name="theme-color" content="#1A1A1A" />
+  <style>
+    /* New Dark, Modern Theme Variables */
+    :root {
+      --bg: #1A1A1A; /* Dark background */
+      --text: #E0E0E0; /* Light text for contrast */
+      --card: #282828; /* Slightly lighter card background */
+      --accent: #007AFF; /* A professional blue, similar to iOS system blue */
+      --card-shadow: rgba(0, 0, 0, 0.3); /* Stronger shadow for depth */
+      --tabbar-bg: #1C1C1C; /* Darker tabbar background */
+      --tabbar-icon: #8E8E93; /* Desaturated icon color */
+      --tabbar-icon-active: #007AFF; /* Accent color for active icon */
+      --border-color: #3A3A3C; /* Subtle border for elements */
+    }
+
+    /* Keep light mode as an option, though dark is default now */
+    body.light {
+      --bg: #F5F5F7;
+      --text: #333;
+      --card: #FFFFFF;
+      --accent: #4C4BFD;
+      --card-shadow: rgba(0, 0, 0, 0.1);
+      --tabbar-bg: #F5F5F7;
+      --tabbar-icon: #999;
+      --tabbar-icon-active: #4C4BFD;
+      --border-color: #E0E0E0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding-bottom: 75px; /* Smaller padding for a more compact feel */
+      transition: background 0.3s, color 0.3s;
+    }
+
+    header {
+      background: var(--bg);
+      color: var(--text);
+      padding: 25px 15px 15px; /* Reduced padding */
+      text-align: center;
+      box-shadow: 0 1px 8px var(--card-shadow); /* Slightly lighter shadow */
+    }
+
+    header img {
+      width: 60px; /* Smaller logo */
+      border-radius: 12px; /* Smaller border-radius */
+      margin-bottom: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    h1 {
+      margin: 5px 0;
+      font-size: 24px; /* Smaller title */
+      font-weight: 700;
+    }
+
+    h2 {
+      margin: 0;
+      font-weight: 400;
+      font-size: 16px; /* Smaller subtitle */
+      color: var(--tabbar-icon);
+    }
+
+    #pwaBanner {
+      display: none;
+      background: #333;
+      color: #FFF;
+      padding: 12px; /* Reduced padding */
+      text-align: center;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    #pwaBanner button {
+      margin-top: 10px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 8px 15px; /* Reduced padding */
+      border-radius: 8px; /* Smaller border-radius */
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px; /* Smaller font size */
+    }
+
+    .top-bar {
+      max-width: 700px; /* Narrower content area */
+      margin: 10px auto; /* Reduced margin */
+      padding: 0 15px; /* Reduced padding */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .top-bar input {
+      flex: 1;
+      padding: 10px; /* Reduced padding */
+      font-size: 14px; /* Smaller font size */
+      border-radius: 8px; /* Smaller border-radius */
+      border: 1px solid var(--border-color);
+      background: var(--card);
+      color: var(--text);
+      margin-right: 10px;
+    }
+
+    .top-bar input::placeholder {
+        color: var(--tabbar-icon);
+    }
+
+    .toggle-mode {
+      background: var(--card);
+      color: var(--accent);
+      border: 1px solid var(--border-color);
+      padding: 8px 14px; /* Reduced padding */
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px; /* Smaller icon size */
+    }
+
+    .app-list {
+      max-width: 700px; /* Narrower content area */
+      margin: 15px auto; /* Reduced margin */
+      padding: 0 15px; /* Reduced padding */
+    }
+
+    .app-card {
+      background: var(--card);
+      border-radius: 12px; /* Smaller border-radius */
+      padding: 15px; /* Reduced padding */
+      margin-bottom: 12px; /* Reduced space between cards */
+      display: flex;
+      align-items: center;
+      box-shadow: 0 2px 8px var(--card-shadow); /* Lighter shadow */
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border: 1px solid var(--border-color);
+    }
+
+    .app-card:hover {
+      transform: translateY(-2px); /* Smaller lift effect on hover */
+      box-shadow: 0 3px 10px var(--card-shadow);
+    }
+
+    .app-card img {
+      width: 60px; /* Smaller icons */
+      height: 60px;
+      border-radius: 12px; /* Match card border-radius */
+      margin-right: 15px;
+      flex-shrink: 0;
+    }
+
+    .app-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .app-info h3 {
+      margin: 0;
+      font-size: 18px; /* Smaller app title */
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .app-info p {
+      margin: 4px 0 0; /* Reduced space below title */
+      color: var(--tabbar-icon);
+      font-size: 14px; /* Smaller subtitle */
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .install-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 8px 16px; /* Reduced button padding */
+      border-radius: 8px; /* Smaller border-radius */
+      cursor: pointer;
+      font-size: 14px; /* Smaller font size */
+      font-weight: 600;
+      flex-shrink: 0;
+      margin-left: 15px;
+    }
+
+    /* General Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 99;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.7); /* Slightly lighter overlay */
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: var(--card);
+      padding: 20px; /* Reduced padding */
+      border-radius: 15px; /* Smaller border-radius */
+      max-width: 90%;
+      width: 400px; /* Narrower modal */
+      color: var(--text);
+      box-shadow: 0 4px 15px var(--card-shadow); /* Lighter shadow */
+      position: relative;
+    }
+
+    .modal-content h3 {
+      margin-top: 0;
+      font-size: 22px; /* Smaller font size */
+      font-weight: 700;
+      margin-bottom: 8px; /* Reduced space */
+    }
+
+    .modal-content p {
+        font-size: 15px; /* Smaller font size */
+        line-height: 1.5; /* Adjusted line height */
+        color: var(--tabbar-icon);
+        margin-bottom: 8px;
+    }
+
+    .modal-content .install-btn {
+        display: block;
+        width: fit-content;
+        margin: 18px auto 0; /* Reduced margin */
+        padding: 10px 20px; /* Reduced button padding */
+        font-size: 15px; /* Reduced font size */
+        border-radius: 10px; /* Reduced border-radius */
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 10px; /* Reduced space */
+      right: 15px; /* Reduced space */
+      font-size: 28px; /* Smaller close button */
+      cursor: pointer;
+      color: var(--tabbar-icon);
+    }
+
+    .close-modal:hover {
+        color: var(--text);
+    }
+
+    /* Styles for tab content */
+    .tab-content {
+      display: none;
+      max-width: 700px; /* Narrower content area */
+      margin: 15px auto; /* Reduced margin */
+      padding: 0 15px; /* Reduced padding */
+      box-sizing: border-box;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .tab-item {
+      text-align:center;
+      flex:1;
+      cursor: pointer;
+      padding: 5px 0; /* Reduced padding for clickable area */
+    }
+
+    .tab-item svg {
+      transition: color 0.2s;
+    }
+
+    .tab-item div {
+      transition: color 0.2s;
+    }
+
+    /* Specific styling for search tab input and list if needed */
+    #searchTab .top-bar {
+        margin-top: 15px;
+    }
+
+    #searchTab .app-list {
+        margin-top: 15px;
+    }
+
+    /* Style for no apps message */
+    .no-apps-message {
+        text-align: center;
+        margin-top: 40px; /* Reduced space */
+        color: var(--tabbar-icon);
+        font-size: 16px; /* Smaller font size */
+        line-height: 1.4;
+    }
+    #profileTab > div {
+        padding: 20px; /* Reduced padding */
+    }
+    #profileTab img {
+      width: 90px; /* Smaller profile logo */
+      border-radius: 18px;
+      margin-top: 20px;
+    }
+
+    /* Styles for general settings in Profile Tab */
+    .settings-section {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-color);
+      text-align: left; /* Align text left within settings section */
+    }
+    .settings-section h4 {
+      margin-bottom: 20px;
+      color: var(--text);
+      font-size: 18px;
+      text-align: center; /* Title centered */
+    }
+    .setting-item {
+      background: var(--card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 12px 15px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+    .setting-item:hover {
+      background: var(--border-color);
+      transform: translateY(-2px);
+    }
+    .setting-item span {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text);
+    }
+    .setting-item .value-text {
+        color: var(--accent);
+        font-weight: 600;
+    }
+
+    /* Styles for language selection modal */
+    .language-selection-modal-content {
+      background: var(--card);
+      padding: 20px;
+      border-radius: 15px;
+      max-width: 90%;
+      width: 400px;
+      color: var(--text);
+      box-shadow: 0 4px 15px var(--card-shadow);
+      position: relative;
+      text-align: center; /* Center content in modal */
+    }
+    .language-selection-modal-content h3 {
+        margin-top: 0;
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+    .language-option-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .language-option {
+      background: var(--card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    .language-option:hover {
+      background: var(--border-color);
+    }
+    .language-option.active-lang {
+      border-color: var(--accent);
+      background: var(--accent); /* Hintergrundfarbe für aktive Sprache */
+      color: white; /* Textfarbe für aktive Sprache */
+    }
+    .language-option img {
+      width: 24px;
+      height: 24px;
+      margin-right: 15px;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    
+    /* Splash Screen Animation - Updated Version */
+    #splash-screen {
+      position: fixed;
+      z-index: 9999;
+      background-color: var(--bg);
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeOutSplash 0.6s forwards 2.2s;
+    }
+
+    #splash-screen img {
+      width: 100px;
+      height: 100px;
+      animation: logoBounce 2.2s ease-in-out forwards;
+    }
+
+    @keyframes logoBounce {
+      0% { transform: scale(0); opacity: 0; }
+      30% { transform: scale(1.1); opacity: 1; }
+      50% { transform: scale(0.9); }
+      70% { transform: scale(1.05); }
+      90% { opacity: 1; }
+      100% { transform: scale(2); opacity: 0; }
+    }
+
+    @keyframes fadeOutSplash {
+      to { opacity: 0; visibility: hidden; }
+    }
+    /* New Feature: Featured App Card */
+    .featured-app-card {
+      background: var(--card);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 4px 15px var(--card-shadow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 1px solid var(--accent);
+      cursor: pointer;
+    }
+
+    .featured-app-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px var(--card-shadow);
+    }
+    .featured-app-card img {
+      width: 90px;
+      height: 90px;
+      border-radius: 20px;
+      margin-bottom: 15px;
+      border: 1px solid var(--border-color);
+    }
+    .featured-app-card h3 {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0;
+    }
+    .featured-app-card p {
+      font-size: 16px;
+      color: var(--tabbar-icon);
+      margin: 8px 0 15px;
+    }
+    .featured-app-card .install-btn {
+      padding: 10px 25px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    #featuredAppContainer {
+      margin-bottom: 25px;
+      padding: 0 15px;
+    }
+  </style>
+</head>
+<body class="dark">
+  <div id="splash-screen">
+    <img src="logo.PNG" alt="Splash Logo">
+  </div>
+<header>
+  <img src="logo.PNG" alt="Xalostore Logo">
+  <h1 id="header-title">Xalostore</h1>
+  <h2 id="header-subtitle">Sideload Apps. Simple. Secure.</h2>
+</header>
+
+<div id="pwaBanner">
+  <strong id="pwa-banner-tip">📲 Tipp:</strong> <span id="pwa-banner-text">Du kannst <strong>Xalostore</strong> wie eine echte App nutzen!<br>Tippe unten auf das <strong>Teilen-Symbol</strong> und wähle <em>"Zum Home-Bildschirm hinzufügen"</em>.</span><br>
+  <button id="pwa-banner-button" onclick="hideBanner()">Nicht mehr anzeigen</button>
+</div>
+
+<div id="mainContent">
+  <div id="exploreTab" class="tab-content active">
+    <div id="featuredAppContainer"></div>
+    <div class="app-list" id="appList"></div>
+  </div>
+
+  <div id="searchTab" class="tab-content">
+    <div class="top-bar">
+      <input type="text" id="search" placeholder="App suchen...">
+      <button class="toggle-mode" onclick="toggleMode()">☀️</button>
+    </div>
+    <div class="app-list" id="appListSearch">
+        <p class="no-apps-message" id="search-prompt" data-type="searchPrompt">Beginne mit der Suche, um Apps zu finden.</p>
+    </div>
+  </div>
+
+  <div id="profileTab" class="tab-content">
+    <div style="padding: 20px; text-align: center; max-width: 800px; margin: auto;">
+      <h3 id="profile-welcome-title" style="color: var(--text);">Willkommen bei Xalostore!</h3>
+      <p id="profile-text-1" style="color: var(--tabbar-icon);">Dies ist dein einfacher und sicherer Ort, um Sideload-Apps zu finden und zu installieren.</p>
+      <p id="profile-text-2" style="color: var(--tabbar-icon);">Wir arbeiten ständig daran, dir neue Funktionen und die besten Apps zur Verfügung zu stellen.</p>
+      <p id="profile-text-3" style="color: var(--tabbar-icon);">Schau bald wieder vorbei für Updates und neue Inhalte!</p>
+      <img src="logo.PNG" alt="Xalostore Logo" style="width: 90px; border-radius: 18px; margin-top: 20px; border: 1px solid var(--border-color);">
+
+      <div class="settings-section">
+        <h4 id="settings-title">Einstellungen</h4>
+        <div class="setting-item" onclick="openLanguageModal()">
+            <span id="language-setting-label">Sprache</span>
+            <span class="value-text" id="current-language-display">Deutsch</span> </div>
+        <div class="setting-item" onclick="toggleDarkModeFromSettings()">
+            <span id="dark-mode-setting-label">Dark Mode</span>
+            <span class="value-text" id="dark-mode-toggle-btn">An</span> </div>
+      </div>
+      </div>
+  </div>
+</div>
+
+<div class="modal" id="appModal">
+  <div class="modal-content" id="modalContent">
+    <span class="close-modal" onclick="closeModal()">&times;</span>
+  </div>
+</div>
+
+<div class="modal" id="languageModal">
+    <div class="language-selection-modal-content">
+        <span class="close-modal" onclick="closeLanguageModal()">&times;</span>
+        <h3 id="language-selection-title">Sprache wählen</h3>
+        <div class="language-option-list">
+            <div class="language-option" id="lang-de" onclick="setLanguage('de')">
+                <img src="https://flagcdn.com/w20/de.png" alt="German Flag">
+                <span>Deutsch</span>
+            </div>
+            <div class="language-option" id="lang-en" onclick="setLanguage('en')">
+                <img src="https://flagcdn.com/w20/us.png" alt="US Flag">
+                <span>English</span>
+            </div>
+            </div>
+    </div>
+</div>
+<div id="tabbar" style="
+  position: fixed;
+  bottom: 15px; /* Back to a very compact position */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%; /* Original width */
+  max-width: 400px; /* Max width to keep it small on large screens */
+  background: var(--tabbar-bg);
+  border-radius: 18px; /* Smaller border-radius for compactness */
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0; /* Smaller padding */
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2); /* Lighter shadow */
+  z-index: 100;
+  border: 1px solid var(--border-color);
+  ">
+  
+  <div class="tab-item" id="tabExplore" onclick="goTab('explore')">
+    <svg width="24" height="24" fill="currentColor" class="tab-icon active-icon">
+      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+    </svg>
+    <div class="tab-text" id="tab-explore-text" style="font-size:12px;margin-top:3px;">Explore</div>
+  </div>
+
+  <div class="tab-item" id="tabSearch" onclick="goTab('search')">
+    <svg width="24" height="24" fill="currentColor" class="tab-icon">
+      <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+    </svg>
+    <div class="tab-text" id="tab-search-text" style="font-size:12px;margin-top:3px;">Search</div>
+  </div>
+
+  <div class="tab-item" id="tabProfile" onclick="goTab('profile')">
+    <svg width="24" height="24" fill="currentColor" class="tab-icon">
+      <path d="M12 12c2.7 0 4.7-2 4.7-4.7S14.7 2.6 12 2.6 7.3 4.6 7.3 7.3 9.3 12 12 12zm0 2.4c-3.1 0-9.2 1.6-9.2 4.7V22h18.5v-2.9c0-3.1-6.1-4.7-9.3-4.7z"/>
+    </svg>
+    <div class="tab-text" id="tab-profile-text" style="font-size:12px;margin-top:3px;">Profile</div>
+  </div>
+</div>
+
+<script>
+    // Languages.js Content
+    const translations = {
+        "de": {
+            "title": "Xalostore",
+            "subtitle": "Sideload Apps. Simple. Secure.",
+            "searchPlaceholder": "App suchen...",
+            "searchPrompt": "Beginne mit der Suche, um Apps zu finden.",
+            "noAppsFound": "Keine Apps gefunden.",
+            "exploreTab": "Explore",
+            "searchTab": "Suchen",
+            "profileTab": "Profil",
+            "appsLoadError": "Fehler beim Laden der Apps. Bitte versuche es später erneut.",
+            "installButton": "Installieren",
+            "modalDefaultDescription": "Keine Beschreibung verfügbar.",
+            "modalVersion": "Version:",
+            "modalSize": "Größe:",
+            "modalInstallButton": "Installieren",
+            "pwaBannerTip": "📲 Tipp:",
+            "pwaBannerText": "Du kannst <strong>Xalostore</strong> wie eine echte App nutzen!<br>Tippe unten auf das <strong>Teilen-Symbol</strong> und wähle <em>\"Zum Home-Bildschirm hinzufügen\"</em>.",
+            "pwaBannerButton": "Nicht mehr anzeigen",
+            "profileWelcomeTitle": "Willkommen bei Xalostore!",
+            "profileText1": "Dies ist dein einfacher und sicherer Ort, um Sideload-Apps zu finden und zu installieren.",
+            "profileText2": "Wir arbeiten ständig daran, dir neue Funktionen und die besten Apps zur Verfügung zu stellen.",
+            "profileText3": "Schau bald wieder vorbei für Updates und neue Inhalte!",
+            "settingsTitle": "Einstellungen",
+            "languageSettingLabel": "Sprache",
+            "darkModeSettingLabel": "Dark Mode",
+            "languageSelectionTitle": "Sprache wählen",
+            "languageDe": "Deutsch",
+            "languageEn": "English",
+            "toggleModeButtonDark": "☀️",
+            "toggleModeButtonLight": "🌙"
+        },
+        "en": {
+            "title": "Xalostore",
+            "subtitle": "Sideload Apps. Simple. Secure.",
+            "searchPlaceholder": "Search for an app...",
+            "searchPrompt": "Start searching to find apps.",
+            "noAppsFound": "No apps found.",
+            "exploreTab": "Explore",
+            "searchTab": "Search",
+            "profileTab": "Profile",
+            "appsLoadError": "Error loading apps. Please try again later.",
+            "installButton": "Install",
+            "modalDefaultDescription": "No description available.",
+            "modalVersion": "Version:",
+            "modalSize": "Size:",
+            "modalInstallButton": "Install",
+            "pwaBannerTip": "📲 Tip:",
+            "pwaBannerText": "You can use <strong>Xalostore</strong> like a real app!<br>Tap the <strong>Share icon</strong> at the bottom and select <em>\"Add to Home Screen\"</em>.",
+            "pwaBannerButton": "Don't show again",
+            "profileWelcomeTitle": "Welcome to Xalostore!",
+            "profileText1": "This is your simple and secure place to find and install sideload apps.",
+            "profileText2": "We are constantly working to bring you new features and the best apps.",
+            "profileText3": "Check back soon for updates and new content!",
+            "settingsTitle": "Settings",
+            "languageSettingLabel": "Language",
+            "darkModeSettingLabel": "Dark Mode",
+            "languageSelectionTitle": "Select Language",
+            "languageDe": "Deutsch",
+            "languageEn": "English",
+            "toggleModeButtonDark": "☀️",
+            "toggleModeButtonLight": "🌙"
+        }
+    };
+    let currentLanguage = localStorage.getItem('appLanguage') || 'de'; // Set 'de' as default
+    function getTranslation(key) {
+        return translations[currentLanguage][key] || key;
+    }
+    function setLanguage(lang) {
+        currentLanguage = lang;
+        localStorage.setItem('appLanguage', lang);
+        translateUI();
+        closeLanguageModal();
+    }
+    function translateUI() {
+        document.querySelectorAll('[data-type]').forEach(element => {
+            const key = element.getAttribute('data-type');
+            if (translations[currentLanguage][key]) {
+                element.textContent = translations[currentLanguage][key];
+            }
+        });
+        document.getElementById('header-title').textContent = getTranslation('title');
+        document.getElementById('header-subtitle').textContent = getTranslation('subtitle');
+        document.getElementById('search').placeholder = getTranslation('searchPlaceholder');
+        document.getElementById('tab-explore-text').textContent = getTranslation('exploreTab');
+        document.getElementById('tab-search-text').textContent = getTranslation('searchTab');
+        document.getElementById('tab-profile-text').textContent = getTranslation('profileTab');
+        document.getElementById('pwa-banner-tip').textContent = getTranslation('pwaBannerTip');
+        document.getElementById('pwa-banner-text').innerHTML = getTranslation('pwaBannerText');
+        document.getElementById('pwa-banner-button').textContent = getTranslation('pwaBannerButton');
+        document.getElementById('profile-welcome-title').textContent = getTranslation('profileWelcomeTitle');
+        document.getElementById('profile-text-1').textContent = getTranslation('profileText1');
+        document.getElementById('profile-text-2').textContent = getTranslation('profileText2');
+        document.getElementById('profile-text-3').textContent = getTranslation('profileText3');
+        document.getElementById('settings-title').textContent = getTranslation('settingsTitle');
+        document.getElementById('language-setting-label').textContent = getTranslation('languageSettingLabel');
+        document.getElementById('dark-mode-setting-label').textContent = getTranslation('darkModeSettingLabel');
+        document.getElementById('language-selection-title').textContent = getTranslation('languageSelectionTitle');
+        document.getElementById('lang-de').querySelector('span').textContent = getTranslation('languageDe');
+        document.getElementById('lang-en').querySelector('span').textContent = getTranslation('languageEn');
+        document.getElementById('current-language-display').textContent = translations[currentLanguage][`language${currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1)}`];
+        const searchModeToggle = document.querySelector('.top-bar .toggle-mode');
+        if (searchModeToggle) {
+          searchModeToggle.innerHTML = currentDarkModeState ? getTranslation('toggleModeButtonDark') : getTranslation('toggleModeButtonLight');
+        }
+    }
+    let currentDarkModeState = localStorage.getItem('xalostore_dark_mode') === 'true';
+    function loadPreferences() {
+        const storedLanguage = localStorage.getItem('appLanguage');
+        if (storedLanguage) {
+            currentLanguage = storedLanguage;
+        } else {
+            const browserLang = navigator.language.split('-')[0];
+            if (translations[browserLang]) {
+                currentLanguage = browserLang;
+            } else {
+                currentLanguage = 'de';
+            }
+        }
+        const storedDarkMode = localStorage.getItem('xalostore_dark_mode');
+        if (storedDarkMode !== null) {
+            currentDarkModeState = storedDarkMode === 'true';
+        }
+        applyDarkModeState();
+        translateUI();
+    }
+</script>
+<script>
+    // Source.json Content
+    const sourceData = {
+      "name": "Xalostore ",
+      "subtitle": "A source for all of my apps",
+      "description": "Welcome to my source! Here you'll find all of my apps.",
+      "iconURL": "https://i.imgur.com/oWyf5VR.png",
+      "website": "https://altstudio.app",
+      "patreonURL": "https://patreon.com/altstudio",
+      "tintColor": "#6156e2",
+      "featuredApps": [
+        "com.burbn.instagram",
+        "com.elven.video"
+      ],
+      "headerURL": "https://i.imgur.com/vFyAEQt.png",
+      "apps": [
+        {
+          "name": "Xalo MyFitnessPal",
+          "bundleIdentifier": "com.myfitnesspal.mfp",
+          "marketplaceID": "",
+          "developerName": "Example Developer",
+          "subtitle": "An awesome app.",
+          "localizedDescription": "This is an awesome app only available on Xalostore.",
+          "iconURL": "https://i.imgur.com/ZfFzw1Q.png",
+          "tintColor": "#0464ec",
+          "category": "other",
+          "screenshots": [],
+          "versions": [
+            {
+              "version": "25.28.0",
+              "date": "2025-07-24T08:30:00+02:00",
+              "localizedDescription": null,
+              "downloadURL": "https://github.com/Ihaveadream19/xalostore/releases/download/untagged-3a220d8c37214071c5a9/MyFitnessPal_25.28.0_3Xalo.ipa",
+              "size": 117200000,
+              "buildVersion": null,
+              "minOSVersion": null
+            }
+          ],
+          "appPermissions": {
+            "entitlements": [],
+            "privacy": {
+              "NSBluetoothPeripheralUsageDescription": "Allows MyFitnessPal to use Bluetooth.",
+              "NSCalendarsUsageDescription": "Allows MyFitnessPal to add class reservations to your calendar.",
+              "NSCameraUsageDescription": "We use your camera to allow you to scan barcodes, foods, and add photos to your weight entries and custom meals.",
+              "NSHealthShareUsageDescription": "Allows MyFitnessPal to read data from the Health app.",
+              "NSHealthUpdateUsageDescription": "Allows MyFitnessPal to write data to the Health app.",
+              "NSMicrophoneUsageDescription": "We use your microphone to allow you to log food with your voice.",
+              "NSPhotoLibraryUsageDescription": "We need photo library access in order to scan meals, log using barcodes, and add photos to weight entries/custom meals.",
+              "NSSpeechRecognitionUsageDescription": "Voice Log uses speech recognition technology to understand and interpret what you're saying.",
+              "NSUserTrackingUsageDescription": "This info will be used to show you ads that are more relevant to you."
+            }
+          },
+          "patreon": {}
+        },
+        {
+          "name": "Xalo Truecaller",
+          "bundleIdentifier": "com.truesoftware.TrueCallerOther",
+          "marketplaceID": "",
+          "developerName": "Example Developer",
+          "subtitle": "An awesome app.",
+          "localizedDescription": "This is an awesome app only available on Xalostore.",
+          "iconURL": "https://i.imgur.com/j5pTxhp.png",
+          "tintColor": "#0424fc",
+          "category": "other",
+          "screenshots": [],
+          "versions": [
+            {
+              "version": "14.21.5",
+              "date": "2025-07-24T06:25:00+02:00",
+              "localizedDescription": null,
+              "downloadURL": "https://github.com/Ihaveadream19/xalostore/releases/download/untagged-16c296fa5c1e64d7a745/Truecaller_Caller_ID_Lookup_v14_21_Xalo.ipa",
+              "size": 71100000,
+              "buildVersion": null,
+              "minOSVersion": null
+            }
+          ],
+          "appPermissions": {
+            "entitlements": [],
+            "privacy": {
+              "NSAdvertisingAttributionReportEndpoint": "https://appsflyer-skadnetwork.com/",
+              "NSCameraUsageDescription": "This lets you take a photo and set it as your profile picture.",
+              "NSContactsUsageDescription": "We need this permission to allow you to save contacts or check which of your contacts use Truecaller. We never upload your phonebook.",
+              "NSMicrophoneUsageDescription": "Truecaller needs access to your microphone to answer calls",
+              "NSPhotoLibraryUsageDescription": "Photo Library access is required for selecting photos",
+              "NSUserTrackingUsageDescription": "This allows us to give you a more personalized experience."
+            }
+          },
+          "patreon": {}
+        },
+        {
+          "name": "Xalo AIVideo",
+          "bundleIdentifier": "com.elven.video",
+          "marketplaceID": "",
+          "developerName": "Example Developer",
+          "subtitle": "An awesome app.",
+          "localizedDescription": "This is an awesome app only available on Xalostore.",
+          "iconURL": "https://i.imgur.com/VWN8fih.png",
+          "tintColor": "#7f7f7f",
+          "category": "other",
+          "screenshots": [],
+          "versions": [
+            {
+              "version": "1.0.0",
+              "date": "2025-07-13T21:48:00+02:00",
+              "localizedDescription": null,
+              "downloadURL": "https://github.com/Ihaveadream19/Xalstor/releases/download/untagged-77154b797db3a85ea0c2/VideoGPT_AI_Video_Generator_v3_1_Subscription_Unlocked_blatant_patched.ipa",
+              "size": 170400000,
+              "buildVersion": "",
+              "minOSVersion": null
+            }
+          ],
+          "appPermissions": {
+            "entitlements": [],
+            "privacy": {
+              "NSCameraUsageDescription": "Allow to save video in library",
+              "NSMicrophoneUsageDescription": "Allow microphone permission to record voice",
+              "NSPhotoLibraryUsageDescription": "Allow to save video in library",
+              "NSSpeechRecognitionUsageDescription": "We need access to speech recognition to transcribe audio input for voice cloning.",
+              "NSUserTrackingUsageDescription": "Your data will be used to deliver personalized ads to you"
+            }
+          },
+          "patreon": {}
+        },
+        {
+          "name": "Xalo Instagram",
+          "bundleIdentifier": "com.burbn.instagram",
+          "marketplaceID": "",
+          "developerName": "Example Developer",
+          "subtitle": "An awesome app.",
+          "localizedDescription": "This is an awesome app only available on Xalostore.",
+          "iconURL": "https://i.imgur.com/YynrWtw.png",
+          "tintColor": "#a204fc",
+          "category": "other",
+          "screenshots": [],
+          "versions": [
+            {
+              "version": "388.0.0",
+              "date": "2025-07-09T12:11:00+02:00",
+              "localizedDescription": null,
+              "downloadURL": "https://github.com/Ihaveadream19/Xalstor/releases/download/untagged-7d3a53b40a8c14f36cae/Instagram--Xalo.ipa",
+              "size": 203200000,
+              "buildVersion": null,
+              "minOSVersion": null
+            }
+          ],
+          "appPermissions": {
+            "entitlements": [],
+            "privacy": {
+              "NSAdvertisingAttributionReportEndpoint": "https://facebook.com",
+              "NSBluetoothAlwaysUsageDescription": "This allows your phone to find and connect to the glasses using a Bluetooth connection.",
+              "NSCalendarsUsageDescription": "This will let Instagram sync events to your calendar.",
+              "NSCalendarsWriteOnlyAccessDescription": "This will let Instagram sync events to your calendar.",
+              "NSCameraUsageDescription": "Instagram uses your device's camera to do things like help you take photos, record videos and use effects.",
+              "NSContactsUsageDescription": "Instagram will use your contacts to suggest people and things you care about, and offer a better service. Your contacts will be periodically synced and securely stored on Instagram’s servers.",
+              "NSFaceIDUsageDescription": "Enable Face ID for quick and secure authentication on Instagram.",
+              "NSFocusStatusUsageDescription": "This allows Instagram to check to see if you’ve been missing notifications from friends. You can always change this later in settings.",
+              "NSLocationAlwaysAndWhenInUseUsageDescription": "Instagram uses this to make some features work, personalize content and help people find places. You can change your preferences at any time in your device settings.",
+              "NSLocationUsageDescription": "Instagram uses this to make some features work, personalize content and help people find places. You can change your preferences at any time in your device settings.",
+              "NSLocationWhenInUseUsageDescription": "Instagram uses this to make some features work, personalize content and help people find places. You can change your preferences at any time in your device settings.",
+              "NSMicrophoneUsageDescription": "Instagram uses your device's microphone to do things like help you record videos and preview audio effects.",
+              "NSPhotoLibraryAddUsageDescription": "This lets you save photos and videos to your Camera Roll.",
+              "NSPhotoLibraryUsageDescription": "Instagram uses access to your camera roll to do things like help you share photos and videos to Instagram, apply effects and suggest photos and videos to share.",
+              "NSUserTrackingUsageDescription": "This allows Instagram to provide you with a better ads experience."
+            }
+          },
+          "patreon": {}
+        }
+      ],
+      "news": [
+        {
+          "title": "Now MyFitnessPal Available only on Xalostore!!!",
+          "identifier": "news_xzjd5woljx",
+          "caption": "",
+          "date": "2025-07-09T16:36",
+          "tintColor": "#6156e2",
+          "imageURL": "https://i.imgur.com/RpOc83t.png",
+          "notify": true,
+          "url": "https://example.com/new_feature_details",
+          "appID": "com.myfitnesspal.mfp"
+        }
+      ]
+    };
+
+    const appList = document.getElementById('appList');
+    const featuredAppContainer = document.getElementById('featuredAppContainer');
+    const searchInput = document.getElementById('search');
+    const appListSearch = document.getElementById('appListSearch');
+    const appModal = document.getElementById('appModal');
+    const modalContent = document.getElementById('modalContent');
+    const languageModal = document.getElementById('languageModal');
+
+    let apps = sourceData.apps;
+
+    function formatSize(bytes) {
+      if (!bytes) return "";
+      const mb = (bytes / 1024 / 1024).toFixed(1);
+      return `${mb} MB`;
+    }
+
+    function createCard(app) {
+      let version = app.versions[0] || {};
+      let downloadURL = version.downloadURL || '#';
+      let size = formatSize(version.size);
+      const card = document.createElement('div');
+      card.className = 'app-card';
+      card.innerHTML = `
+        <img src="${app.iconURL}" alt="${app.name}">
+        <div class="app-info">
+          <h3>${app.name.trim()}</h3>
+          <p>${app.subtitle}</p>
+        </div>
+        <a href="${downloadURL}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
+      `;
+      card.onclick = () => {
+        appModal.style.display = 'flex';
+        modalContent.innerHTML = `
+          <span class="close-modal" onclick="closeModal()">&times;</span>
+          <h3>${app.name}</h3>
+          <p>${app.localizedDescription || getTranslation('modalDefaultDescription')}</p>
+          <p><strong>${getTranslation('modalVersion')}</strong> ${version.version || "?"}</p>
+          <p><strong>${getTranslation('modalSize')}</strong> ${size || "?"}</p>
+          <a href="${downloadURL}" class="install-btn">${getTranslation('modalInstallButton')}</a>
+        `;
+      };
+      return card;
+    }
+    
+    function createFeaturedCard(app) {
+        let version = app.versions[0] || {};
+        let downloadURL = version.downloadURL || '#';
+        let size = formatSize(version.size);
+        const card = document.createElement('div');
+        card.className = 'featured-app-card';
+        card.innerHTML = `
+          <img src="${app.iconURL}" alt="${app.name}">
+          <h3>${app.name.trim()}</h3>
+          <p>${app.subtitle}</p>
+          <a href="${downloadURL}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
+        `;
+        card.onclick = () => {
+          appModal.style.display = 'flex';
+          modalContent.innerHTML = `
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h3>${app.name}</h3>
+            <p>${app.localizedDescription || getTranslation('modalDefaultDescription')}</p>
+            <p><strong>${getTranslation('modalVersion')}</strong> ${version.version || "?"}</p>
+            <p><strong>${getTranslation('modalSize')}</strong> ${size || "?"}</p>
+            <a href="${downloadURL}" class="install-btn">${getTranslation('modalInstallButton')}</a>
+          `;
+        };
+        return card;
+    }
+
+    function closeModal() {
+      appModal.style.display = 'none';
+    }
+
+    function applyDarkModeState() {
+      if (currentDarkModeState) {
+        document.body.classList.remove('light');
+        document.body.classList.add('dark');
+      } else {
+        document.body.classList.remove('dark');
+        document.body.classList.add('light');
+      }
+      updateDarkModeButtonText();
+      const searchModeToggle = document.querySelector('.top-bar .toggle-mode');
+      if (searchModeToggle) {
+          searchModeToggle.innerHTML = currentDarkModeState ? getTranslation('toggleModeButtonDark') : getTranslation('toggleModeButtonLight');
+      }
+    }
+
+    function toggleMode() {
+      currentDarkModeState = !currentDarkModeState;
+      localStorage.setItem('xalostore_dark_mode', currentDarkModeState);
+      applyDarkModeState();
+    }
+    
+    function toggleDarkModeFromSettings() {
+      toggleMode();
+    }
+
+    function goTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(tabContent => {
+        tabContent.classList.remove('active');
+      });
+      document.querySelectorAll('.tab-icon').forEach(icon => {
+        icon.style.color = 'var(--tabbar-icon)';
+        icon.classList.remove('active-icon');
+      });
+      document.querySelectorAll('.tab-text').forEach(text => {
+        text.style.color = 'var(--tabbar-icon)';
+        text.classList.remove('active-text');
+      });
+      const selectedTabContent = document.getElementById(`${tabName}Tab`);
+      if (selectedTabContent) {
+        selectedTabContent.classList.add('active');
+      }
+      const selectedTabItem = document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
+      if (selectedTabItem) {
+          selectedTabItem.querySelector('.tab-icon').style.color = 'var(--tabbar-icon-active)';
+          selectedTabItem.querySelector('.tab-icon').classList.add('active-icon');
+          selectedTabItem.querySelector('.tab-text').style.color = 'var(--tabbar-icon-active)';
+          selectedTabItem.querySelector('.tab-text').classList.add('active-text');
+      }
+      if (tabName === 'search') {
+        renderApps(apps, appListSearch);
+        searchInput.value = '';
+        document.getElementById('search-prompt').textContent = getTranslation('searchPrompt');
+      } else if (tabName === 'explore') {
+          renderExploreApps(apps);
+      } else if (tabName === 'profile') {
+        document.getElementById('current-language-display').textContent = translations[currentLanguage][`language${currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1)}`];
+        updateDarkModeButtonText();
+      }
+    }
+
+    function openLanguageModal() {
+      languageModal.style.display = 'flex';
+      document.querySelectorAll('.language-option').forEach(button => {
+          button.classList.remove('active-lang');
+      });
+      const activeLangButton = document.getElementById(`lang-${currentLanguage}`);
+      if (activeLangButton) {
+          activeLangButton.classList.add('active-lang');
+      }
+    }
+
+    function closeLanguageModal() {
+      languageModal.style.display = 'none';
+    }
+
+    function renderExploreApps(list) {
+        appList.innerHTML = '';
+        featuredAppContainer.innerHTML = '';
+        if (!sourceData.apps || sourceData.apps.length === 0) {
+            appList.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
+            return;
+        }
+        let featuredApp = null;
+        if (sourceData.featuredApps && sourceData.featuredApps.length > 0) {
+            featuredApp = sourceData.apps.find(app => app.bundleIdentifier === sourceData.featuredApps[0]);
+        }
+        const otherApps = [];
+        if (featuredApp) {
+            featuredAppContainer.appendChild(createFeaturedCard(featuredApp));
+            list.forEach(app => {
+                if (app.bundleIdentifier !== featuredApp.bundleIdentifier) {
+                    otherApps.push(app);
+                }
+            });
+        } else {
+            otherApps.push(...list);
+        }
+        otherApps.forEach(app => {
+            appList.appendChild(createCard(app));
+        });
+    }
+
+    function renderApps(list, container) {
+      container.innerHTML = '';
+      if (list.length === 0) {
+        container.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
+        return;
+      }
+      list.forEach(app => {
+        container.appendChild(createCard(app));
+      });
+    }
+
+    searchInput.addEventListener('input', () => {
+      const q = searchInput.value.toLowerCase();
+      const filtered = apps.filter(app =>
+          app.name.toLowerCase().includes(q) ||
+          app.subtitle.toLowerCase().includes(q) ||
+          (app.localizedDescription && app.localizedDescription.toLowerCase().includes(q))
+      );
+      renderApps(filtered, appListSearch);
+      if (filtered.length === 0 && q.length > 0) {
+          appListSearch.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
+      } else if (q.length === 0) {
+          appListSearch.innerHTML = `<p class="no-apps-message">${getTranslation('searchPrompt')}</p>`;
+      }
+    });
+
+    function hideBanner() {
+      document.getElementById("pwaBanner").style.display = "none";
+      sessionStorage.setItem("hidePWABannerTemp", "1");
+    }
+
+    function updateDarkModeButtonText() {
+        const darkModeBtn = document.getElementById('dark-mode-toggle-btn');
+        if (darkModeBtn) {
+            darkModeBtn.textContent = currentDarkModeState ? 'An' : 'Aus';
+        }
+    }
+
+    window.addEventListener('load', () => {
+      loadPreferences();
+      applyDarkModeState();
+      translateUI();
+
+      const isIOS = /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
+      const isInStandalone =
+        window.matchMedia('(display-mode: standalone)').matches ||
+        window.navigator.standalone;
+
+      const hideTemp = sessionStorage.getItem("hidePWABannerTemp");
+
+      if (isIOS && !isInStandalone && !hideTemp) {
+        document.getElementById("pwaBanner").style.display = "block";
+      }
+      
+      renderExploreApps(apps);
+      goTab('explore');
+    });
+
+    setTimeout(() => {
+      const splash = document.getElementById('splash-screen');
+      if (splash) splash.style.display = 'none';
+    }, 1500);
+</script>
+</body>
+</html>
 
