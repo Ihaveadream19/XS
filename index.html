@@ -80,8 +80,6 @@
             justify-content: space-between;
             align-items: center;
             padding: 16px 16px 0 16px;
-            position: sticky;
-            top: env(safe-area-inset-top);
             z-index: 1000;
             background: transparent;
             transition: background-color 0.3s;
@@ -272,8 +270,6 @@
         }
         #searchTab .search-container {
             padding: 16px;
-            position: sticky;
-            top: env(safe-area-inset-top);
             z-index: 999;
             background-color: var(--bg-primary);
             transition: background-color 0.3s;
@@ -443,6 +439,7 @@
             background-color: var(--splash-bg);
             z-index: 9999;
             transition: opacity 0.5s ease-out;
+            opacity: 1;
         }
         .splash-screen.hidden {
             opacity: 0;
@@ -981,7 +978,7 @@
     });
     setTimeout(() => {
       const splash = document.getElementById('splash-screen');
-      if (splash) splash.style.display = 'none';
+      if (splash) splash.classList.add('hidden');
     }, 1500);
 </script>
 </body>
