@@ -58,7 +58,7 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
-            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            padding: 0;
             transition: background-color 0.3s, color 0.3s;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -71,15 +71,19 @@
             background-color: var(--dark-bg-primary);
             color: var(--dark-text-primary);
         }
-        .app-container {
-            padding: 0 16px;
-            padding-bottom: 80px;
+        #main-content {
+            padding-top: calc(72px + env(safe-area-inset-top));
+            padding-bottom: calc(60px + env(safe-area-inset-bottom));
         }
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 16px 16px 0 16px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: calc(16px + env(safe-area-inset-top)) 16px 0 16px;
             z-index: 1000;
             background: transparent;
             transition: background-color 0.3s;
@@ -119,6 +123,7 @@
         }
         .app-section {
             margin-top: 16px;
+            padding: 0 16px;
         }
         .app-section h2 {
             font-size: 22px;
@@ -130,6 +135,7 @@
             white-space: nowrap;
             -webkit-overflow-scrolling: touch;
             padding-bottom: 16px;
+            padding: 0 16px;
             scrollbar-width: none;
             -ms-overflow-style: none;
         }
@@ -509,74 +515,76 @@
     <img src="https://i.imgur.com/oWyf5VR.png" alt="Xalostore Logo" class="splash-logo">
 </div>
 
-<div class="top-bar">
-    <div class="title-block">
-        <img src="https://i.imgur.com/oWyf5VR.png" alt="Xalostore Logo">
-        <div>
-            <h1 id="header-title">Xalostore</h1>
-            <h2 id="header-subtitle">Sideload Apps. Simple. Secure.</h2>
+<div id="main-content" style="display: none;">
+    <div class="top-bar">
+        <div class="title-block">
+            <img src="https://i.imgur.com/oWyf5VR.png" alt="Xalostore Logo">
+            <div>
+                <h1 id="header-title">Xalostore</h1>
+                <h2 id="header-subtitle">Sideload Apps. Simple. Secure.</h2>
+            </div>
         </div>
-    </div>
-    <div class="toggle-mode" onclick="toggleMode()">🌙</div>
-</div>
-
-<div class="app-container">
-    <div id="exploreTab" class="tab-content active">
-        <div class="app-section">
-            <h2 data-type="featured">Featured</h2>
-            <div id="featuredAppContainer"></div>
-        </div>
-        <div class="app-section">
-            <h2 data-type="apps">Apps</h2>
-            <div id="appList"></div>
-        </div>
+        <div class="toggle-mode" onclick="toggleMode()">🌙</div>
     </div>
 
-    <div id="searchTab" class="tab-content">
-        <div class="search-container">
-            <input type="text" id="search" placeholder="App suchen...">
+    <div class="app-container">
+        <div id="exploreTab" class="tab-content active">
+            <div class="app-section">
+                <h2 data-type="featured">Featured</h2>
+                <div id="featuredAppContainer"></div>
+            </div>
+            <div class="app-section">
+                <h2 data-type="apps">Apps</h2>
+                <div id="appList"></div>
+            </div>
         </div>
-        <div id="appListSearch" class="app-section">
-            <p id="search-prompt" class="no-apps-message">Beginne mit der Suche, um Apps zu finden.</p>
+
+        <div id="searchTab" class="tab-content">
+            <div class="search-container">
+                <input type="text" id="search" placeholder="App suchen...">
+            </div>
+            <div id="appListSearch" class="app-section">
+                <p id="search-prompt" class="no-apps-message">Beginne mit der Suche, um Apps zu finden.</p>
+            </div>
+        </div>
+
+        <div id="profileTab" class="tab-content">
+            <div class="app-section">
+                <h2 data-type="profileTitle">Profil</h2>
+                <p id="profile-welcome-title">Willkommen bei Xalostore!</p>
+                <p id="profile-text-1">Dies ist dein einfacher und sicherer Ort, um Sideload-Apps zu finden und zu installieren.</p>
+                <p id="profile-text-2">Wir arbeiten ständig daran, dir neue Funktionen und die besten Apps zur Verfügung zu stellen.</p>
+                <p id="profile-text-3">Schau bald wieder vorbei für Updates und neue Inhalte!</p>
+            </div>
+            <div class="app-section">
+                <h2 id="settings-title">Einstellungen</h2>
+                <ul class="settings-list">
+                    <li class="settings-item" onclick="openLanguageModal()">
+                        <p id="language-setting-label">Sprache</p>
+                        <span id="current-language-display">Deutsch</span>
+                    </li>
+                    <li class="settings-item">
+                        <p id="dark-mode-setting-label">Dark Mode</p>
+                        <button id="dark-mode-toggle-btn" onclick="toggleDarkModeFromSettings()">Aus</button>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 
-    <div id="profileTab" class="tab-content">
-        <div class="app-section">
-            <h2 data-type="profileTitle">Profil</h2>
-            <p id="profile-welcome-title">Willkommen bei Xalostore!</p>
-            <p id="profile-text-1">Dies ist dein einfacher und sicherer Ort, um Sideload-Apps zu finden und zu installieren.</p>
-            <p id="profile-text-2">Wir arbeiten ständig daran, dir neue Funktionen und die besten Apps zur Verfügung zu stellen.</p>
-            <p id="profile-text-3">Schau bald wieder vorbei für Updates und neue Inhalte!</p>
+    <div class="tab-bar">
+        <div id="tabExplore" class="tab-item" onclick="goTab('explore')">
+            <i class="fas fa-compass tab-icon active-icon"></i>
+            <span class="tab-text active-text" id="tab-explore-text">Explore</span>
         </div>
-        <div class="app-section">
-            <h2 id="settings-title">Einstellungen</h2>
-            <ul class="settings-list">
-                <li class="settings-item" onclick="openLanguageModal()">
-                    <p id="language-setting-label">Sprache</p>
-                    <span id="current-language-display">Deutsch</span>
-                </li>
-                <li class="settings-item">
-                    <p id="dark-mode-setting-label">Dark Mode</p>
-                    <button id="dark-mode-toggle-btn" onclick="toggleDarkModeFromSettings()">Aus</button>
-                </li>
-            </ul>
+        <div id="tabSearch" class="tab-item" onclick="goTab('search')">
+            <i class="fas fa-search tab-icon"></i>
+            <span class="tab-text" id="tab-search-text">Suchen</span>
         </div>
-    </div>
-</div>
-
-<div class="tab-bar">
-    <div id="tabExplore" class="tab-item" onclick="goTab('explore')">
-        <i class="fas fa-compass tab-icon active-icon"></i>
-        <span class="tab-text active-text" id="tab-explore-text">Explore</span>
-    </div>
-    <div id="tabSearch" class="tab-item" onclick="goTab('search')">
-        <i class="fas fa-search tab-icon"></i>
-        <span class="tab-text" id="tab-search-text">Suchen</span>
-    </div>
-    <div id="tabProfile" class="tab-item" onclick="goTab('profile')">
-        <i class="fas fa-user tab-icon"></i>
-        <span class="tab-text" id="tab-profile-text">Profil</span>
+        <div id="tabProfile" class="tab-item" onclick="goTab('profile')">
+            <i class="fas fa-user tab-icon"></i>
+            <span class="tab-text" id="tab-profile-text">Profil</span>
+        </div>
     </div>
 </div>
 
@@ -978,7 +986,16 @@
     });
     setTimeout(() => {
       const splash = document.getElementById('splash-screen');
-      if (splash) splash.classList.add('hidden');
+      const mainContent = document.getElementById('main-content');
+      if (splash) {
+          splash.classList.add('hidden');
+          setTimeout(() => {
+              splash.style.display = 'none';
+              if (mainContent) {
+                  mainContent.style.display = 'block';
+              }
+          }, 500); // 500ms should match the transition duration
+      }
     }, 1500);
 </script>
 </body>
