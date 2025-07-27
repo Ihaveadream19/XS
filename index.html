@@ -15,7 +15,7 @@
             --light-text-primary: #000000;
             --light-text-secondary: #666666;
             --light-card-bg: #ffffff;
-            --light-install-btn-bg: #007aff;
+            --light-install-btn-bg: #007aff; /* Angepasste Farbe */
             --light-install-btn-text: #ffffff;
             --light-card-shadow: rgba(0, 0, 0, 0.1);
             --light-header-bg: #ffffff;
@@ -38,7 +38,7 @@
             --dark-text-primary: #ffffff;
             --dark-text-secondary: #aaaaaa;
             --dark-card-bg: #2c2c2e;
-            --dark-install-btn-bg: #0a84ff;
+            --dark-install-btn-bg: #0a84ff; /* Angepasste Farbe */
             --dark-install-btn-text: #ffffff;
             --dark-card-shadow: rgba(0, 0, 0, 0.3);
             --dark-header-bg: #1c1c1e;
@@ -71,13 +71,10 @@
             background-color: var(--dark-bg-primary);
             color: var(--dark-text-primary);
         }
-
-        /* DIES IST DER TEST-BORDERS. Wenn Sie diese sehen, funktioniert der Code. */
+        /* FIX: Sorgt dafür, dass der Inhalt nicht unter der Tab-Leiste verschwindet */
         #main-content {
-            border: 2px solid red !important;
-            padding-bottom: calc(60px + env(safe-area-inset-bottom)) !important;
+            padding-bottom: calc(60px + env(safe-area-inset-bottom));
         }
-
         .top-bar {
             display: flex;
             justify-content: space-between;
@@ -296,9 +293,10 @@
             margin-top: 40px;
             color: var(--text-secondary);
         }
+        /* FIX: Extrem hoher z-index, damit die Modals garantiert immer im Vordergrund sind */
         .modal {
             position: fixed;
-            z-index: 99999 !important;
+            z-index: 99999; 
             left: 0;
             top: 0;
             width: 100%;
@@ -332,9 +330,10 @@
             font-size: 16px;
             color: var(--text-secondary);
         }
+        /* FIX: Der Banner ist auch über der Navigationsleiste, aber unter den Modals */
         .pwa-banner {
             position: fixed;
-            bottom: calc(env(safe-area-inset-bottom) + 60px + 10px);
+            bottom: calc(env(safe-area-inset-bottom) + 60px + 10px); 
             left: 50%;
             transform: translateX(-50%);
             width: calc(100% - 32px);
@@ -443,7 +442,7 @@
             justify-content: center;
             align-items: center;
             background-color: var(--splash-bg);
-            z-index: 99999 !important;
+            z-index: 99999;
             transition: opacity 0.5s ease-out;
             opacity: 1;
         }
@@ -676,7 +675,7 @@
             "toggleModeButtonLight": "🌙"
         }
     };
-    let currentLanguage = localStorage.getItem('appLanguage') || 'de';
+    let currentLanguage = localStorage.getItem('appLanguage') || 'de'; // Set 'de' as default
     function getTranslation(key) {
         return translations[currentLanguage][key] || key;
     }
