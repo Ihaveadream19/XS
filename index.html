@@ -23,9 +23,8 @@
             --light-tabbar-border: #e0e0e0;
             --light-tabbar-icon: #8e8e93;
             --light-tabbar-icon-active: #007aff;
-            /* FIX: Modal-Hintergrund ist jetzt vollständig blickdicht */
-            --light-modal-bg: rgba(255, 255, 255, 1.0);
-            --light-modal-content-bg: #ffffff;
+            --light-modal-overlay: rgba(0, 0, 0, 0.4);
+            --light-modal-bg: #ffffff;
             --light-input-bg: #e5e5e5;
             --light-input-text: #000000;
             --light-splash-bg: #ffffff;
@@ -47,9 +46,8 @@
             --dark-tabbar-border: #38383a;
             --dark-tabbar-icon: #8e8e93;
             --dark-tabbar-icon-active: #0a84ff;
-            /* FIX: Modal-Hintergrund ist jetzt vollständig blickdicht */
-            --dark-modal-bg: rgba(0, 0, 0, 1.0);
-            --dark-modal-content-bg: #2c2c2e;
+            --dark-modal-overlay: rgba(0, 0, 0, 0.8);
+            --dark-modal-bg: #2c2c2e;
             --dark-input-bg: #3a3a3c;
             --dark-input-text: #ffffff;
             --dark-splash-bg: #000000;
@@ -60,7 +58,10 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
-            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
             transition: background-color 0.3s, color 0.3s;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -74,24 +75,22 @@
             color: var(--dark-text-primary);
         }
         #main-content {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+            overflow-y: hidden;
+            padding-top: env(safe-area-inset-top);
         }
         .app-container {
-            flex-grow: 1;
+            flex: 1;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            /* FIX: Verhindert, dass Inhalt hinter die Tab-Bar rutscht */
-            padding-bottom: calc(60px + env(safe-area-inset-bottom));
         }
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 16px 16px 0 16px;
-            z-index: 1000;
             background: transparent;
             transition: background-color 0.3s;
         }
@@ -247,16 +246,16 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
             background-color: var(--tabbar-bg);
             border-top: 1px solid var(--tabbar-border);
             padding-bottom: env(safe-area-inset-bottom);
-            z-index: 1001 !important;
-            transition: background-color 0.3s, border-color 0.3s;
+            z-index: 1001;
             height: 60px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            flex-shrink: 0;
+        }
+        .dark .tab-bar {
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
         }
         .tab-item {
             display: flex;
@@ -285,6 +284,9 @@
         .tab-content {
             display: none;
             padding-top: 1px;
+            height: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .tab-content.active {
             display: block;
@@ -312,32 +314,33 @@
         }
         .modal {
             position: fixed;
-            z-index: 99999 !important;
+            z-index: 999999;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            /* FIX: Modal-Hintergrund ist jetzt vollständig blickdicht */
-            background-color: var(--modal-bg);
+            background-color: var(--modal-overlay);
             display: none;
             justify-content: center;
             align-items: center;
         }
         .modal.active {
             display: flex;
-            background-color: var(--modal-bg) !important;
         }
         .modal-content {
-            background-color: var(--modal-content-bg);
+            background-color: var(--modal-bg);
             padding: 20px;
             border-radius: 20px;
             width: 90%;
             max-width: 400px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
             text-align: center;
+            position: relative; /* Wichtig für das Schließen-Icon */
         }
         .close-modal {
-            float: right;
+            position: absolute;
+            top: 10px;
+            right: 15px;
             font-size: 28px;
             font-weight: bold;
             color: var(--text-secondary);
@@ -351,7 +354,6 @@
             font-size: 16px;
             color: var(--text-secondary);
         }
-        /* FIX: Spezieller Stil für den Install-Button im Pop-up */
         .modal-content .install-btn {
             background-color: #555555;
             color: #ffffff;
@@ -376,7 +378,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             display: none;
-            z-index: 1002 !important;
+            z-index: 1002;
         }
         .pwa-banner p {
             margin: 0;
@@ -407,6 +409,11 @@
             border-radius: 15px;
             margin-bottom: 10px;
             box-shadow: 0 2px 5px var(--card-shadow);
+            cursor: pointer; /* Visuelles Feedback bei Klick/Tippen */
+            transition: transform 0.2s ease-in-out;
+        }
+        .settings-item:active {
+            transform: scale(0.98);
         }
         .settings-item p {
             margin: 0;
@@ -430,10 +437,11 @@
         }
         .language-modal-content {
             padding: 20px;
-            background-color: var(--modal-content-bg);
+            background-color: var(--modal-bg);
             border-radius: 20px;
             width: 90%;
             max-width: 300px;
+            position: relative;
         }
         .language-modal-content h3 {
             margin-top: 0;
@@ -460,11 +468,6 @@
         .language-option span {
             color: var(--text-primary);
         }
-        .language-modal-content .close-modal {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-        }
         .splash-screen {
             position: fixed;
             top: 0;
@@ -475,7 +478,7 @@
             justify-content: center;
             align-items: center;
             background-color: var(--splash-bg);
-            z-index: 99999 !important;
+            z-index: 9999999;
             transition: opacity 0.5s ease-out;
             opacity: 1;
         }
@@ -522,7 +525,7 @@
                 color: var(--dark-search-bar-text);
             }
             body:not(.light) .modal-content {
-                background-color: var(--dark-modal-content-bg);
+                background-color: var(--dark-modal-bg);
             }
             body:not(.light) .settings-item {
                 background-color: var(--dark-card-bg);
@@ -827,7 +830,7 @@
         <a href="${downloadURL}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
       `;
       card.onclick = () => {
-        appModal.style.display = 'flex';
+        appModal.classList.add('active');
         modalContent.innerHTML = `
           <span class="close-modal" onclick="closeModal()">&times;</span>
           <h3>${app.name}</h3>
@@ -853,7 +856,7 @@
           <a href="${downloadURL}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
         `;
         card.onclick = () => {
-          appModal.style.display = 'flex';
+          appModal.classList.add('active');
           modalContent.innerHTML = `
             <span class="close-modal" onclick="closeModal()">&times;</span>
             <h3>${app.name}</h3>
@@ -866,7 +869,7 @@
         return card;
     }
     function closeModal() {
-      appModal.style.display = 'none';
+      appModal.classList.remove('active');
     }
     function applyDarkModeState() {
       if (currentDarkModeState) {
@@ -926,7 +929,7 @@
       }
     }
     function openLanguageModal() {
-      languageModal.style.display = 'flex';
+      languageModal.classList.add('active');
       document.querySelectorAll('.language-option').forEach(button => {
           button.classList.remove('active-lang');
       });
@@ -936,7 +939,7 @@
       }
     }
     function closeLanguageModal() {
-      languageModal.style.display = 'none';
+      languageModal.classList.remove('active');
     }
     function renderExploreApps(list) {
         if (!sourceData) return;
@@ -1024,7 +1027,7 @@
           setTimeout(() => {
               splash.style.display = 'none';
               if (mainContent) {
-                  mainContent.style.display = 'block';
+                  mainContent.style.display = 'flex';
               }
           }, 500);
       }
