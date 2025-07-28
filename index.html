@@ -23,7 +23,7 @@
             --light-tabbar-border: #e0e0e0;
             --light-tabbar-icon: #8e8e93;
             --light-tabbar-icon-active: #007aff;
-            --light-modal-overlay: #000000; /* Geändert: rgba(0, 0, 0, 0.4) zu #000000 */
+            --light-modal-overlay: rgba(0, 0, 0, 0.7); /* Extra Farbe für den Hintergrund */
             --light-modal-bg: #ffffff;
             --light-input-bg: #e5e5e5;
             --light-input-text: #000000;
@@ -46,7 +46,7 @@
             --dark-tabbar-border: #38383a;
             --dark-tabbar-icon: #8e8e93;
             --dark-tabbar-icon-active: #0a84ff;
-            --dark-modal-overlay: #000000; /* Geändert: rgba(0, 0, 0, 0.8) zu #000000 */
+            --dark-modal-overlay: rgba(0, 0, 0, 0.8); /* Extra Farbe für den Hintergrund */
             --dark-modal-bg: #2c2c2e;
             --dark-input-bg: #3a3a3c;
             --dark-input-text: #ffffff;
@@ -335,7 +335,7 @@
             max-width: 400px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
             text-align: center;
-            position: relative; /* Wichtig für das Schließen-Icon */
+            position: relative;
         }
         .close-modal {
             position: absolute;
@@ -409,7 +409,7 @@
             border-radius: 15px;
             margin-bottom: 10px;
             box-shadow: 0 2px 5px var(--card-shadow);
-            cursor: pointer; /* Visuelles Feedback bei Klick/Tippen */
+            cursor: pointer;
             transition: transform 0.2s ease-in-out;
         }
         .settings-item:active {
