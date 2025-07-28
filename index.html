@@ -23,7 +23,8 @@
             --light-tabbar-border: #e0e0e0;
             --light-tabbar-icon: #8e8e93;
             --light-tabbar-icon-active: #007aff;
-            --light-modal-overlay: rgba(0, 0, 0, 0.7); /* Extra Farbe für den Hintergrund */
+            /* GEÄNDERT: Blickdichtes Grau für Light Mode Modal */
+            --light-modal-overlay: rgba(128, 128, 128, 1); /* Oder eine andere Grau-Nuance */
             --light-modal-bg: #ffffff;
             --light-input-bg: #e5e5e5;
             --light-input-text: #000000;
@@ -46,7 +47,8 @@
             --dark-tabbar-border: #38383a;
             --dark-tabbar-icon: #8e8e93;
             --dark-tabbar-icon-active: #0a84ff;
-            --dark-modal-overlay: rgba(0, 0, 0, 0.8); /* Extra Farbe für den Hintergrund */
+            /* GEÄNDERT: Blickdichtes Grau für Dark Mode Modal */
+            --dark-modal-overlay: rgba(128, 128, 128, 1); /* Muss das gleiche Grau sein wie Light Mode */
             --dark-modal-bg: #2c2c2e;
             --dark-input-bg: #3a3a3c;
             --dark-input-text: #ffffff;
@@ -78,12 +80,12 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            overflow-y: hidden;
+            overflow-y: hidden; /* Verhindert Scrollen des Hauptinhalts */
             padding-top: env(safe-area-inset-top);
         }
         .app-container {
             flex: 1;
-            overflow-y: auto;
+            overflow-y: auto; /* Ermöglicht Scrollen nur im App-Inhaltsbereich */
             -webkit-overflow-scrolling: touch;
         }
         .top-bar {
@@ -253,6 +255,9 @@
             height: 60px;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
             flex-shrink: 0;
+            position: sticky; /* Hält die Tab-Bar fest am Viewport */
+            bottom: 0; /* Positioniert sie am unteren Rand */
+            width: 100%; /* Stellt sicher, dass sie die volle Breite einnimmt */
         }
         .dark .tab-bar {
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
@@ -285,7 +290,7 @@
             display: none;
             padding-top: 1px;
             height: 100%;
-            overflow-y: auto;
+            overflow-y: auto; /* Wichtig: Scrollen muss hier stattfinden */
             -webkit-overflow-scrolling: touch;
         }
         .tab-content.active {
@@ -319,7 +324,7 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: var(--modal-overlay);
+            background-color: var(--modal-overlay); /* Nutzt die neue, blickdichte Grau-Variable */
             display: none;
             justify-content: center;
             align-items: center;
@@ -328,7 +333,7 @@
             display: flex;
         }
         .modal-content {
-            background-color: var(--modal-bg);
+            background-color: var(--modal-bg); /* Die innere Box bleibt bei der ursprünglichen Modal-Hintergrundfarbe */
             padding: 20px;
             border-radius: 20px;
             width: 90%;
@@ -437,7 +442,7 @@
         }
         .language-modal-content {
             padding: 20px;
-            background-color: var(--modal-bg);
+            background-color: var(--modal-bg); /* Die innere Box bleibt bei der ursprünglichen Modal-Hintergrundfarbe */
             border-radius: 20px;
             width: 90%;
             max-width: 300px;
