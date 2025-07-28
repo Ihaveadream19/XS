@@ -23,7 +23,8 @@
             --light-tabbar-border: #e0e0e0;
             --light-tabbar-icon: #8e8e93;
             --light-tabbar-icon-active: #007aff;
-            --light-modal-bg: rgba(255, 255, 255, 0.9);
+            /* FIX: Modal-Hintergrund ist jetzt weniger transparent */
+            --light-modal-bg: rgba(255, 255, 255, 0.95);
             --light-modal-content-bg: #ffffff;
             --light-input-bg: #e5e5e5;
             --light-input-text: #000000;
@@ -46,7 +47,8 @@
             --dark-tabbar-border: #38383a;
             --dark-tabbar-icon: #8e8e93;
             --dark-tabbar-icon-active: #0a84ff;
-            --dark-modal-bg: rgba(0, 0, 0, 0.9);
+            /* FIX: Modal-Hintergrund ist jetzt weniger transparent */
+            --dark-modal-bg: rgba(0, 0, 0, 0.95);
             --dark-modal-content-bg: #2c2c2e;
             --dark-input-bg: #3a3a3c;
             --dark-input-text: #ffffff;
@@ -58,7 +60,11 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
-            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            /* FIX: Verhindert, dass Inhalt in den sicheren Bereich ragt */
+            padding-top: env(safe-area-inset-top);
+            padding-right: env(safe-area-inset-right);
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-left: env(safe-area-inset-left);
             transition: background-color 0.3s, color 0.3s;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -74,6 +80,12 @@
         /* FIX: Sorgt dafür, dass der Inhalt nicht unter der Tab-Leiste verschwindet */
         #main-content {
             padding-bottom: calc(60px + env(safe-area-inset-bottom)) !important;
+            min-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+        }
+        .app-container {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            height: 100%;
         }
         .top-bar {
             display: flex;
@@ -218,14 +230,19 @@
             text-overflow: ellipsis;
         }
         .install-btn {
-            background-color: var(--install-btn-bg);
-            color: var(--install-btn-text);
+            background-color: var(--light-install-btn-bg);
+            color: var(--light-install-btn-text);
             padding: 8px 16px;
             border-radius: 20px;
             text-decoration: none;
             font-size: 14px;
             font-weight: 600;
             white-space: nowrap;
+            border: none;
+        }
+        .dark .install-btn {
+            background-color: var(--dark-install-btn-bg);
+            color: var(--dark-install-btn-text);
         }
         .tab-bar {
             display: flex;
@@ -268,6 +285,7 @@
         }
         .tab-content {
             display: none;
+            padding-top: 1px; /* FIX: Verhindert, dass margin von h2 mit body zusammenfällt */
         }
         .tab-content.active {
             display: block;
@@ -306,6 +324,11 @@
             justify-content: center;
             align-items: center;
         }
+        /* FIX: Sorgt für einen festen Hintergrund, der den Inhalt verdeckt */
+        .modal.active {
+            display: flex;
+            background-color: var(--modal-bg) !important;
+        }
         .modal-content {
             background-color: var(--modal-content-bg);
             padding: 20px;
@@ -329,6 +352,19 @@
         .modal-content p {
             font-size: 16px;
             color: var(--text-secondary);
+        }
+        /* FIX: Spezieller Stil für den Install-Button im Pop-up */
+        .modal-content .install-btn {
+            background-color: #555555;
+            color: #ffffff;
+            font-size: 16px;
+            padding: 12px 24px;
+            margin-top: 15px;
+            display: inline-block;
+        }
+        .dark .modal-content .install-btn {
+            background-color: #8e8e93;
+            color: #000000;
         }
         /* FIX: Der Banner ist auch über der Navigationsleiste, aber unter den Modals */
         .pwa-banner {
@@ -525,7 +561,7 @@
         </div>
         <div class="toggle-mode" onclick="toggleMode()">🌙</div>
     </div>
-
+    
     <div class="app-container">
         <div id="exploreTab" class="tab-content active">
             <div class="app-section">
