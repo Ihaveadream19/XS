@@ -9,6 +9,13 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="https://i.imgur.com/oWyf5VR.png">
     <style>
+        /* HINZUGEFÜGT: Rote Umrandung für Testzwecke */
+        body.test-border {
+            border: 5px solid red !important; /* Wichtig: !important stellt sicher, dass es andere Styles überschreibt */
+            box-sizing: border-box; /* Stellt sicher, dass der Rand die Größe des Elements nicht beeinflusst */
+        }
+        /* Ende HINZUGEFÜGT */
+
         :root {
             --light-bg-primary: #ffffff;
             --light-bg-secondary: #f0f0f0;
@@ -549,9 +556,7 @@
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 </head>
-<body class="light">
-
-<div id="splash-screen" class="splash-screen">
+<body class="light test-border"> <div id="splash-screen" class="splash-screen">
     <img src="https://i.imgur.com/oWyf5VR.png" alt="Xalostore Logo" class="splash-logo">
 </div>
 
