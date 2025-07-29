@@ -23,9 +23,8 @@
             --light-tabbar-border: #e0e0e0;
             --light-tabbar-icon: #8e8e93;
             --light-tabbar-icon-active: #007aff;
-            /* GEÄNDERT: Blickdichtes Grau für Light Mode Modal */
-            --light-modal-overlay: rgba(128, 128, 128, 1); /* Oder eine andere Grau-Nuance */
-            --light-modal-bg: #ffffff;
+            --modal-overlay-fixed: rgba(0, 0, 0, 0.7); /* Feste, nicht transparente Graufarbe für das Overlay */
+            --modal-bg-fixed: #f0f0f0; /* Feste, nicht transparente Graufarbe für den Modal-Inhalt */
             --light-input-bg: #e5e5e5;
             --light-input-text: #000000;
             --light-splash-bg: #ffffff;
@@ -47,9 +46,8 @@
             --dark-tabbar-border: #38383a;
             --dark-tabbar-icon: #8e8e93;
             --dark-tabbar-icon-active: #0a84ff;
-            /* GEÄNDERT: Blickdichtes Grau für Dark Mode Modal */
-            --dark-modal-overlay: rgba(128, 128, 128, 1); /* Muss das gleiche Grau sein wie Light Mode */
-            --dark-modal-bg: #2c2c2e;
+            /* --dark-modal-overlay: rgba(0, 0, 0, 0.8); Diese werden durch --modal-overlay-fixed überschrieben */
+            /* --dark-modal-bg: #2c2c2e; Diese werden durch --modal-bg-fixed überschrieben */
             --dark-input-bg: #3a3a3c;
             --dark-input-text: #ffffff;
             --dark-splash-bg: #000000;
@@ -80,12 +78,13 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            overflow-y: hidden; /* Verhindert Scrollen des Hauptinhalts */
+            /* overflow-y: hidden; entfernt, damit der Inhalt scrollen kann, während die Tab-Bar fixiert bleibt */
             padding-top: env(safe-area-inset-top);
+            padding-bottom: calc(60px + env(safe-area-inset-bottom)); /* Platz für die fixierte Tab-Bar */
         }
         .app-container {
             flex: 1;
-            overflow-y: auto; /* Ermöglicht Scrollen nur im App-Inhaltsbereich */
+            overflow-y: auto; /* Erlaubt das Scrollen des Inhalts */
             -webkit-overflow-scrolling: touch;
         }
         .top-bar {
@@ -245,6 +244,9 @@
             color: var(--dark-install-btn-text);
         }
         .tab-bar {
+            position: fixed; /* Fixiert die Leiste am unteren Rand */
+            bottom: 0; /* Platziert sie am unteren Rand */
+            width: 100%; /* Volle Breite */
             display: flex;
             justify-content: space-around;
             align-items: center;
@@ -255,9 +257,6 @@
             height: 60px;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
             flex-shrink: 0;
-            position: sticky; /* Hält die Tab-Bar fest am Viewport */
-            bottom: 0; /* Positioniert sie am unteren Rand */
-            width: 100%; /* Stellt sicher, dass sie die volle Breite einnimmt */
         }
         .dark .tab-bar {
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
@@ -287,10 +286,9 @@
             color: var(--tabbar-icon-active) !important;
         }
         .tab-content {
-            display: none;
-            padding-top: 1px;
-            height: 100%;
-            overflow-y: auto; /* Wichtig: Scrollen muss hier stattfinden */
+            /* padding-top: 1px; entfernt, da padding-bottom auf main-content angewendet wird */
+            height: 100%; /* Nimmt die verbleibende Höhe ein */
+            overflow-y: auto; /* Erlaubt das Scrollen des Inhalts innerhalb des Tabs */
             -webkit-overflow-scrolling: touch;
         }
         .tab-content.active {
@@ -324,7 +322,7 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: var(--modal-overlay); /* Nutzt die neue, blickdichte Grau-Variable */
+            background-color: var(--modal-overlay-fixed); /* Verwendet die neue, feste Overlay-Farbe */
             display: none;
             justify-content: center;
             align-items: center;
@@ -333,7 +331,7 @@
             display: flex;
         }
         .modal-content {
-            background-color: var(--modal-bg); /* Die innere Box bleibt bei der ursprünglichen Modal-Hintergrundfarbe */
+            background-color: var(--modal-bg-fixed); /* Verwendet die neue, feste Hintergrundfarbe */
             padding: 20px;
             border-radius: 20px;
             width: 90%;
@@ -367,10 +365,11 @@
             margin-top: 15px;
             display: inline-block;
         }
-        .dark .modal-content .install-btn {
+        /* Die Dark Mode-Überschreibungen für Modal-Inhalte wurden entfernt, um die feste Farbe zu gewährleisten */
+        /* .dark .modal-content .install-btn {
             background-color: #8e8e93;
             color: #000000;
-        }
+        } */
         .pwa-banner {
             position: fixed;
             bottom: calc(env(safe-area-inset-bottom) + 60px + 10px);
@@ -442,7 +441,7 @@
         }
         .language-modal-content {
             padding: 20px;
-            background-color: var(--modal-bg); /* Die innere Box bleibt bei der ursprünglichen Modal-Hintergrundfarbe */
+            background-color: var(--modal-bg-fixed); /* Verwendet die neue, feste Hintergrundfarbe */
             border-radius: 20px;
             width: 90%;
             max-width: 300px;
@@ -529,9 +528,10 @@
                 background-color: var(--dark-search-bar-bg);
                 color: var(--dark-search-bar-text);
             }
-            body:not(.light) .modal-content {
+            /* .modal-content und .language-modal-content Farben werden nicht mehr überschrieben, um die feste graue Farbe zu erhalten */
+            /* body:not(.light) .modal-content {
                 background-color: var(--dark-modal-bg);
-            }
+            } */
             body:not(.light) .settings-item {
                 background-color: var(--dark-card-bg);
             }
