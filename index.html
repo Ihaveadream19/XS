@@ -585,9 +585,12 @@
     <div id="exploreTab" class="tab-content active">
         <div class="app-section">
             <h2 data-type="featured">Featured</h2>
-            <div id="featuredAppContainer"></div> </div>
-        <div class="app-section"> <h2 data-type="apps">Apps</h2>
-            <div id="appList"></div> </div>
+            <div id="featuredAppContainer"></div> 
+        </div>
+        <div class="app-section">
+            <h2 data-type="apps">Apps</h2>
+            <div id="appList"></div> 
+        </div>
     </div>
 
     <div id="searchTab" class="tab-content">
@@ -797,24 +800,46 @@
 <script>
     // Dynamically load Source.json Content
     let sourceData = null;
-    let apps = [];
+    let apps = []; // This will now hold sourceData.apps
+    let featuredAppsIdentifiers = []; // This will hold sourceData.featuredApps
     let activeCard = null; // Variable, um die aktuell hervorgehobene Karte zu speichern
 
     function loadAppsFromSource() {
+        console.log("Attempting to load source.json...");
         fetch('source.json')
             .then(response => {
                 if (!response.ok) {
+                    console.error(`HTTP error! status: ${response.status} for source.json`);
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 return response.json();
             })
             .then(data => {
-                sourceData = data;
-                apps = sourceData.apps;
-                renderExploreApps(apps);
+                console.log("source.json loaded successfully:", data);
+                sourceData = data; // Store the entire source.json object
+
+                // Now access the 'apps' array from within the sourceData object
+                if (sourceData && Array.isArray(sourceData.apps) && sourceData.apps.length > 0) {
+                    apps = sourceData.apps; // Assign the actual apps array
+                    console.log("Apps parsed from sourceData.apps:", apps);
+                } else {
+                    console.warn("source.json does not contain a valid 'apps' array or it's empty.");
+                    apps = []; // Ensure apps is an empty array if not found
+                }
+
+                // Also access the 'featuredApps' array
+                if (sourceData && Array.isArray(sourceData.featuredApps) && sourceData.featuredApps.length > 0) {
+                    featuredAppsIdentifiers = sourceData.featuredApps;
+                    console.log("Featured app identifiers parsed:", featuredAppsIdentifiers);
+                } else {
+                    console.warn("source.json does not contain a valid 'featuredApps' array or it's empty.");
+                    featuredAppsIdentifiers = []; // Ensure featuredAppsIdentifiers is an empty array
+                }
+
+                renderExploreApps(); // Call render without passing apps directly, it will use the global 'apps'
             })
             .catch(error => {
-                console.error("Could not load source.json:", error);
+                console.error("Could not load or parse source.json:", error);
                 const errorMessageElement = document.createElement('p');
                 errorMessageElement.id = 'appsLoadError';
                 errorMessageElement.className = 'no-apps-message';
@@ -853,7 +878,8 @@
     }
 
     function createCard(app) {
-      let version = app.versions[0] || {};
+      console.log("Creating card for app:", app.name);
+      let version = app.versions && app.versions.length > 0 ? app.versions[0] : {};
       let downloadURL = version.downloadURL || '#';
       let size = formatSize(version.size);
       const card = document.createElement('div');
@@ -862,7 +888,7 @@
         <img src="${app.iconURL}" alt="${app.name}">
         <div class="app-info">
           <h3>${app.name.trim()}</h3>
-          <p>${app.subtitle}</p>
+          <p>${app.subtitle || ''}</p>
         </div>
         <a href="${downloadURL}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
       `;
@@ -882,7 +908,8 @@
     }
 
     function createFeaturedCard(app) {
-        let version = app.versions[0] || {};
+        console.log("Creating featured card for app:", app.name);
+        let version = app.versions && app.versions.length > 0 ? app.versions[0] : {};
         let downloadURL = version.downloadURL || '#';
         let size = formatSize(version.size);
         const card = document.createElement('div');
@@ -890,7 +917,7 @@
         card.innerHTML = `
           <img src="${app.iconURL}" alt="${app.name}">
           <h3>${app.name.trim()}</h3>
-          <p>${app.subtitle}</p>
+          <p>${app.subtitle || ''}</p>
           <a href="${downloadURL}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
         `;
         card.onclick = () => {
@@ -946,6 +973,7 @@
     }
 
     function goTab(tabName) {
+      console.log("Switching to tab:", tabName);
       document.querySelectorAll('.tab-content').forEach(tabContent => {
         tabContent.classList.remove('active');
       });
@@ -976,7 +1004,13 @@
         searchInput.value = '';
         document.getElementById('search-prompt').textContent = getTranslation('searchPrompt');
       } else if (tabName === 'explore') {
-          renderExploreApps(apps);
+          // Rendere Apps neu, falls Tab gewechselt wird und Daten schon geladen sind
+          if (sourceData) {
+            renderExploreApps(); // Call render without passing apps directly
+          } else {
+            console.log("sourceData not yet loaded for explore tab, calling loadAppsFromSource again.");
+            loadAppsFromSource(); // Versuche erneut zu laden, falls noch nicht geschehen
+          }
       } else if (tabName === 'profile') {
         document.getElementById('current-language-display').textContent = translations[currentLanguage][`language${currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1)}`];
         updateDarkModeButtonText();
@@ -1003,37 +1037,68 @@
     function closeLanguageModal() {
       languageModal.classList.remove('active');
     }
-    function renderExploreApps(list) {
-        if (!sourceData) return;
-        appList.innerHTML = '';
-        featuredAppContainer.innerHTML = '';
-        if (!sourceData.apps || sourceData.apps.length === 0) {
+    
+    // Wichtig: renderExploreApps und renderApps müssen die Container leeren, bevor sie neue hinzufügen
+    function renderExploreApps() {
+        console.log("Rendering explore apps...");
+        if (!sourceData || !Array.isArray(apps) || apps.length === 0) {
+            console.warn("No apps data available to render explore section.");
             appList.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
+            featuredAppContainer.innerHTML = '';
             return;
         }
-        let featuredApp = null;
-        if (sourceData.featuredApps && sourceData.featuredApps.length > 0) {
-            featuredApp = sourceData.apps.find(app => app.bundleIdentifier === sourceData.featuredApps[0]);
-        }
-        const otherApps = [];
-        if (featuredApp) {
-            featuredAppContainer.appendChild(createFeaturedCard(featuredApp));
-            list.forEach(app => {
-                if (app.bundleIdentifier !== featuredApp.bundleIdentifier) {
-                    otherApps.push(app);
+
+        appList.innerHTML = ''; // Leere den Haupt-App-Container
+        featuredAppContainer.innerHTML = ''; // Leere den Featured-Container
+
+        let renderedFeaturedAppsCount = 0;
+        if (featuredAppsIdentifiers && featuredAppsIdentifiers.length > 0) {
+            featuredAppsIdentifiers.forEach(featuredId => {
+                const featuredApp = apps.find(app => app.bundleIdentifier === featuredId);
+                if (featuredApp) {
+                    console.log("Found featured app:", featuredApp.name);
+                    featuredAppContainer.appendChild(createFeaturedCard(featuredApp));
+                    renderedFeaturedAppsCount++;
+                } else {
+                    console.warn(`Featured app with identifier ${featuredId} not found in sourceData.apps.`);
                 }
             });
-        } else {
-            otherApps.push(...list);
         }
-        otherApps.forEach(app => {
-            appList.appendChild(createCard(app));
+        
+        // Hide featured section if no featured apps were rendered
+        if (renderedFeaturedAppsCount === 0) {
+            document.querySelector('#exploreTab .app-section:first-of-type').style.display = 'none';
+        } else {
+            document.querySelector('#exploreTab .app-section:first-of-type').style.display = 'block';
+        }
+
+
+        const otherApps = [];
+        apps.forEach(app => {
+            // Check if this app's bundleIdentifier is NOT in the featuredAppsIdentifiers list
+            if (!featuredAppsIdentifiers.includes(app.bundleIdentifier)) {
+                otherApps.push(app);
+            }
         });
+
+        console.log("Rendering other apps (non-featured):", otherApps.length);
+        if (otherApps.length > 0) {
+            otherApps.forEach(app => {
+                appList.appendChild(createCard(app));
+            });
+        } else {
+            // Only show 'No apps found' for the main list if no other apps exist AND no featured apps were rendered
+            if (renderedFeaturedAppsCount === 0) {
+                appList.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
+            }
+        }
     }
+
     function renderApps(list, container) {
-      if (!sourceData) return;
-      container.innerHTML = '';
+      console.log(`Rendering ${list.length} apps into container:`, container.id);
+      container.innerHTML = ''; // Leere den Container
       if (list.length === 0) {
+        console.log("No apps to render.");
         container.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
         return;
       }
@@ -1041,11 +1106,12 @@
         container.appendChild(createCard(app));
       });
     }
+
     searchInput.addEventListener('input', () => {
       const q = searchInput.value.toLowerCase();
       const filtered = apps.filter(app =>
           app.name.toLowerCase().includes(q) ||
-          app.subtitle.toLowerCase().includes(q) ||
+          (app.subtitle && app.subtitle.toLowerCase().includes(q)) || // Subtitle kann leer sein
           (app.localizedDescription && app.localizedDescription.toLowerCase().includes(q))
       );
       renderApps(filtered, appListSearch);
@@ -1055,20 +1121,25 @@
           appListSearch.innerHTML = `<p class="no-apps-message">${getTranslation('searchPrompt')}</p>`;
       }
     });
+
     function hideBanner() {
       document.getElementById("pwaBanner").style.display = "none";
       sessionStorage.setItem("hidePWABannerTemp", "1");
     }
+
     function updateDarkModeButtonText() {
         const darkModeBtn = document.getElementById('dark-mode-toggle-btn');
         if (darkModeBtn) {
             darkModeBtn.textContent = currentDarkModeState ? getTranslation('darkModeOn') : getTranslation('darkModeOff');
         }
     }
+
     window.addEventListener('load', () => {
+      console.log("Window loaded. Initializing...");
       loadPreferences();
       applyDarkModeState();
       translateUI();
+
       const isIOS = /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
       const isInStandalone =
         window.matchMedia('(display-mode: standalone)').matches ||
@@ -1078,9 +1149,12 @@
         document.getElementById("pwaBanner").style.display = "block";
       }
 
+      // Initiales Laden der Apps
       loadAppsFromSource();
       goTab('explore');
+      console.log("Initialization complete. Apps should be loading or error messages shown.");
     });
+
     setTimeout(() => {
       const splash = document.getElementById('splash-screen');
       const mainContent = document.getElementById('main-content');
