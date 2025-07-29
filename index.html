@@ -8,6 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="https://i.imgur.com/oWyf5VR.png">
+    <link rel="preload" href="source.json" as="fetch" crossorigin="anonymous"> 
     <style>
         :root {
             --light-bg-primary: #ffffff;
@@ -804,47 +805,46 @@
     let featuredAppsIdentifiers = []; // This will hold sourceData.featuredApps
     let activeCard = null; // Variable, um die aktuell hervorgehobene Karte zu speichern
 
-    function loadAppsFromSource() {
-        console.log("Attempting to load source.json...");
-        fetch('source.json')
+    // OPTIMIERUNG: loadAppsFromSourcePromise gibt ein Promise zurück
+    function loadAppsFromSourcePromise() {
+        console.log("Versuche source.json zu laden...");
+        return fetch('source.json')
             .then(response => {
                 if (!response.ok) {
-                    console.error(`HTTP error! status: ${response.status} for source.json`);
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    console.error(`HTTP Fehler! Status: ${response.status} für source.json`);
+                    throw new Error(`HTTP Fehler! Status: ${response.status}`);
                 }
                 return response.json();
             })
             .then(data => {
-                console.log("source.json loaded successfully:", data);
-                sourceData = data; // Store the entire source.json object
+                console.log("source.json erfolgreich geladen:", data);
+                sourceData = data; // Das gesamte source.json Objekt speichern
 
-                // Now access the 'apps' array from within the sourceData object
                 if (sourceData && Array.isArray(sourceData.apps) && sourceData.apps.length > 0) {
-                    apps = sourceData.apps; // Assign the actual apps array
-                    console.log("Apps parsed from sourceData.apps:", apps);
+                    apps = sourceData.apps; 
+                    console.log("Apps von sourceData.apps geparst:", apps);
                 } else {
-                    console.warn("source.json does not contain a valid 'apps' array or it's empty.");
-                    apps = []; // Ensure apps is an empty array if not found
+                    console.warn("source.json enthält kein gültiges 'apps'-Array oder es ist leer.");
+                    apps = []; 
                 }
 
-                // Also access the 'featuredApps' array
                 if (sourceData && Array.isArray(sourceData.featuredApps) && sourceData.featuredApps.length > 0) {
                     featuredAppsIdentifiers = sourceData.featuredApps;
-                    console.log("Featured app identifiers parsed:", featuredAppsIdentifiers);
+                    console.log("Gekennzeichnete App-Identifikatoren geparst:", featuredAppsIdentifiers);
                 } else {
-                    console.warn("source.json does not contain a valid 'featuredApps' array or it's empty.");
-                    featuredAppsIdentifiers = []; // Ensure featuredAppsIdentifiers is an empty array
+                    console.warn("source.json enthält kein gültiges 'featuredApps'-Array oder es ist leer.");
+                    featuredAppsIdentifiers = []; 
                 }
-
-                renderExploreApps(); // Call render without passing apps directly, it will use the global 'apps'
+                // renderExploreApps() wird jetzt erst aufgerufen, wenn das Promise aufgelöst wird (im window.load)
             })
             .catch(error => {
-                console.error("Could not load or parse source.json:", error);
+                console.error("source.json konnte nicht geladen oder geparst werden:", error);
                 const errorMessageElement = document.createElement('p');
                 errorMessageElement.id = 'appsLoadError';
                 errorMessageElement.className = 'no-apps-message';
                 errorMessageElement.textContent = getTranslation('appsLoadError');
                 document.getElementById('exploreTab').appendChild(errorMessageElement);
+                throw error; // Fehler weiterleiten, damit das Promise abgelehnt wird
             });
     }
 
@@ -878,7 +878,7 @@
     }
 
     function createCard(app) {
-      console.log("Creating card for app:", app.name);
+      console.log("Erstelle Karte für App:", app.name);
       let version = app.versions && app.versions.length > 0 ? app.versions[0] : {};
       let downloadURL = version.downloadURL || '#';
       let size = formatSize(version.size);
@@ -893,7 +893,7 @@
         <a href="${downloadURL}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
       `;
       card.onclick = () => {
-        highlightCard(card); // Highlight the card when clicked
+        highlightCard(card); // Karte beim Klicken hervorheben
         appModal.classList.add('active');
         modalContent.innerHTML = `
           <span class="close-modal" onclick="closeModal()">&times;</span>
@@ -908,7 +908,7 @@
     }
 
     function createFeaturedCard(app) {
-        console.log("Creating featured card for app:", app.name);
+        console.log("Erstelle hervorgehobene Karte für App:", app.name);
         let version = app.versions && app.versions.length > 0 ? app.versions[0] : {};
         let downloadURL = version.downloadURL || '#';
         let size = formatSize(version.size);
@@ -921,7 +921,7 @@
           <a href="${downloadURL}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
         `;
         card.onclick = () => {
-          highlightCard(card); // Highlight the card when clicked
+          highlightCard(card); // Karte beim Klicken hervorheben
           appModal.classList.add('active');
           modalContent.innerHTML = `
             <span class="close-modal" onclick="closeModal()">&times;</span>
@@ -937,7 +937,7 @@
 
     function closeModal() {
       appModal.classList.remove('active');
-      removeHighlight(); // Remove highlight when modal is closed
+      removeHighlight(); // Hervorhebung entfernen, wenn Modal geschlossen wird
     }
 
     function applyDarkModeState() {
@@ -962,35 +962,34 @@
     }
 
     function toggleDarkModeFromSettings(element) {
-        // Handle highlighting for settings item
+        // Highlighting für Einstellungselement behandeln
         if (element) {
             element.classList.add('highlighted-active-item');
             setTimeout(() => {
                 element.classList.remove('highlighted-active-item');
-            }, 300); // Highlight for 300ms
+            }, 300); // Highlight für 300ms
         }
         toggleMode();
     }
 
     function goTab(tabName) {
-      console.log("Switching to tab:", tabName);
+      console.log("Wechsle zu Tab:", tabName);
       document.querySelectorAll('.tab-content').forEach(tabContent => {
         tabContent.classList.remove('active');
       });
       document.querySelectorAll('.tab-icon').forEach(icon => {
-        icon.style.color = ''; // Reset to default via CSS variable
+        icon.style.color = ''; 
         icon.classList.remove('active-icon');
       });
       document.querySelectorAll('.tab-text').forEach(text => {
-        text.style.color = ''; // Reset to default via CSS variable
+        text.style.color = ''; 
         text.classList.remove('active-text');
       });
 
       const selectedTabContent = document.getElementById(`${tabName}Tab`);
       if (selectedTabContent) {
         selectedTabContent.classList.add('active');
-        // Ensure scroll to top when changing tabs, for better UX
-        selectedTabContent.scrollTop = 0;
+        selectedTabContent.scrollTop = 0; // Sicherstellen, dass beim Tab-Wechsel zum Anfang gescrollt wird
       }
       
       const selectedTabItem = document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
@@ -1006,26 +1005,25 @@
       } else if (tabName === 'explore') {
           // Rendere Apps neu, falls Tab gewechselt wird und Daten schon geladen sind
           if (sourceData) {
-            renderExploreApps(); // Call render without passing apps directly
+            renderExploreApps(); 
           } else {
-            console.log("sourceData not yet loaded for explore tab, calling loadAppsFromSource again.");
-            loadAppsFromSource(); // Versuche erneut zu laden, falls noch nicht geschehen
+            console.log("sourceData noch nicht für Explore-Tab geladen, versuche erneut zu laden.");
+            // OPTIMIERUNG: Keine direkte erneute Ladung hier, da Promise.all im load-Handler es schon tut
+            // und goTab('explore') beim Initialladen aufgerufen wird
           }
       } else if (tabName === 'profile') {
         document.getElementById('current-language-display').textContent = translations[currentLanguage][`language${currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1)}`];
         updateDarkModeButtonText();
       }
-      // Apply lazy loading after tab content is rendered and visible
-      lazyLoadImages();
+      lazyLoadImages(); // Lazy Loading anwenden, nachdem der Tab-Inhalt gerendert und sichtbar ist
     }
 
     function openLanguageModal(element) {
-      // Handle highlighting for settings item
       if (element) {
           element.classList.add('highlighted-active-item');
           setTimeout(() => {
               element.classList.remove('highlighted-active-item');
-          }, 300); // Highlight for 300ms
+          }, 300); 
         }
         languageModal.classList.add('active');
         document.querySelectorAll('.language-option').forEach(button => {
@@ -1040,34 +1038,36 @@
       languageModal.classList.remove('active');
     }
     
-    // Wichtig: renderExploreApps und renderApps müssen die Container leeren, bevor sie neue hinzufügen
+    // OPTIMIERUNG: Verwendung von DocumentFragment
     function renderExploreApps() {
-        console.log("Rendering explore apps...");
+        console.log("Rendere Explore-Apps...");
         if (!sourceData || !Array.isArray(apps) || apps.length === 0) {
-            console.warn("No apps data available to render explore section.");
+            console.warn("Keine App-Daten zum Rendern des Explore-Bereichs verfügbar.");
             appList.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
             featuredAppContainer.innerHTML = '';
             return;
         }
 
-        appList.innerHTML = ''; // Leere den Haupt-App-Container
-        featuredAppContainer.innerHTML = ''; // Leere den Featured-Container
+        appList.innerHTML = ''; 
+        featuredAppContainer.innerHTML = ''; 
 
+        const featuredAppFragment = document.createDocumentFragment(); // Fragment für Featured Apps
         let renderedFeaturedAppsCount = 0;
         if (featuredAppsIdentifiers && featuredAppsIdentifiers.length > 0) {
             featuredAppsIdentifiers.forEach(featuredId => {
                 const featuredApp = apps.find(app => app.bundleIdentifier === featuredId);
                 if (featuredApp) {
-                    console.log("Found featured app:", featuredApp.name);
-                    featuredAppContainer.appendChild(createFeaturedCard(featuredApp));
+                    console.log("Gekennzeichnete App gefunden:", featuredApp.name);
+                    featuredAppFragment.appendChild(createFeaturedCard(featuredApp));
                     renderedFeaturedAppsCount++;
                 } else {
-                    console.warn(`Featured app with identifier ${featuredId} not found in sourceData.apps.`);
+                    console.warn(`Gekennzeichnete App mit ID ${featuredId} nicht in sourceData.apps gefunden.`);
                 }
             });
+            featuredAppContainer.appendChild(featuredAppFragment); // Fragment einmal zum DOM hinzufügen
         }
         
-        // Hide featured section if no featured apps were rendered
+        // Featured-Sektion ausblenden, wenn keine gekennzeichneten Apps gerendert wurden
         if (renderedFeaturedAppsCount === 0) {
             document.querySelector('#exploreTab .app-section:first-of-type').style.display = 'none';
         } else {
@@ -1077,53 +1077,62 @@
 
         const otherApps = [];
         apps.forEach(app => {
-            // Check if this app's bundleIdentifier is NOT in the featuredAppsIdentifiers list
             if (!featuredAppsIdentifiers.includes(app.bundleIdentifier)) {
                 otherApps.push(app);
             }
         });
 
-        console.log("Rendering other apps (non-featured):", otherApps.length);
+        console.log("Rendere andere Apps (nicht gekennzeichnet):", otherApps.length);
+        const appListFragment = document.createDocumentFragment(); // Fragment für andere Apps
         if (otherApps.length > 0) {
             otherApps.forEach(app => {
-                appList.appendChild(createCard(app));
+                appListFragment.appendChild(createCard(app));
             });
+            appList.appendChild(appListFragment); // Fragment einmal zum DOM hinzufügen
         } else {
-            // Only show 'No apps found' for the main list if no other apps exist AND no featured apps were rendered
+            // Nur "Keine Apps gefunden" für die Hauptliste anzeigen, wenn keine anderen Apps existieren UND keine gekennzeichneten Apps gerendert wurden
             if (renderedFeaturedAppsCount === 0) {
                 appList.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
             }
         }
-        lazyLoadImages(); // Apply lazy loading after all explore apps are rendered
+        lazyLoadImages(); 
     }
 
+    // OPTIMIERUNG: Verwendung von DocumentFragment
     function renderApps(list, container) {
-      console.log(`Rendering ${list.length} apps into container:`, container.id);
-      container.innerHTML = ''; // Leere den Container
+      console.log(`Rendere ${list.length} Apps in Container:`, container.id);
+      container.innerHTML = ''; 
       if (list.length === 0) {
-        console.log("No apps to render.");
+        console.log("Keine Apps zum Rendern.");
         container.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
         return;
       }
+      const fragment = document.createDocumentFragment(); // Fragment erstellen
       list.forEach(app => {
-        container.appendChild(createCard(app));
+        fragment.appendChild(createCard(app)); // Dem Fragment hinzufügen
       });
-      lazyLoadImages(); // Apply lazy loading after search results are rendered
+      container.appendChild(fragment); // Fragment einmal zum DOM hinzufügen
+      lazyLoadImages(); 
     }
 
+    // OPTIMIERUNG: Debouncing für die Suchfunktion
+    let searchTimeout;
     searchInput.addEventListener('input', () => {
-      const q = searchInput.value.toLowerCase();
-      const filtered = apps.filter(app =>
-          app.name.toLowerCase().includes(q) ||
-          (app.subtitle && app.subtitle.toLowerCase().includes(q)) || // Subtitle kann leer sein
-          (app.localizedDescription && app.localizedDescription.toLowerCase().includes(q))
-      );
-      renderApps(filtered, appListSearch);
-      if (filtered.length === 0 && q.length > 0) {
-          appListSearch.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
-      } else if (q.length === 0) {
-          appListSearch.innerHTML = `<p class="no-apps-message">${getTranslation('searchPrompt')}</p>`;
-      }
+      clearTimeout(searchTimeout); // Vorherigen Timeout löschen
+      searchTimeout = setTimeout(() => { // Neuen Timeout setzen
+        const q = searchInput.value.toLowerCase();
+        const filtered = apps.filter(app =>
+            app.name.toLowerCase().includes(q) ||
+            (app.subtitle && app.subtitle.toLowerCase().includes(q)) || 
+            (app.localizedDescription && app.localizedDescription.toLowerCase().includes(q))
+        );
+        renderApps(filtered, appListSearch);
+        if (filtered.length === 0 && q.length > 0) {
+            appListSearch.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
+        } else if (q.length === 0) {
+            appListSearch.innerHTML = `<p class="no-apps-message">${getTranslation('searchPrompt')}</p>`;
+        }
+      }, 300); // 300ms Verzögerung nach der letzten Eingabe
     });
 
     function hideBanner() {
@@ -1143,7 +1152,7 @@
 
     function lazyLoadImages() {
         if ('IntersectionObserver' in window) {
-            if (observer) { // Disconnect previous observer if exists
+            if (observer) { 
                 observer.disconnect();
             }
             observer = new IntersectionObserver((entries, observer) => {
@@ -1155,18 +1164,18 @@
                             img.src = src;
                             img.removeAttribute('data-src');
                         }
-                        observer.unobserve(img); // Stop observing once loaded
+                        observer.unobserve(img); 
                     }
                 });
             }, {
-                rootMargin: '0px 0px 100px 0px' // Load images when they are 100px away from the viewport
+                rootMargin: '0px 0px 100px 0px' 
             });
 
             document.querySelectorAll('.lazy-load-img').forEach(img => {
                 observer.observe(img);
             });
         } else {
-            // Fallback for browsers that do not support IntersectionObserver
+            // Fallback für Browser, die IntersectionObserver nicht unterstützen
             document.querySelectorAll('.lazy-load-img').forEach(img => {
                 const src = img.getAttribute('data-src');
                 if (src) {
@@ -1177,8 +1186,9 @@
         }
     }
 
+    // OPTIMIERUNG: Initialisierung des Splash-Screens und des Hauptinhalts
     window.addEventListener('load', () => {
-      console.log("Window loaded. Initializing...");
+      console.log("Fenster geladen. Initialisiere...");
       loadPreferences();
       applyDarkModeState();
       translateUI();
@@ -1192,26 +1202,44 @@
         document.getElementById("pwaBanner").style.display = "block";
       }
 
-      // Initiales Laden der Apps
-      loadAppsFromSource();
-      goTab('explore');
-      // lazyLoadImages() will be called by renderExploreApps() or goTab()
-      console.log("Initialization complete. Apps should be loading or error messages shown.");
+      // OPTIMIERUNG: Synchronisiere Splash-Screen mit Laden der Daten
+      Promise.all([
+          loadAppsFromSourcePromise(), // Lade die App-Daten
+          new Promise(resolve => setTimeout(resolve, 1000)) // Mindestens 1 Sekunde für den Splash-Screen
+      ]).then(() => {
+          console.log("Alle Startdaten geladen und minimale Splash-Zeit erreicht.");
+          renderExploreApps(); // Apps rendern, sobald Daten da sind
+          goTab('explore'); // Zum Explore-Tab wechseln
+          
+          const splash = document.getElementById('splash-screen');
+          const mainContent = document.getElementById('main-content');
+          if (splash) {
+              splash.classList.add('hidden');
+              setTimeout(() => {
+                  splash.style.display = 'none';
+                  if (mainContent) {
+                      mainContent.style.display = 'flex'; // Hauptinhalt sichtbar machen
+                  }
+              }, 500); // Dauer des Ausblendens
+          }
+      }).catch(error => {
+          console.error("Fehler während des initialen Ladevorgangs:", error);
+          // Fallback: Splash-Screen trotzdem ausblenden, auch wenn ein Fehler auftritt
+          const splash = document.getElementById('splash-screen');
+          const mainContent = document.getElementById('main-content');
+          if (splash) {
+              splash.classList.add('hidden');
+              setTimeout(() => {
+                  splash.style.display = 'none';
+                  if (mainContent) {
+                      mainContent.style.display = 'flex';
+                  }
+              }, 500);
+          }
+          // Zeige trotzdem den Explore-Tab, aber mit der Fehlermeldung
+          goTab('explore'); 
+      });
     });
-
-    setTimeout(() => {
-      const splash = document.getElementById('splash-screen');
-      const mainContent = document.getElementById('main-content');
-      if (splash) {
-          splash.classList.add('hidden');
-          setTimeout(() => {
-              splash.style.display = 'none';
-              if (mainContent) {
-                  mainContent.style.display = 'flex';
-              }
-          }, 500);
-      }
-    }, 1500);
 </script>
 </body>
 </html>
