@@ -585,12 +585,9 @@
     <div id="exploreTab" class="tab-content active">
         <div class="app-section">
             <h2 data-type="featured">Featured</h2>
-        </div>
-        <div id="featuredAppContainer"></div>
-        <div class="app-section">
-            <h2 data-type="apps">Apps</h2>
-            <div id="appList"></div>
-        </div>
+            <div id="featuredAppContainer"></div> </div>
+        <div class="app-section"> <h2 data-type="apps">Apps</h2>
+            <div id="appList"></div> </div>
     </div>
 
     <div id="searchTab" class="tab-content">
@@ -993,15 +990,15 @@
           setTimeout(() => {
               element.classList.remove('highlighted-active-item');
           }, 300); // Highlight for 300ms
-      }
-      languageModal.classList.add('active');
-      document.querySelectorAll('.language-option').forEach(button => {
-          button.classList.remove('active-lang');
-      });
-      const activeLangButton = document.getElementById(`lang-${currentLanguage}`);
-      if (activeLangButton) {
-          activeLangButton.classList.add('active-lang');
-      }
+        }
+        languageModal.classList.add('active');
+        document.querySelectorAll('.language-option').forEach(button => {
+            button.classList.remove('active-lang');
+        });
+        const activeLangButton = document.getElementById(`lang-${currentLanguage}`);
+        if (activeLangButton) {
+            activeLangButton.classList.add('active-lang');
+        }
     }
     function closeLanguageModal() {
       languageModal.classList.remove('active');
