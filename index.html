@@ -885,7 +885,7 @@
       const card = document.createElement('div');
       card.className = 'app-card';
       card.innerHTML = `
-        <img src="${app.iconURL}" alt="${app.name}">
+        <img data-src="${app.iconURL}" alt="${app.name}" class="lazy-load-img">
         <div class="app-info">
           <h3>${app.name.trim()}</h3>
           <p>${app.subtitle || ''}</p>
@@ -915,7 +915,7 @@
         const card = document.createElement('div');
         card.className = 'featured-app-card';
         card.innerHTML = `
-          <img src="${app.iconURL}" alt="${app.name}">
+          <img data-src="${app.iconURL}" alt="${app.name}" class="lazy-load-img">
           <h3>${app.name.trim()}</h3>
           <p>${app.subtitle || ''}</p>
           <a href="${downloadURL}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
@@ -1015,6 +1015,8 @@
         document.getElementById('current-language-display').textContent = translations[currentLanguage][`language${currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1)}`];
         updateDarkModeButtonText();
       }
+      // Apply lazy loading after tab content is rendered and visible
+      lazyLoadImages();
     }
 
     function openLanguageModal(element) {
@@ -1092,6 +1094,7 @@
                 appList.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
             }
         }
+        lazyLoadImages(); // Apply lazy loading after all explore apps are rendered
     }
 
     function renderApps(list, container) {
@@ -1105,6 +1108,7 @@
       list.forEach(app => {
         container.appendChild(createCard(app));
       });
+      lazyLoadImages(); // Apply lazy loading after search results are rendered
     }
 
     searchInput.addEventListener('input', () => {
@@ -1134,6 +1138,45 @@
         }
     }
 
+    // --- Lazy Loading Implementation ---
+    let observer;
+
+    function lazyLoadImages() {
+        if ('IntersectionObserver' in window) {
+            if (observer) { // Disconnect previous observer if exists
+                observer.disconnect();
+            }
+            observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        const src = img.getAttribute('data-src');
+                        if (src) {
+                            img.src = src;
+                            img.removeAttribute('data-src');
+                        }
+                        observer.unobserve(img); // Stop observing once loaded
+                    }
+                });
+            }, {
+                rootMargin: '0px 0px 100px 0px' // Load images when they are 100px away from the viewport
+            });
+
+            document.querySelectorAll('.lazy-load-img').forEach(img => {
+                observer.observe(img);
+            });
+        } else {
+            // Fallback for browsers that do not support IntersectionObserver
+            document.querySelectorAll('.lazy-load-img').forEach(img => {
+                const src = img.getAttribute('data-src');
+                if (src) {
+                    img.src = src;
+                    img.removeAttribute('data-src');
+                }
+            });
+        }
+    }
+
     window.addEventListener('load', () => {
       console.log("Window loaded. Initializing...");
       loadPreferences();
@@ -1152,6 +1195,7 @@
       // Initiales Laden der Apps
       loadAppsFromSource();
       goTab('explore');
+      // lazyLoadImages() will be called by renderExploreApps() or goTab()
       console.log("Initialization complete. Apps should be loading or error messages shown.");
     });
 
