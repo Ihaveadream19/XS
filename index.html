@@ -9,13 +9,6 @@
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="https://i.imgur.com/oWyf5VR.png">
     <style>
-        /* HINZUGEFÜGT: Rote Umrandung für Testzwecke */
-        body.test-border {
-            border: 5px solid red !important; /* Wichtig: !important stellt sicher, dass es andere Styles überschreibt */
-            box-sizing: border-box; /* Stellt sicher, dass der Rand die Größe des Elements nicht beeinflusst */
-        }
-        /* Ende HINZUGEFÜGT */
-
         :root {
             --light-bg-primary: #ffffff;
             --light-bg-secondary: #f0f0f0;
@@ -38,6 +31,7 @@
             --light-search-bar-bg: #e5e5e5;
             --light-search-bar-text: #000000;
             --light-pwa-banner-bg: #f0f0f0;
+            --highlight-color: #e0f2ff; /* Neue Highlight-Farbe für helle Themen */
         }
         .dark {
             --dark-bg-primary: #1c1c1e;
@@ -53,25 +47,25 @@
             --dark-tabbar-border: #38383a;
             --dark-tabbar-icon: #8e8e93;
             --dark-tabbar-icon-active: #0a84ff;
-            /* --dark-modal-overlay: rgba(0, 0, 0, 0.8); Diese werden durch --modal-overlay-fixed überschrieben */
-            /* --dark-modal-bg: #2c2c2e; Diese werden durch --modal-bg-fixed überschrieben */
             --dark-input-bg: #3a3a3c;
             --dark-input-text: #ffffff;
             --dark-splash-bg: #000000;
             --dark-search-bar-bg: #3a3a3c;
             --dark-search-bar-text: #ffffff;
             --dark-pwa-banner-bg: #3a3a3c;
+            --highlight-color: #3a4a5a; /* Neue Highlight-Farbe für dunkle Themen */
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
-            height: 100vh;
+            height: 100vh; /* Volle Höhe des Viewports */
             display: flex;
             flex-direction: column;
             transition: background-color 0.3s, color 0.3s;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            overflow: hidden; /* Verhindert das Scrollen des gesamten Bodys */
         }
         body.light {
             background-color: var(--light-bg-primary);
@@ -82,25 +76,28 @@
             color: var(--dark-text-primary);
         }
         #main-content {
-            flex: 1;
+            flex: 1; /* Nimmt den verbleibenden Platz ein */
             display: flex;
             flex-direction: column;
-            /* overflow-y: hidden; entfernt, damit der Inhalt scrollen kann, während die Tab-Bar fixiert bleibt */
+            overflow: hidden; /* Verhindert das Scrollen des main-content selbst */
             padding-top: env(safe-area-inset-top);
             padding-bottom: calc(60px + env(safe-area-inset-bottom)); /* Platz für die fixierte Tab-Bar */
         }
-        .app-container {
-            flex: 1;
-            overflow-y: auto; /* Erlaubt das Scrollen des Inhalts */
-            -webkit-overflow-scrolling: touch;
-        }
         .top-bar {
+            position: fixed; /* Fixiert die Top-Bar */
+            top: 0;
+            left: 0;
+            width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 16px 16px 0 16px;
+            padding: 16px 16px 10px 16px; /* Angepasstes Padding für den festen Header */
             background: transparent;
             transition: background-color 0.3s;
+            z-index: 1000; /* Stellt sicher, dass die Top-Bar über den Inhalten liegt */
+            box-sizing: border-box; /* Padding wird in die Breite eingerechnet */
+            padding-top: calc(16px + env(safe-area-inset-top)); /* Berücksichtigt Safe Area */
+            border-bottom: 1px solid var(--tabbar-border); /* Leichte Trennlinie */
         }
         body.light .top-bar {
             background-color: var(--light-header-bg);
@@ -167,6 +164,7 @@
             margin-right: 10px;
             text-align: center;
             white-space: normal;
+            transition: transform 0.2s ease-in-out, background-color 0.2s; /* Für Highlight */
         }
         .featured-app-card:last-child {
             margin-right: 16px;
@@ -203,7 +201,7 @@
             padding: 12px;
             margin-bottom: 10px;
             cursor: pointer;
-            transition: transform 0.2s ease-in-out;
+            transition: transform 0.2s ease-in-out, background-color 0.2s; /* Für Highlight */
         }
         .app-card:active {
             transform: scale(0.98);
@@ -292,19 +290,28 @@
         .active-text {
             color: var(--tabbar-icon-active) !important;
         }
+        /* Neue Scroll-Regeln für Tabs */
         .tab-content {
-            /* padding-top: 1px; entfernt, da padding-bottom auf main-content angewendet wird */
-            height: 100%; /* Nimmt die verbleibende Höhe ein */
+            flex: 1; /* Jeder Tab-Inhalt nimmt den verfügbaren Platz ein */
             overflow-y: auto; /* Erlaubt das Scrollen des Inhalts innerhalb des Tabs */
             -webkit-overflow-scrolling: touch;
+            display: none; /* Standardmäßig ausgeblendet */
+            padding-top: 75px; /* Platz für die fixierte Top-Bar */
+            box-sizing: border-box; /* Padding wird in die Höhe eingerechnet */
         }
         .tab-content.active {
-            display: block;
+            display: flex; /* Aktiviert den Flex-Container, um inneren Inhalt zu verwalten */
+            flex-direction: column; /* Stellt sicher, dass die Abschnitte untereinander liegen */
         }
+
         #searchTab .search-container {
             padding: 16px;
             background-color: var(--bg-primary);
             transition: background-color 0.3s;
+            position: sticky; /* Fixiert die Suchleiste beim Scrollen des Search-Tabs */
+            top: 75px; /* Unterhalb der Top-Bar */
+            z-index: 50; /* Über dem scrollenden Inhalt */
+            border-bottom: 1px solid var(--tabbar-border);
         }
         #search {
             width: 100%;
@@ -372,11 +379,6 @@
             margin-top: 15px;
             display: inline-block;
         }
-        /* Die Dark Mode-Überschreibungen für Modal-Inhalte wurden entfernt, um die feste Farbe zu gewährleisten */
-        /* .dark .modal-content .install-btn {
-            background-color: #8e8e93;
-            color: #000000;
-        } */
         .pwa-banner {
             position: fixed;
             bottom: calc(env(safe-area-inset-bottom) + 60px + 10px);
@@ -421,7 +423,7 @@
             margin-bottom: 10px;
             box-shadow: 0 2px 5px var(--card-shadow);
             cursor: pointer;
-            transition: transform 0.2s ease-in-out;
+            transition: transform 0.2s ease-in-out, background-color 0.2s; /* Für Highlight */
         }
         .settings-item:active {
             transform: scale(0.98);
@@ -446,6 +448,13 @@
             font-weight: 600;
             cursor: pointer;
         }
+        /* Highlight für aktive Elemente (App-Karten und Einstellungen-Items) */
+        .highlighted-active-item {
+            background-color: var(--highlight-color) !important; /* Extra Farbe */
+            border: 2px solid var(--tabbar-icon-active); /* Extra Form (Rand) */
+            padding: 13px; /* Anpassung des Paddings für den Rand */
+        }
+
         .language-modal-content {
             padding: 20px;
             background-color: var(--modal-bg-fixed); /* Verwendet die neue, feste Hintergrundfarbe */
@@ -535,10 +544,6 @@
                 background-color: var(--dark-search-bar-bg);
                 color: var(--dark-search-bar-text);
             }
-            /* .modal-content und .language-modal-content Farben werden nicht mehr überschrieben, um die feste graue Farbe zu erhalten */
-            /* body:not(.light) .modal-content {
-                background-color: var(--dark-modal-bg);
-            } */
             body:not(.light) .settings-item {
                 background-color: var(--dark-card-bg);
             }
@@ -552,11 +557,16 @@
                 background-color: var(--dark-install-btn-bg);
                 color: var(--dark-install-btn-text);
             }
+            body:not(.light) .highlighted-active-item {
+                border-color: var(--dark-tabbar-icon-active) !important;
+            }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 </head>
-<body class="light test-border"> <div id="splash-screen" class="splash-screen">
+<body class="light">
+
+<div id="splash-screen" class="splash-screen">
     <img src="https://i.imgur.com/oWyf5VR.png" alt="Xalostore Logo" class="splash-logo">
 </div>
 
@@ -572,48 +582,46 @@
         <div class="toggle-mode" onclick="toggleMode()">🌙</div>
     </div>
     
-    <div class="app-container">
-        <div id="exploreTab" class="tab-content active">
-            <div class="app-section">
-                <h2 data-type="featured">Featured</h2>
-            </div>
-            <div id="featuredAppContainer"></div>
-            <div class="app-section">
-                <h2 data-type="apps">Apps</h2>
-                <div id="appList"></div>
-            </div>
+    <div id="exploreTab" class="tab-content active">
+        <div class="app-section">
+            <h2 data-type="featured">Featured</h2>
         </div>
-
-        <div id="searchTab" class="tab-content">
-            <div class="search-container">
-                <input type="text" id="search" placeholder="App suchen...">
-            </div>
-            <div id="appListSearch" class="app-section">
-                <p id="search-prompt" class="no-apps-message">Beginne mit der Suche, um Apps zu finden.</p>
-            </div>
+        <div id="featuredAppContainer"></div>
+        <div class="app-section">
+            <h2 data-type="apps">Apps</h2>
+            <div id="appList"></div>
         </div>
+    </div>
 
-        <div id="profileTab" class="tab-content">
-            <div class="app-section">
-                <h2 data-type="profileTitle">Profil</h2>
-                <p id="profile-welcome-title">Willkommen bei Xalostore!</p>
-                <p id="profile-text-1">Dies ist dein einfacher und sicherer Ort, um Sideload-Apps zu finden und zu installieren.</p>
-                <p id="profile-text-2">Wir arbeiten ständig daran, dir neue Funktionen und die besten Apps zur Verfügung zu stellen.</p>
-                <p id="profile-text-3">Schau bald wieder vorbei für Updates und neue Inhalte!</p>
-            </div>
-            <div class="app-section">
-                <h2 id="settings-title">Einstellungen</h2>
-                <ul class="settings-list">
-                    <li class="settings-item" onclick="openLanguageModal()">
-                        <p id="language-setting-label">Sprache</p>
-                        <span id="current-language-display">Deutsch</span>
-                    </li>
-                    <li class="settings-item">
-                        <p id="dark-mode-setting-label">Dark Mode</p>
-                        <button id="dark-mode-toggle-btn" onclick="toggleDarkModeFromSettings()">Aus</button>
-                    </li>
-                </ul>
-            </div>
+    <div id="searchTab" class="tab-content">
+        <div class="search-container">
+            <input type="text" id="search" placeholder="App suchen...">
+        </div>
+        <div id="appListSearch" class="app-section">
+            <p id="search-prompt" class="no-apps-message">Beginne mit der Suche, um Apps zu finden.</p>
+        </div>
+    </div>
+
+    <div id="profileTab" class="tab-content">
+        <div class="app-section">
+            <h2 data-type="profileTitle">Profil</h2>
+            <p id="profile-welcome-title">Willkommen bei Xalostore!</p>
+            <p id="profile-text-1">Dies ist dein einfacher und sicherer Ort, um Sideload-Apps zu finden und zu installieren.</p>
+            <p id="profile-text-2">Wir arbeiten ständig daran, dir neue Funktionen und die besten Apps zur Verfügung zu stellen.</p>
+            <p id="profile-text-3">Schau bald wieder vorbei für Updates und neue Inhalte!</p>
+        </div>
+        <div class="app-section">
+            <h2 id="settings-title">Einstellungen</h2>
+            <ul class="settings-list">
+                <li class="settings-item" onclick="openLanguageModal(this)">
+                    <p id="language-setting-label">Sprache</p>
+                    <span id="current-language-display">Deutsch</span>
+                </li>
+                <li class="settings-item" onclick="toggleDarkModeFromSettings(this)">
+                    <p id="dark-mode-setting-label">Dark Mode</p>
+                    <button id="dark-mode-toggle-btn">Aus</button>
+                </li>
+            </ul>
         </div>
     </div>
 
@@ -687,7 +695,9 @@
             "languageDe": "Deutsch",
             "languageEn": "English",
             "toggleModeButtonDark": "☀️",
-            "toggleModeButtonLight": "🌙"
+            "toggleModeButtonLight": "🌙",
+            "darkModeOn": "An",
+            "darkModeOff": "Aus"
         },
         "en": {
             "title": "Xalostore",
@@ -718,7 +728,9 @@
             "languageDe": "Deutsch",
             "languageEn": "English",
             "toggleModeButtonDark": "☀️",
-            "toggleModeButtonLight": "🌙"
+            "toggleModeButtonLight": "🌙",
+            "darkModeOn": "On",
+            "darkModeOff": "Off"
         }
     };
     let currentLanguage = localStorage.getItem('appLanguage') || 'de';
@@ -753,7 +765,7 @@
         document.getElementById('profile-text-3').textContent = getTranslation('profileText3');
         document.getElementById('settings-title').textContent = getTranslation('settingsTitle');
         document.getElementById('language-setting-label').textContent = getTranslation('languageSettingLabel');
-        document.getElementById('dark-mode-setting-label').textContent = getTranslation('darkModeSettingLabel');
+        document.getElementById('darkModeSettingLabel').textContent = getTranslation('darkModeSettingLabel'); /* Update this line */
         document.getElementById('language-selection-title').textContent = getTranslation('languageSelectionTitle');
         document.getElementById('lang-de').querySelector('span').textContent = getTranslation('languageDe');
         document.getElementById('lang-en').querySelector('span').textContent = getTranslation('languageEn');
@@ -762,6 +774,7 @@
         if (searchModeToggle) {
           searchModeToggle.innerHTML = currentDarkModeState ? getTranslation('toggleModeButtonDark') : getTranslation('toggleModeButtonLight');
         }
+        updateDarkModeButtonText(); // Update the button text for settings
     }
     let currentDarkModeState = localStorage.getItem('xalostore_dark_mode') === 'true';
     function loadPreferences() {
@@ -788,6 +801,7 @@
     // Dynamically load Source.json Content
     let sourceData = null;
     let apps = [];
+    let activeCard = null; // Variable, um die aktuell hervorgehobene Karte zu speichern
 
     function loadAppsFromSource() {
         fetch('source.json')
@@ -825,6 +839,22 @@
       const mb = (bytes / 1024 / 1024).toFixed(1);
       return `${mb} MB`;
     }
+
+    function highlightCard(card) {
+        if (activeCard) {
+            activeCard.classList.remove('highlighted-active-item');
+        }
+        activeCard = card;
+        card.classList.add('highlighted-active-item');
+    }
+
+    function removeHighlight() {
+        if (activeCard) {
+            activeCard.classList.remove('highlighted-active-item');
+            activeCard = null;
+        }
+    }
+
     function createCard(app) {
       let version = app.versions[0] || {};
       let downloadURL = version.downloadURL || '#';
@@ -840,6 +870,7 @@
         <a href="${downloadURL}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
       `;
       card.onclick = () => {
+        highlightCard(card); // Highlight the card when clicked
         appModal.classList.add('active');
         modalContent.innerHTML = `
           <span class="close-modal" onclick="closeModal()">&times;</span>
@@ -866,6 +897,7 @@
           <a href="${downloadURL}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
         `;
         card.onclick = () => {
+          highlightCard(card); // Highlight the card when clicked
           appModal.classList.add('active');
           modalContent.innerHTML = `
             <span class="close-modal" onclick="closeModal()">&times;</span>
@@ -878,9 +910,12 @@
         };
         return card;
     }
+
     function closeModal() {
       appModal.classList.remove('active');
+      removeHighlight(); // Remove highlight when modal is closed
     }
+
     function applyDarkModeState() {
       if (currentDarkModeState) {
         document.body.classList.remove('light');
@@ -895,38 +930,50 @@
           searchModeToggle.innerHTML = currentDarkModeState ? getTranslation('toggleModeButtonDark') : getTranslation('toggleModeButtonLight');
       }
     }
+
     function toggleMode() {
       currentDarkModeState = !currentDarkModeState;
       localStorage.setItem('xalostore_dark_mode', currentDarkModeState);
       applyDarkModeState();
     }
 
-    function toggleDarkModeFromSettings() {
-      toggleMode();
+    function toggleDarkModeFromSettings(element) {
+        // Handle highlighting for settings item
+        if (element) {
+            element.classList.add('highlighted-active-item');
+            setTimeout(() => {
+                element.classList.remove('highlighted-active-item');
+            }, 300); // Highlight for 300ms
+        }
+        toggleMode();
     }
+
     function goTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(tabContent => {
         tabContent.classList.remove('active');
       });
       document.querySelectorAll('.tab-icon').forEach(icon => {
-        icon.style.color = 'var(--tabbar-icon)';
+        icon.style.color = ''; // Reset to default via CSS variable
         icon.classList.remove('active-icon');
       });
       document.querySelectorAll('.tab-text').forEach(text => {
-        text.style.color = 'var(--tabbar-icon)';
+        text.style.color = ''; // Reset to default via CSS variable
         text.classList.remove('active-text');
       });
+
       const selectedTabContent = document.getElementById(`${tabName}Tab`);
       if (selectedTabContent) {
         selectedTabContent.classList.add('active');
+        // Ensure scroll to top when changing tabs, for better UX
+        selectedTabContent.scrollTop = 0;
       }
+      
       const selectedTabItem = document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
       if (selectedTabItem) {
-          selectedTabItem.querySelector('.tab-icon').style.color = 'var(--tabbar-icon-active)';
           selectedTabItem.querySelector('.tab-icon').classList.add('active-icon');
-          selectedTabItem.querySelector('.tab-text').style.color = 'var(--tabbar-icon-active)';
           selectedTabItem.querySelector('.tab-text').classList.add('active-text');
       }
+      
       if (tabName === 'search') {
         renderApps(apps, appListSearch);
         searchInput.value = '';
@@ -938,7 +985,15 @@
         updateDarkModeButtonText();
       }
     }
-    function openLanguageModal() {
+
+    function openLanguageModal(element) {
+      // Handle highlighting for settings item
+      if (element) {
+          element.classList.add('highlighted-active-item');
+          setTimeout(() => {
+              element.classList.remove('highlighted-active-item');
+          }, 300); // Highlight for 300ms
+      }
       languageModal.classList.add('active');
       document.querySelectorAll('.language-option').forEach(button => {
           button.classList.remove('active-lang');
@@ -1010,7 +1065,7 @@
     function updateDarkModeButtonText() {
         const darkModeBtn = document.getElementById('dark-mode-toggle-btn');
         if (darkModeBtn) {
-            darkModeBtn.textContent = currentDarkModeState ? 'An' : 'Aus';
+            darkModeBtn.textContent = currentDarkModeState ? getTranslation('darkModeOn') : getTranslation('darkModeOff');
         }
     }
     window.addEventListener('load', () => {
