@@ -8,7 +8,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="https://i.imgur.com/oWyf5VR.png">
-    <link rel="preload" href="source.json" as="fetch" crossorigin="anonymous"> 
     <style>
         :root {
             --light-bg-primary: #ffffff;
@@ -24,15 +23,14 @@
             --light-tabbar-border: #e0e0e0;
             --light-tabbar-icon: #8e8e93;
             --light-tabbar-icon-active: #007aff;
-            --modal-overlay-fixed: rgba(0, 0, 0, 0.7); /* Feste, nicht transparente Graufarbe für das Overlay */
-            --modal-bg-fixed: #f0f0f0; /* Feste, nicht transparente Graufarbe für den Modal-Inhalt */
+            --light-modal-bg: rgba(255, 255, 255, 0.9);
+            --light-modal-content-bg: #ffffff;
             --light-input-bg: #e5e5e5;
             --light-input-text: #000000;
             --light-splash-bg: #ffffff;
             --light-search-bar-bg: #e5e5e5;
             --light-search-bar-text: #000000;
             --light-pwa-banner-bg: #f0f0f0;
-            --highlight-color: #e0f2ff; /* Neue Highlight-Farbe für helle Themen */
         }
         .dark {
             --dark-bg-primary: #1c1c1e;
@@ -48,25 +46,22 @@
             --dark-tabbar-border: #38383a;
             --dark-tabbar-icon: #8e8e93;
             --dark-tabbar-icon-active: #0a84ff;
+            --dark-modal-bg: rgba(0, 0, 0, 0.9);
+            --dark-modal-content-bg: #2c2c2e;
             --dark-input-bg: #3a3a3c;
             --dark-input-text: #ffffff;
             --dark-splash-bg: #000000;
             --dark-search-bar-bg: #3a3a3c;
             --dark-search-bar-text: #ffffff;
             --dark-pwa-banner-bg: #3a3a3c;
-            --highlight-color: #3a4a5a; /* Neue Highlight-Farbe für dunkle Themen */
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
-            padding: 0;
-            height: 100vh; /* Volle Höhe des Viewports */
-            display: flex;
-            flex-direction: column;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
             transition: background-color 0.3s, color 0.3s;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            overflow: hidden; /* Verhindert das Scrollen des gesamten Bodys */
         }
         body.light {
             background-color: var(--light-bg-primary);
@@ -76,29 +71,18 @@
             background-color: var(--dark-bg-primary);
             color: var(--dark-text-primary);
         }
-        #main-content {
-            flex: 1; /* Nimmt den verbleibenden Platz ein */
-            display: flex;
-            flex-direction: column;
-            overflow: hidden; /* Verhindert das Scrollen des main-content selbst */
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: calc(60px + env(safe-area-inset-bottom)); /* Platz für die fixierte Tab-Bar */
+        .app-container {
+            padding: 0 16px;
+            padding-bottom: 80px;
         }
         .top-bar {
-            position: fixed; /* Fixiert die Top-Bar */
-            top: 0;
-            left: 0;
-            width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 16px 16px 10px 16px; /* Angepasstes Padding für den festen Header */
+            padding: 16px 16px 0 16px;
+            z-index: 1000;
             background: transparent;
             transition: background-color 0.3s;
-            z-index: 1000; /* Stellt sicher, dass die Top-Bar über den Inhalten liegt */
-            box-sizing: border-box; /* Padding wird in die Breite eingerechnet */
-            padding-top: calc(16px + env(safe-area-inset-top)); /* Berücksichtigt Safe Area */
-            border-bottom: 1px solid var(--tabbar-border); /* Leichte Trennlinie */
         }
         body.light .top-bar {
             background-color: var(--light-header-bg);
@@ -135,7 +119,6 @@
         }
         .app-section {
             margin-top: 16px;
-            padding: 0 16px;
         }
         .app-section h2 {
             font-size: 22px;
@@ -146,7 +129,6 @@
             overflow-x: scroll;
             white-space: nowrap;
             -webkit-overflow-scrolling: touch;
-            padding-left: 16px;
             padding-bottom: 16px;
             scrollbar-width: none;
             -ms-overflow-style: none;
@@ -165,10 +147,9 @@
             margin-right: 10px;
             text-align: center;
             white-space: normal;
-            transition: transform 0.2s ease-in-out, background-color 0.2s; /* Für Highlight */
         }
         .featured-app-card:last-child {
-            margin-right: 16px;
+            margin-right: 0;
         }
         .featured-app-card img {
             width: 80px;
@@ -202,7 +183,7 @@
             padding: 12px;
             margin-bottom: 10px;
             cursor: pointer;
-            transition: transform 0.2s ease-in-out, background-color 0.2s; /* Für Highlight */
+            transition: transform 0.2s ease-in-out;
         }
         .app-card:active {
             transform: scale(0.98);
@@ -235,37 +216,28 @@
             text-overflow: ellipsis;
         }
         .install-btn {
-            background-color: var(--light-install-btn-bg);
-            color: var(--light-install-btn-text);
+            background-color: var(--install-btn-bg);
+            color: var(--install-btn-text);
             padding: 8px 16px;
             border-radius: 20px;
             text-decoration: none;
             font-size: 14px;
             font-weight: 600;
             white-space: nowrap;
-            border: none;
-        }
-        .dark .install-btn {
-            background-color: var(--dark-install-btn-bg);
-            color: var(--dark-install-btn-text);
         }
         .tab-bar {
-            position: fixed; /* Fixiert die Leiste am unteren Rand */
-            bottom: 0; /* Platziert sie am unteren Rand */
-            width: 100%; /* Volle Breite */
             display: flex;
             justify-content: space-around;
             align-items: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
             background-color: var(--tabbar-bg);
             border-top: 1px solid var(--tabbar-border);
             padding-bottom: env(safe-area-inset-bottom);
             z-index: 1001;
-            height: 60px;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-            flex-shrink: 0;
-        }
-        .dark .tab-bar {
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+            transition: background-color 0.3s, border-color 0.3s;
         }
         .tab-item {
             display: flex;
@@ -274,7 +246,6 @@
             flex: 1;
             padding: 10px 0;
             cursor: pointer;
-            height: 100%;
         }
         .tab-icon {
             font-size: 24px;
@@ -291,28 +262,17 @@
         .active-text {
             color: var(--tabbar-icon-active) !important;
         }
-        /* Neue Scroll-Regeln für Tabs */
         .tab-content {
-            flex: 1; /* Jeder Tab-Inhalt nimmt den verfügbaren Platz ein */
-            overflow-y: auto; /* Erlaubt das Scrollen des Inhalts innerhalb des Tabs */
-            -webkit-overflow-scrolling: touch;
-            display: none; /* Standardmäßig ausgeblendet */
-            padding-top: 75px; /* Platz für die fixierte Top-Bar */
-            box-sizing: border-box; /* Padding wird in die Höhe eingerechnet */
+            display: none;
         }
         .tab-content.active {
-            display: flex; /* Aktiviert den Flex-Container, um inneren Inhalt zu verwalten */
-            flex-direction: column; /* Stellt sicher, dass die Abschnitte untereinander liegen */
+            display: block;
         }
-
         #searchTab .search-container {
             padding: 16px;
+            z-index: 999;
             background-color: var(--bg-primary);
             transition: background-color 0.3s;
-            position: sticky; /* Fixiert die Suchleiste beim Scrollen des Search-Tabs */
-            top: 75px; /* Unterhalb der Top-Bar */
-            z-index: 50; /* Über dem scrollenden Inhalt */
-            border-bottom: 1px solid var(--tabbar-border);
         }
         #search {
             width: 100%;
@@ -332,33 +292,27 @@
         }
         .modal {
             position: fixed;
-            z-index: 999999;
+            z-index: 1002;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: var(--modal-overlay-fixed); /* Verwendet die neue, feste Overlay-Farbe */
+            background-color: var(--modal-bg);
             display: none;
             justify-content: center;
             align-items: center;
         }
-        .modal.active {
-            display: flex;
-        }
         .modal-content {
-            background-color: var(--modal-bg-fixed); /* Verwendet die neue, feste Hintergrundfarbe */
+            background-color: var(--modal-content-bg);
             padding: 20px;
             border-radius: 20px;
             width: 90%;
             max-width: 400px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
             text-align: center;
-            position: relative;
         }
         .close-modal {
-            position: absolute;
-            top: 10px;
-            right: 15px;
+            float: right;
             font-size: 28px;
             font-weight: bold;
             color: var(--text-secondary);
@@ -372,17 +326,9 @@
             font-size: 16px;
             color: var(--text-secondary);
         }
-        .modal-content .install-btn {
-            background-color: #555555;
-            color: #ffffff;
-            font-size: 16px;
-            padding: 12px 24px;
-            margin-top: 15px;
-            display: inline-block;
-        }
         .pwa-banner {
             position: fixed;
-            bottom: calc(env(safe-area-inset-bottom) + 60px + 10px);
+            bottom: calc(env(safe-area-inset-bottom) + 60px);
             left: 50%;
             transform: translateX(-50%);
             width: calc(100% - 32px);
@@ -392,7 +338,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             display: none;
-            z-index: 1002;
+            z-index: 1000;
         }
         .pwa-banner p {
             margin: 0;
@@ -414,7 +360,7 @@
             padding: 0;
             margin: 20px 0;
         }
-        .settings-item {
+        #profileTab .settings-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -423,11 +369,6 @@
             border-radius: 15px;
             margin-bottom: 10px;
             box-shadow: 0 2px 5px var(--card-shadow);
-            cursor: pointer;
-            transition: transform 0.2s ease-in-out, background-color 0.2s; /* Für Highlight */
-        }
-        .settings-item:active {
-            transform: scale(0.98);
         }
         .settings-item p {
             margin: 0;
@@ -449,20 +390,12 @@
             font-weight: 600;
             cursor: pointer;
         }
-        /* Highlight für aktive Elemente (App-Karten und Einstellungen-Items) */
-        .highlighted-active-item {
-            background-color: var(--highlight-color) !important; /* Extra Farbe */
-            border: 2px solid var(--tabbar-icon-active); /* Extra Form (Rand) */
-            padding: 13px; /* Anpassung des Paddings für den Rand */
-        }
-
         .language-modal-content {
             padding: 20px;
-            background-color: var(--modal-bg-fixed); /* Verwendet die neue, feste Hintergrundfarbe */
+            background-color: var(--modal-content-bg);
             border-radius: 20px;
             width: 90%;
             max-width: 300px;
-            position: relative;
         }
         .language-modal-content h3 {
             margin-top: 0;
@@ -489,6 +422,11 @@
         .language-option span {
             color: var(--text-primary);
         }
+        .language-modal-content .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+        }
         .splash-screen {
             position: fixed;
             top: 0;
@@ -499,7 +437,7 @@
             justify-content: center;
             align-items: center;
             background-color: var(--splash-bg);
-            z-index: 9999999;
+            z-index: 9999;
             transition: opacity 0.5s ease-out;
             opacity: 1;
         }
@@ -545,6 +483,9 @@
                 background-color: var(--dark-search-bar-bg);
                 color: var(--dark-search-bar-text);
             }
+            body:not(.light) .modal-content {
+                background-color: var(--dark-modal-content-bg);
+            }
             body:not(.light) .settings-item {
                 background-color: var(--dark-card-bg);
             }
@@ -558,9 +499,6 @@
                 background-color: var(--dark-install-btn-bg);
                 color: var(--dark-install-btn-text);
             }
-            body:not(.light) .highlighted-active-item {
-                border-color: var(--dark-tabbar-icon-active) !important;
-            }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
@@ -571,26 +509,26 @@
     <img src="https://i.imgur.com/oWyf5VR.png" alt="Xalostore Logo" class="splash-logo">
 </div>
 
-<div id="main-content" style="display: none;">
-    <div class="top-bar">
-        <div class="title-block">
-            <img src="https://i.imgur.com/oWyf5VR.png" alt="Xalostore Logo">
-            <div>
-                <h1 id="header-title">Xalostore</h1>
-                <h2 id="header-subtitle">Sideload Apps. Simple. Secure.</h2>
-            </div>
+<div class="top-bar">
+    <div class="title-block">
+        <img src="https://i.imgur.com/oWyf5VR.png" alt="Xalostore Logo">
+        <div>
+            <h1 id="header-title">Xalostore</h1>
+            <h2 id="header-subtitle">Sideload Apps. Simple. Secure.</h2>
         </div>
-        <div class="toggle-mode" onclick="toggleMode()">🌙</div>
     </div>
-    
+    <div class="toggle-mode" onclick="toggleMode()">🌙</div>
+</div>
+
+<div class="app-container">
     <div id="exploreTab" class="tab-content active">
         <div class="app-section">
             <h2 data-type="featured">Featured</h2>
-            <div id="featuredAppContainer"></div> 
+            <div id="featuredAppContainer"></div>
         </div>
         <div class="app-section">
             <h2 data-type="apps">Apps</h2>
-            <div id="appList"></div> 
+            <div id="appList"></div>
         </div>
     </div>
 
@@ -614,31 +552,31 @@
         <div class="app-section">
             <h2 id="settings-title">Einstellungen</h2>
             <ul class="settings-list">
-                <li class="settings-item" onclick="openLanguageModal(this)">
+                <li class="settings-item" onclick="openLanguageModal()">
                     <p id="language-setting-label">Sprache</p>
                     <span id="current-language-display">Deutsch</span>
                 </li>
-                <li class="settings-item" onclick="toggleDarkModeFromSettings(this)">
+                <li class="settings-item">
                     <p id="dark-mode-setting-label">Dark Mode</p>
-                    <button id="dark-mode-toggle-btn">Aus</button>
+                    <button id="dark-mode-toggle-btn" onclick="toggleDarkModeFromSettings()">Aus</button>
                 </li>
             </ul>
         </div>
     </div>
+</div>
 
-    <div class="tab-bar">
-        <div id="tabExplore" class="tab-item" onclick="goTab('explore')">
-            <i class="fas fa-compass tab-icon active-icon"></i>
-            <span class="tab-text active-text" id="tab-explore-text">Explore</span>
-        </div>
-        <div id="tabSearch" class="tab-item" onclick="goTab('search')">
-            <i class="fas fa-search tab-icon"></i>
-            <span class="tab-text" id="tab-search-text">Suchen</span>
-        </div>
-        <div id="tabProfile" class="tab-item" onclick="goTab('profile')">
-            <i class="fas fa-user tab-icon"></i>
-            <span class="tab-text" id="tab-profile-text">Profil</span>
-        </div>
+<div class="tab-bar">
+    <div id="tabExplore" class="tab-item" onclick="goTab('explore')">
+        <i class="fas fa-compass tab-icon active-icon"></i>
+        <span class="tab-text active-text" id="tab-explore-text">Explore</span>
+    </div>
+    <div id="tabSearch" class="tab-item" onclick="goTab('search')">
+        <i class="fas fa-search tab-icon"></i>
+        <span class="tab-text" id="tab-search-text">Suchen</span>
+    </div>
+    <div id="tabProfile" class="tab-item" onclick="goTab('profile')">
+        <i class="fas fa-user tab-icon"></i>
+        <span class="tab-text" id="tab-profile-text">Profil</span>
     </div>
 </div>
 
@@ -696,9 +634,7 @@
             "languageDe": "Deutsch",
             "languageEn": "English",
             "toggleModeButtonDark": "☀️",
-            "toggleModeButtonLight": "🌙",
-            "darkModeOn": "An",
-            "darkModeOff": "Aus"
+            "toggleModeButtonLight": "🌙"
         },
         "en": {
             "title": "Xalostore",
@@ -729,12 +665,10 @@
             "languageDe": "Deutsch",
             "languageEn": "English",
             "toggleModeButtonDark": "☀️",
-            "toggleModeButtonLight": "🌙",
-            "darkModeOn": "On",
-            "darkModeOff": "Off"
+            "toggleModeButtonLight": "🌙"
         }
     };
-    let currentLanguage = localStorage.getItem('appLanguage') || 'de';
+    let currentLanguage = localStorage.getItem('appLanguage') || 'de'; // Set 'de' as default
     function getTranslation(key) {
         return translations[currentLanguage][key] || key;
     }
@@ -766,7 +700,7 @@
         document.getElementById('profile-text-3').textContent = getTranslation('profileText3');
         document.getElementById('settings-title').textContent = getTranslation('settingsTitle');
         document.getElementById('language-setting-label').textContent = getTranslation('languageSettingLabel');
-        document.getElementById('darkModeSettingLabel').textContent = getTranslation('darkModeSettingLabel'); /* Update this line */
+        document.getElementById('dark-mode-setting-label').textContent = getTranslation('darkModeSettingLabel');
         document.getElementById('language-selection-title').textContent = getTranslation('languageSelectionTitle');
         document.getElementById('lang-de').querySelector('span').textContent = getTranslation('languageDe');
         document.getElementById('lang-en').querySelector('span').textContent = getTranslation('languageEn');
@@ -775,7 +709,6 @@
         if (searchModeToggle) {
           searchModeToggle.innerHTML = currentDarkModeState ? getTranslation('toggleModeButtonDark') : getTranslation('toggleModeButtonLight');
         }
-        updateDarkModeButtonText(); // Update the button text for settings
     }
     let currentDarkModeState = localStorage.getItem('xalostore_dark_mode') === 'true';
     function loadPreferences() {
@@ -801,50 +734,28 @@
 <script>
     // Dynamically load Source.json Content
     let sourceData = null;
-    let apps = []; // This will now hold sourceData.apps
-    let featuredAppsIdentifiers = []; // This will hold sourceData.featuredApps
-    let activeCard = null; // Variable, um die aktuell hervorgehobene Karte zu speichern
+    let apps = [];
 
-    // OPTIMIERUNG: loadAppsFromSourcePromise gibt ein Promise zurück
-    function loadAppsFromSourcePromise() {
-        console.log("Versuche source.json zu laden...");
-        return fetch('source.json')
+    function loadAppsFromSource() {
+        fetch('source.json')
             .then(response => {
                 if (!response.ok) {
-                    console.error(`HTTP Fehler! Status: ${response.status} für source.json`);
-                    throw new Error(`HTTP Fehler! Status: ${response.status}`);
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 return response.json();
             })
             .then(data => {
-                console.log("source.json erfolgreich geladen:", data);
-                sourceData = data; // Das gesamte source.json Objekt speichern
-
-                if (sourceData && Array.isArray(sourceData.apps) && sourceData.apps.length > 0) {
-                    apps = sourceData.apps; 
-                    console.log("Apps von sourceData.apps geparst:", apps);
-                } else {
-                    console.warn("source.json enthält kein gültiges 'apps'-Array oder es ist leer.");
-                    apps = []; 
-                }
-
-                if (sourceData && Array.isArray(sourceData.featuredApps) && sourceData.featuredApps.length > 0) {
-                    featuredAppsIdentifiers = sourceData.featuredApps;
-                    console.log("Gekennzeichnete App-Identifikatoren geparst:", featuredAppsIdentifiers);
-                } else {
-                    console.warn("source.json enthält kein gültiges 'featuredApps'-Array oder es ist leer.");
-                    featuredAppsIdentifiers = []; 
-                }
-                // renderExploreApps() wird jetzt erst aufgerufen, wenn das Promise aufgelöst wird (im window.load)
+                sourceData = data;
+                apps = sourceData.apps;
+                renderExploreApps(apps);
             })
             .catch(error => {
-                console.error("source.json konnte nicht geladen oder geparst werden:", error);
+                console.error("Could not load source.json:", error);
                 const errorMessageElement = document.createElement('p');
                 errorMessageElement.id = 'appsLoadError';
                 errorMessageElement.className = 'no-apps-message';
                 errorMessageElement.textContent = getTranslation('appsLoadError');
                 document.getElementById('exploreTab').appendChild(errorMessageElement);
-                throw error; // Fehler weiterleiten, damit das Promise abgelehnt wird
             });
     }
 
@@ -861,40 +772,22 @@
       const mb = (bytes / 1024 / 1024).toFixed(1);
       return `${mb} MB`;
     }
-
-    function highlightCard(card) {
-        if (activeCard) {
-            activeCard.classList.remove('highlighted-active-item');
-        }
-        activeCard = card;
-        card.classList.add('highlighted-active-item');
-    }
-
-    function removeHighlight() {
-        if (activeCard) {
-            activeCard.classList.remove('highlighted-active-item');
-            activeCard = null;
-        }
-    }
-
     function createCard(app) {
-      console.log("Erstelle Karte für App:", app.name);
-      let version = app.versions && app.versions.length > 0 ? app.versions[0] : {};
+      let version = app.versions[0] || {};
       let downloadURL = version.downloadURL || '#';
       let size = formatSize(version.size);
       const card = document.createElement('div');
       card.className = 'app-card';
       card.innerHTML = `
-        <img data-src="${app.iconURL}" alt="${app.name}" class="lazy-load-img">
+        <img src="${app.iconURL}" alt="${app.name}">
         <div class="app-info">
           <h3>${app.name.trim()}</h3>
-          <p>${app.subtitle || ''}</p>
+          <p>${app.subtitle}</p>
         </div>
         <a href="${downloadURL}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
       `;
       card.onclick = () => {
-        highlightCard(card); // Karte beim Klicken hervorheben
-        appModal.classList.add('active');
+        appModal.style.display = 'flex';
         modalContent.innerHTML = `
           <span class="close-modal" onclick="closeModal()">&times;</span>
           <h3>${app.name}</h3>
@@ -908,21 +801,19 @@
     }
 
     function createFeaturedCard(app) {
-        console.log("Erstelle hervorgehobene Karte für App:", app.name);
-        let version = app.versions && app.versions.length > 0 ? app.versions[0] : {};
+        let version = app.versions[0] || {};
         let downloadURL = version.downloadURL || '#';
         let size = formatSize(version.size);
         const card = document.createElement('div');
         card.className = 'featured-app-card';
         card.innerHTML = `
-          <img data-src="${app.iconURL}" alt="${app.name}" class="lazy-load-img">
+          <img src="${app.iconURL}" alt="${app.name}">
           <h3>${app.name.trim()}</h3>
-          <p>${app.subtitle || ''}</p>
+          <p>${app.subtitle}</p>
           <a href="${downloadURL}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
         `;
         card.onclick = () => {
-          highlightCard(card); // Karte beim Klicken hervorheben
-          appModal.classList.add('active');
+          appModal.style.display = 'flex';
           modalContent.innerHTML = `
             <span class="close-modal" onclick="closeModal()">&times;</span>
             <h3>${app.name}</h3>
@@ -934,12 +825,9 @@
         };
         return card;
     }
-
     function closeModal() {
-      appModal.classList.remove('active');
-      removeHighlight(); // Hervorhebung entfernen, wenn Modal geschlossen wird
+      appModal.style.display = 'none';
     }
-
     function applyDarkModeState() {
       if (currentDarkModeState) {
         document.body.classList.remove('light');
@@ -954,245 +842,128 @@
           searchModeToggle.innerHTML = currentDarkModeState ? getTranslation('toggleModeButtonDark') : getTranslation('toggleModeButtonLight');
       }
     }
-
     function toggleMode() {
       currentDarkModeState = !currentDarkModeState;
       localStorage.setItem('xalostore_dark_mode', currentDarkModeState);
       applyDarkModeState();
     }
 
-    function toggleDarkModeFromSettings(element) {
-        // Highlighting für Einstellungselement behandeln
-        if (element) {
-            element.classList.add('highlighted-active-item');
-            setTimeout(() => {
-                element.classList.remove('highlighted-active-item');
-            }, 300); // Highlight für 300ms
-        }
-        toggleMode();
+    function toggleDarkModeFromSettings() {
+      toggleMode();
     }
-
     function goTab(tabName) {
-      console.log("Wechsle zu Tab:", tabName);
       document.querySelectorAll('.tab-content').forEach(tabContent => {
         tabContent.classList.remove('active');
       });
       document.querySelectorAll('.tab-icon').forEach(icon => {
-        icon.style.color = ''; 
+        icon.style.color = 'var(--tabbar-icon)';
         icon.classList.remove('active-icon');
       });
       document.querySelectorAll('.tab-text').forEach(text => {
-        text.style.color = ''; 
+        text.style.color = 'var(--tabbar-icon)';
         text.classList.remove('active-text');
       });
-
       const selectedTabContent = document.getElementById(`${tabName}Tab`);
       if (selectedTabContent) {
         selectedTabContent.classList.add('active');
-        selectedTabContent.scrollTop = 0; // Sicherstellen, dass beim Tab-Wechsel zum Anfang gescrollt wird
       }
-      
       const selectedTabItem = document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
       if (selectedTabItem) {
+          selectedTabItem.querySelector('.tab-icon').style.color = 'var(--tabbar-icon-active)';
           selectedTabItem.querySelector('.tab-icon').classList.add('active-icon');
+          selectedTabItem.querySelector('.tab-text').style.color = 'var(--tabbar-icon-active)';
           selectedTabItem.querySelector('.tab-text').classList.add('active-text');
       }
-      
       if (tabName === 'search') {
         renderApps(apps, appListSearch);
         searchInput.value = '';
         document.getElementById('search-prompt').textContent = getTranslation('searchPrompt');
       } else if (tabName === 'explore') {
-          // Rendere Apps neu, falls Tab gewechselt wird und Daten schon geladen sind
-          if (sourceData) {
-            renderExploreApps(); 
-          } else {
-            console.log("sourceData noch nicht für Explore-Tab geladen, versuche erneut zu laden.");
-            // OPTIMIERUNG: Keine direkte erneute Ladung hier, da Promise.all im load-Handler es schon tut
-            // und goTab('explore') beim Initialladen aufgerufen wird
-          }
+          renderExploreApps(apps);
       } else if (tabName === 'profile') {
         document.getElementById('current-language-display').textContent = translations[currentLanguage][`language${currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1)}`];
         updateDarkModeButtonText();
       }
-      lazyLoadImages(); // Lazy Loading anwenden, nachdem der Tab-Inhalt gerendert und sichtbar ist
     }
-
-    function openLanguageModal(element) {
-      if (element) {
-          element.classList.add('highlighted-active-item');
-          setTimeout(() => {
-              element.classList.remove('highlighted-active-item');
-          }, 300); 
-        }
-        languageModal.classList.add('active');
-        document.querySelectorAll('.language-option').forEach(button => {
-            button.classList.remove('active-lang');
-        });
-        const activeLangButton = document.getElementById(`lang-${currentLanguage}`);
-        if (activeLangButton) {
-            activeLangButton.classList.add('active-lang');
-        }
+    function openLanguageModal() {
+      languageModal.style.display = 'flex';
+      document.querySelectorAll('.language-option').forEach(button => {
+          button.classList.remove('active-lang');
+      });
+      const activeLangButton = document.getElementById(`lang-${currentLanguage}`);
+      if (activeLangButton) {
+          activeLangButton.classList.add('active-lang');
+      }
     }
     function closeLanguageModal() {
-      languageModal.classList.remove('active');
+      languageModal.style.display = 'none';
     }
-    
-    // OPTIMIERUNG: Verwendung von DocumentFragment
-    function renderExploreApps() {
-        console.log("Rendere Explore-Apps...");
-        if (!sourceData || !Array.isArray(apps) || apps.length === 0) {
-            console.warn("Keine App-Daten zum Rendern des Explore-Bereichs verfügbar.");
+    function renderExploreApps(list) {
+        if (!sourceData) return;
+        appList.innerHTML = '';
+        featuredAppContainer.innerHTML = '';
+        if (!sourceData.apps || sourceData.apps.length === 0) {
             appList.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
-            featuredAppContainer.innerHTML = '';
             return;
         }
-
-        appList.innerHTML = ''; 
-        featuredAppContainer.innerHTML = ''; 
-
-        const featuredAppFragment = document.createDocumentFragment(); // Fragment für Featured Apps
-        let renderedFeaturedAppsCount = 0;
-        if (featuredAppsIdentifiers && featuredAppsIdentifiers.length > 0) {
-            featuredAppsIdentifiers.forEach(featuredId => {
-                const featuredApp = apps.find(app => app.bundleIdentifier === featuredId);
-                if (featuredApp) {
-                    console.log("Gekennzeichnete App gefunden:", featuredApp.name);
-                    featuredAppFragment.appendChild(createFeaturedCard(featuredApp));
-                    renderedFeaturedAppsCount++;
-                } else {
-                    console.warn(`Gekennzeichnete App mit ID ${featuredId} nicht in sourceData.apps gefunden.`);
+        let featuredApp = null;
+        if (sourceData.featuredApps && sourceData.featuredApps.length > 0) {
+            featuredApp = sourceData.apps.find(app => app.bundleIdentifier === sourceData.featuredApps[0]);
+        }
+        const otherApps = [];
+        if (featuredApp) {
+            featuredAppContainer.appendChild(createFeaturedCard(featuredApp));
+            list.forEach(app => {
+                if (app.bundleIdentifier !== featuredApp.bundleIdentifier) {
+                    otherApps.push(app);
                 }
             });
-            featuredAppContainer.appendChild(featuredAppFragment); // Fragment einmal zum DOM hinzufügen
-        }
-        
-        // Featured-Sektion ausblenden, wenn keine gekennzeichneten Apps gerendert wurden
-        if (renderedFeaturedAppsCount === 0) {
-            document.querySelector('#exploreTab .app-section:first-of-type').style.display = 'none';
         } else {
-            document.querySelector('#exploreTab .app-section:first-of-type').style.display = 'block';
+            otherApps.push(...list);
         }
-
-
-        const otherApps = [];
-        apps.forEach(app => {
-            if (!featuredAppsIdentifiers.includes(app.bundleIdentifier)) {
-                otherApps.push(app);
-            }
+        otherApps.forEach(app => {
+            appList.appendChild(createCard(app));
         });
-
-        console.log("Rendere andere Apps (nicht gekennzeichnet):", otherApps.length);
-        const appListFragment = document.createDocumentFragment(); // Fragment für andere Apps
-        if (otherApps.length > 0) {
-            otherApps.forEach(app => {
-                appListFragment.appendChild(createCard(app));
-            });
-            appList.appendChild(appListFragment); // Fragment einmal zum DOM hinzufügen
-        } else {
-            // Nur "Keine Apps gefunden" für die Hauptliste anzeigen, wenn keine anderen Apps existieren UND keine gekennzeichneten Apps gerendert wurden
-            if (renderedFeaturedAppsCount === 0) {
-                appList.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
-            }
-        }
-        lazyLoadImages(); 
     }
-
-    // OPTIMIERUNG: Verwendung von DocumentFragment
     function renderApps(list, container) {
-      console.log(`Rendere ${list.length} Apps in Container:`, container.id);
-      container.innerHTML = ''; 
+      if (!sourceData) return;
+      container.innerHTML = '';
       if (list.length === 0) {
-        console.log("Keine Apps zum Rendern.");
         container.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
         return;
       }
-      const fragment = document.createDocumentFragment(); // Fragment erstellen
       list.forEach(app => {
-        fragment.appendChild(createCard(app)); // Dem Fragment hinzufügen
+        container.appendChild(createCard(app));
       });
-      container.appendChild(fragment); // Fragment einmal zum DOM hinzufügen
-      lazyLoadImages(); 
     }
-
-    // OPTIMIERUNG: Debouncing für die Suchfunktion
-    let searchTimeout;
     searchInput.addEventListener('input', () => {
-      clearTimeout(searchTimeout); // Vorherigen Timeout löschen
-      searchTimeout = setTimeout(() => { // Neuen Timeout setzen
-        const q = searchInput.value.toLowerCase();
-        const filtered = apps.filter(app =>
-            app.name.toLowerCase().includes(q) ||
-            (app.subtitle && app.subtitle.toLowerCase().includes(q)) || 
-            (app.localizedDescription && app.localizedDescription.toLowerCase().includes(q))
-        );
-        renderApps(filtered, appListSearch);
-        if (filtered.length === 0 && q.length > 0) {
-            appListSearch.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
-        } else if (q.length === 0) {
-            appListSearch.innerHTML = `<p class="no-apps-message">${getTranslation('searchPrompt')}</p>`;
-        }
-      }, 300); // 300ms Verzögerung nach der letzten Eingabe
+      const q = searchInput.value.toLowerCase();
+      const filtered = apps.filter(app =>
+          app.name.toLowerCase().includes(q) ||
+          app.subtitle.toLowerCase().includes(q) ||
+          (app.localizedDescription && app.localizedDescription.toLowerCase().includes(q))
+      );
+      renderApps(filtered, appListSearch);
+      if (filtered.length === 0 && q.length > 0) {
+          appListSearch.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
+      } else if (q.length === 0) {
+          appListSearch.innerHTML = `<p class="no-apps-message">${getTranslation('searchPrompt')}</p>`;
+      }
     });
-
     function hideBanner() {
       document.getElementById("pwaBanner").style.display = "none";
       sessionStorage.setItem("hidePWABannerTemp", "1");
     }
-
     function updateDarkModeButtonText() {
         const darkModeBtn = document.getElementById('dark-mode-toggle-btn');
         if (darkModeBtn) {
-            darkModeBtn.textContent = currentDarkModeState ? getTranslation('darkModeOn') : getTranslation('darkModeOff');
+            darkModeBtn.textContent = currentDarkModeState ? 'An' : 'Aus';
         }
     }
-
-    // --- Lazy Loading Implementation ---
-    let observer;
-
-    function lazyLoadImages() {
-        if ('IntersectionObserver' in window) {
-            if (observer) { 
-                observer.disconnect();
-            }
-            observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        const src = img.getAttribute('data-src');
-                        if (src) {
-                            img.src = src;
-                            img.removeAttribute('data-src');
-                        }
-                        observer.unobserve(img); 
-                    }
-                });
-            }, {
-                rootMargin: '0px 0px 100px 0px' 
-            });
-
-            document.querySelectorAll('.lazy-load-img').forEach(img => {
-                observer.observe(img);
-            });
-        } else {
-            // Fallback für Browser, die IntersectionObserver nicht unterstützen
-            document.querySelectorAll('.lazy-load-img').forEach(img => {
-                const src = img.getAttribute('data-src');
-                if (src) {
-                    img.src = src;
-                    img.removeAttribute('data-src');
-                }
-            });
-        }
-    }
-
-    // OPTIMIERUNG: Initialisierung des Splash-Screens und des Hauptinhalts
     window.addEventListener('load', () => {
-      console.log("Fenster geladen. Initialisiere...");
       loadPreferences();
       applyDarkModeState();
       translateUI();
-
       const isIOS = /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
       const isInStandalone =
         window.matchMedia('(display-mode: standalone)').matches ||
@@ -1202,44 +973,13 @@
         document.getElementById("pwaBanner").style.display = "block";
       }
 
-      // OPTIMIERUNG: Synchronisiere Splash-Screen mit Laden der Daten
-      Promise.all([
-          loadAppsFromSourcePromise(), // Lade die App-Daten
-          new Promise(resolve => setTimeout(resolve, 1000)) // Mindestens 1 Sekunde für den Splash-Screen
-      ]).then(() => {
-          console.log("Alle Startdaten geladen und minimale Splash-Zeit erreicht.");
-          renderExploreApps(); // Apps rendern, sobald Daten da sind
-          goTab('explore'); // Zum Explore-Tab wechseln
-          
-          const splash = document.getElementById('splash-screen');
-          const mainContent = document.getElementById('main-content');
-          if (splash) {
-              splash.classList.add('hidden');
-              setTimeout(() => {
-                  splash.style.display = 'none';
-                  if (mainContent) {
-                      mainContent.style.display = 'flex'; // Hauptinhalt sichtbar machen
-                  }
-              }, 500); // Dauer des Ausblendens
-          }
-      }).catch(error => {
-          console.error("Fehler während des initialen Ladevorgangs:", error);
-          // Fallback: Splash-Screen trotzdem ausblenden, auch wenn ein Fehler auftritt
-          const splash = document.getElementById('splash-screen');
-          const mainContent = document.getElementById('main-content');
-          if (splash) {
-              splash.classList.add('hidden');
-              setTimeout(() => {
-                  splash.style.display = 'none';
-                  if (mainContent) {
-                      mainContent.style.display = 'flex';
-                  }
-              }, 500);
-          }
-          // Zeige trotzdem den Explore-Tab, aber mit der Fehlermeldung
-          goTab('explore'); 
-      });
+      loadAppsFromSource();
+      goTab('explore');
     });
+    setTimeout(() => {
+      const splash = document.getElementById('splash-screen');
+      if (splash) splash.classList.add('hidden');
+    }, 1500);
 </script>
 </body>
 </html>
