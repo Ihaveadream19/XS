@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Xalostore</title>
+    <title id="page-title">Xalostore</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="https://i.imgur.com/oWyf5VR.png">
     <style>
+        /* CSS-Variablen */
         :root {
-            /* Standard-Werte für Light Mode, diese werden von .dark überschrieben, wenn die Klasse aktiv ist */
             --bg-primary: var(--light-bg-primary);
             --bg-secondary: var(--light-bg-secondary);
             --text-primary: var(--light-text-primary);
@@ -18,13 +18,13 @@
             --card-bg: var(--light-card-bg);
             --install-btn-bg: var(--light-install-btn-bg);
             --install-btn-text: var(--light-install-btn-text);
-            --card-shadow: var(--light-card-shadow);
+            --card-shadow: rgba(0, 0, 0, 0.1);
             --header-bg: var(--light-header-bg);
             --tabbar-bg: var(--light-tabbar-bg);
             --tabbar-border: var(--light-tabbar-border);
             --tabbar-icon: var(--light-tabbar-icon);
             --tabbar-icon-active: var(--light-tabbar-icon-active);
-            --modal-overlay: var(--light-modal-overlay);
+            --modal-overlay: rgba(0, 0, 0, 0.7);
             --modal-bg: var(--light-modal-bg);
             --input-bg: var(--light-input-bg);
             --input-text: var(--light-input-text);
@@ -63,13 +63,13 @@
             --card-bg: var(--dark-card-bg);
             --install-btn-bg: var(--dark-install-btn-bg);
             --install-btn-text: var(--dark-install-btn-text);
-            --card-shadow: var(--dark-card-shadow);
+            --card-shadow: rgba(0, 0, 0, 0.3);
             --header-bg: var(--dark-header-bg);
             --tabbar-bg: var(--dark-tabbar-bg);
             --tabbar-border: var(--dark-tabbar-border);
             --tabbar-icon: var(--dark-tabbar-icon);
             --tabbar-icon-active: var(--dark-tabbar-icon-active);
-            --modal-overlay: var(--dark-modal-overlay);
+            --modal-overlay: rgba(0, 0, 0, 0.8);
             --modal-bg: var(--dark-modal-bg);
             --input-bg: var(--dark-input-bg);
             --input-text: var(--dark-input-text);
@@ -91,7 +91,6 @@
             --dark-tabbar-border: #38383a;
             --dark-tabbar-icon: #8e8e93;
             --dark-tabbar-icon-active: #0a84ff;
-            --dark-modal-overlay: rgba(0, 0, 0, 0.8);
             --dark-modal-bg: #2c2c2e;
             --dark-input-bg: #3a3a3c;
             --dark-input-text: #ffffff;
@@ -100,16 +99,20 @@
             --dark-search-bar-text: #ffffff;
             --dark-pwa-banner-bg: #3a3a3c;
         }
+
+        /* Allgemeine Stile */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
-            height: 100vh;
+            min-height: 100vh; /* Mindesthöhe, damit der Footer unten bleibt */
             display: flex;
             flex-direction: column;
             transition: background-color 0.3s, color 0.3s;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            background-color: var(--bg-primary); /* Initialwert, wird von JS/Prefers-Color-Scheme gesetzt */
+            color: var(--text-primary); /* Initialwert */
         }
         body.light {
             background-color: var(--light-bg-primary);
@@ -119,32 +122,23 @@
             background-color: var(--dark-bg-primary);
             color: var(--dark-text-primary);
         }
-        #main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow-y: hidden;
-            padding-top: env(safe-area-inset-top);
+
+        .container {
+            flex: 1; /* Nimmt den verbleibenden Platz ein */
+            padding: 0 16px;
+            padding-bottom: 70px; /* Platz für Tab-Bar */
+            padding-top: env(safe-area-inset-top); /* Für iPhone Notch */
+            padding-bottom: env(safe-area-inset-bottom);
         }
-        .app-container {
-            flex: 1;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 75px;
-        }
+
+        /* Top Bar */
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 16px 16px 0 16px;
-            background: transparent;
+            background-color: var(--header-bg);
             transition: background-color 0.3s;
-        }
-        body.light .top-bar {
-            background-color: var(--light-header-bg);
-        }
-        body.dark .top-bar {
-            background-color: var(--dark-header-bg);
         }
         .top-bar .title-block {
             display: flex;
@@ -173,379 +167,490 @@
             cursor: pointer;
             color: var(--text-primary);
         }
-        .app-section {
-            margin-top: 16px;
-            padding: 0 16px;
-        }
-        .app-section h2 {
-            font-size: 22px;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-        #featuredAppContainer {
-            overflow-x: scroll;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
-            padding-left: 16px;
-            padding-bottom: 16px;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-        #featuredAppContainer::-webkit-scrollbar {
-            display: none;
-        }
-        .featured-app-card {
-            display: inline-block;
-            vertical-align: top;
-            width: 150px;
-            background-color: var(--card-bg);
-            border-radius: 15px;
-            box-shadow: 0 4px 10px var(--card-shadow);
-            padding: 15px;
-            margin-right: 10px;
-            text-align: center;
-            white-space: normal;
-        }
-        .featured-app-card:last-child {
-            margin-right: 16px;
-        }
-        .featured-app-card img {
-            width: 80px;
-            height: 80px;
-            border-radius: 20px;
-            margin-bottom: 10px;
-        }
-        .featured-app-card h3 {
-            font-size: 16px;
-            font-weight: 600;
-            margin: 0;
-            color: var(--text-primary);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .featured-app-card p {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin: 2px 0 10px 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .app-card {
-            display: flex;
-            align-items: center;
-            background-color: var(--card-bg);
-            border-radius: 15px;
-            box-shadow: 0 4px 10px var(--card-shadow);
-            padding: 12px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: transform 0.2s ease-in-out;
-        }
-        .app-card:active {
-            transform: scale(0.98);
-        }
-        .app-card img {
-            width: 60px;
-            height: 60px;
-            border-radius: 15px;
-            margin-right: 12px;
-        }
-        .app-info {
-            flex-grow: 1;
-            overflow: hidden;
-        }
-        .app-info h3 {
-            font-size: 16px;
-            font-weight: 600;
-            margin: 0;
-            color: var(--text-primary);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .app-info p {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin: 2px 0 0 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .install-btn {
-            background-color: var(--install-btn-bg); /* Nutze die generische Variable */
-            color: var(--install-btn-text); /* Nutze die generische Variable */
-            padding: 8px 16px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 600;
-            white-space: nowrap;
-            border: none;
-        }
+
+        /* Tab Bar */
         .tab-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
             display: flex;
             justify-content: space-around;
             align-items: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
             background-color: var(--tabbar-bg);
             border-top: 1px solid var(--tabbar-border);
-            padding-bottom: env(safe-area-inset-bottom);
-            z-index: 1001;
-            height: 60px;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-            display: none; /* Initial ausgeblendet, wird per JS eingeblendet */
+            padding-bottom: env(safe-area-inset-bottom);
+            z-index: 1000;
+            transition: background-color 0.3s, border-color 0.3s;
         }
-        .dark .tab-bar {
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
-        }
+
         .tab-item {
             display: flex;
             flex-direction: column;
             align-items: center;
             flex: 1;
-            padding: 10px 0;
+            padding: 5px 0;
             cursor: pointer;
-            height: 100%;
-        }
-        .tab-icon {
-            font-size: 24px;
             color: var(--tabbar-icon);
-        }
-        .tab-text {
             font-size: 12px;
-            margin-top: 4px;
-            color: var(--tabbar-icon);
+            transition: color 0.3s;
         }
-        .active-icon {
-            color: var(--tabbar-icon-active) !important;
+
+        .tab-item.active {
+            color: var(--tabbar-icon-active);
         }
-        .active-text {
-            color: var(--tabbar-icon-active) !important;
+
+        .tab-item i {
+            font-size: 24px;
+            margin-bottom: 2px;
         }
-        .tab-content {
+
+        /* Content Sections */
+        .content-section {
             display: none;
-            padding-top: 1px;
-            height: 100%;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+            padding-top: 20px;
         }
-        .tab-content.active {
+        .content-section.active {
             display: block;
         }
-        #searchTab .search-container {
-            padding: 16px;
-            background-color: var(--bg-primary);
-            transition: background-color 0.3s;
-        }
-        #search {
-            width: 100%;
-            padding: 12px 16px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            background-color: var(--search-bar-bg);
-            color: var(--search-bar-text);
-            box-sizing: border-box;
-            -webkit-appearance: none;
-        }
-        .no-apps-message {
-            text-align: center;
-            margin-top: 40px;
-            color: var(--text-secondary);
-        }
-        .modal {
-            position: fixed;
-            z-index: 999999;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--modal-overlay);
-            display: none;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal.active {
-            display: flex;
-        }
-        .modal-content {
-            background-color: var(--modal-bg);
-            padding: 20px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            position: relative;
-        }
-        .close-modal {
-            position: absolute;
-            top: 10px;
-            right: 15px;
+
+        /* Explore Section */
+        .section-title {
             font-size: 28px;
-            font-weight: bold;
-            color: var(--text-secondary);
-            cursor: pointer;
-        }
-        .modal-content h3 {
-            font-size: 24px;
-            margin: 0 0 10px;
-        }
-        .modal-content p {
-            font-size: 16px;
-            color: var(--text-secondary);
-        }
-        .modal-content .install-btn {
-            background-color: var(--install-btn-bg); /* Nutze die generische Variable */
-            color: var(--install-btn-text); /* Nutze die generische Variable */
-            font-size: 16px;
-            padding: 12px 24px;
-            margin-top: 15px;
-            display: inline-block;
-        }
-        .pwa-banner {
-            position: fixed;
-            bottom: calc(env(safe-area-inset-bottom) + 60px + 10px);
-            left: 50%;
-            transform: translateX(-50%);
-            width: calc(100% - 32px);
-            background-color: var(--pwa-banner-bg);
+            font-weight: 700;
+            margin-top: 25px;
+            margin-bottom: 20px;
             color: var(--text-primary);
+        }
+
+        .featured-apps-container {
+            display: flex;
+            overflow-x: scroll;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 15px; /* Platz für Scrollbar */
+            scroll-snap-type: x mandatory;
+            gap: 15px; /* Abstand zwischen Featured Cards */
+        }
+
+        .featured-app-card {
+            flex: 0 0 90%; /* Nimmt 90% der Breite ein */
+            max-width: 400px; /* Maximale Breite für größere Bildschirme */
+            scroll-snap-align: start;
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px var(--card-shadow);
             padding: 15px;
-            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            min-height: 220px; /* Mindesthöhe für konsistentes Layout */
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .featured-app-card img {
+            width: 90px;
+            height: 90px;
+            border-radius: 20px;
+            margin-bottom: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            display: none;
-            z-index: 1002;
         }
-        .pwa-banner p {
-            margin: 0;
+
+        .featured-app-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0 0 5px 0;
+            color: var(--text-primary);
+        }
+
+        .featured-app-card p {
             font-size: 14px;
-            line-height: 1.4;
+            color: var(--text-secondary);
+            margin: 0 0 15px 0;
+            flex-grow: 1; /* Lässt den Text Platz einnehmen */
         }
-        .pwa-banner button {
-            background: none;
-            border: none;
-            color: var(--install-btn-bg);
+
+        .featured-app-card .install-btn {
+            background-color: var(--install-btn-bg);
+            color: var(--install-btn-text);
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: transform 0.2s ease-in-out, background-color 0.3s;
+        }
+        .featured-app-card .install-btn:active {
+            transform: scale(0.95);
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .app-card {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px var(--card-shadow);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out, background-color 0.3s, box-shadow 0.3s;
+        }
+        .app-card:active {
+            transform: scale(0.98);
+        }
+
+        .app-card img {
+            width: 80px;
+            height: 80px;
+            border-radius: 18px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .app-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 5px 0;
+            color: var(--text-primary);
+        }
+
+        .app-card p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin: 0 0 10px 0;
+            flex-grow: 1; /* Lässt den Text Platz einnehmen */
+        }
+
+        .app-card .install-btn {
+            background-color: var(--install-btn-bg);
+            color: var(--install-btn-text);
+            padding: 8px 15px;
+            border-radius: 15px;
+            text-decoration: none;
             font-size: 14px;
             font-weight: 600;
-            margin-top: 10px;
-            padding: 0;
-            cursor: pointer;
+            white-space: nowrap;
+            transition: transform 0.2s ease-in-out, background-color 0.3s;
         }
-        #profileTab .settings-list {
-            list-style: none;
-            padding: 0;
-            margin: 20px 0;
+        .app-card .install-btn:active {
+            transform: scale(0.95);
         }
-        .settings-item {
+
+        /* Search Section */
+        .search-bar {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: var(--search-bar-bg);
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            color: var(--search-bar-text);
+            outline: none;
+            margin-bottom: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .search-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        .search-prompt, .no-results {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-top: 50px;
+            font-size: 16px;
+        }
+
+        /* Profile Section */
+        .profile-content {
+            text-align: center;
+            padding-top: 50px;
+        }
+        .profile-content h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+        .profile-content p {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .settings-section {
+            margin-top: 40px;
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: left;
+            box-shadow: 0 5px 15px var(--card-shadow);
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        .settings-section h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+            text-align: center;
+        }
+        .setting-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px;
-            background-color: var(--card-bg);
-            border-radius: 15px;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 5px var(--card-shadow);
-            cursor: pointer;
-            transition: transform 0.2s ease-in-out;
-        }
-        .settings-item:active {
-            transform: scale(0.98);
-        }
-        .settings-item p {
-            margin: 0;
-            font-size: 16px;
-            font-weight: 500;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--tabbar-border);
             color: var(--text-primary);
         }
-        .settings-item span {
-            color: var(--text-secondary);
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+        .setting-item label {
             font-size: 16px;
         }
-        .settings-item button {
-            background-color: var(--install-btn-bg);
-            color: var(--install-btn-text);
+        .setting-item select, .setting-item .toggle-switch {
+            cursor: pointer;
+        }
+        .setting-item select {
+            background-color: var(--input-bg);
+            color: var(--input-text);
             border: none;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 15px;
+            appearance: none; /* Entfernt Standard-Pfeil */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%238e8e93" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 24px;
         }
-        .language-modal-content {
-            padding: 20px;
-            background-color: var(--modal-bg);
-            border-radius: 20px;
-            width: 90%;
-            max-width: 300px;
+        .dark .setting-item select { /* Spezifisch für Dark Mode, falls SVG-Farbe angepasst werden muss */
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%23aaaaaa" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+        }
+
+        /* Toggle Switch (für Dark Mode) */
+        .toggle-switch {
             position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
         }
-        .language-modal-content h3 {
-            margin-top: 0;
-            color: var(--text-primary);
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
         }
-        .language-option {
-            display: block;
-            padding: 10px 15px;
-            margin: 8px 0;
-            background-color: var(--bg-secondary);
-            border-radius: 10px;
+        .slider {
+            position: absolute;
             cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 24px;
         }
-        .language-option:hover {
-            background-color: var(--card-bg);
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 50%;
         }
-        .language-option.active-lang {
+        input:checked + .slider {
             background-color: var(--install-btn-bg);
-            color: var(--install-btn-text);
         }
-        .language-option.active-lang span {
-            color: var(--install-btn-text);
+        input:focus + .slider {
+            box-shadow: 0 0 1px var(--install-btn-bg);
         }
-        .language-option span {
-            color: var(--text-primary);
+        input:checked + .slider:before {
+            -webkit-transform: translateX(20px);
+            -ms-transform: translateX(20px);
+            transform: translateX(20px);
         }
-        .splash-screen {
+
+        /* Modal / Detail View */
+        .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            background-color: var(--modal-overlay);
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: var(--splash-bg);
-            z-index: 9999999;
-            transition: opacity 0.5s ease-out;
-            opacity: 1;
-        }
-        .splash-screen.hidden {
+            z-index: 2000;
             opacity: 0;
-            pointer-events: none;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
         }
-        .splash-logo {
+
+        .modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: var(--modal-bg);
+            border-radius: 15px;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            text-align: center;
+            transform: translateY(20px);
+            transition: transform 0.3s ease-in-out, background-color 0.3s;
+        }
+        .modal-overlay.visible .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .modal-icon {
             width: 100px;
             height: 100px;
-            animation: pulse 1.5s ease-in-out infinite;
+            border-radius: 22px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
+
+        .modal-app-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--text-primary);
         }
-        /* Die @media (prefers-color-scheme: dark) Regel sollte erhalten bleiben,
-           da sie die Initialisierung des Dark Mode basierend auf Systemeinstellungen ermöglicht,
-           bevor JavaScript vollständig geladen ist. */
+
+        .modal-app-subtitle {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        .modal-description {
+            font-size: 15px;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            max-height: 150px; /* Max Höhe, kann scrollbar werden */
+            overflow-y: auto;
+            text-align: left;
+            line-height: 1.4;
+        }
+
+        .modal-details {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .modal-details div strong {
+            display: block;
+            color: var(--text-primary);
+            font-size: 16px;
+        }
+
+        .modal-install-btn {
+            background-color: var(--install-btn-bg);
+            color: var(--install-btn-text);
+            padding: 12px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 600;
+            white-space: nowrap;
+            display: inline-block;
+            transition: transform 0.2s ease-in-out, background-color 0.3s;
+        }
+        .modal-install-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* PWA Installation Banner */
+        .pwa-banner {
+            display: none; /* Initial hidden */
+            position: fixed;
+            bottom: 70px; /* Über der Tab-Bar */
+            left: 10px;
+            right: 10px;
+            background-color: var(--pwa-banner-bg);
+            color: var(--text-primary);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            z-index: 999;
+            animation: fadeIn 0.5s ease-out;
+            transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+        }
+        .pwa-banner.show {
+            display: block;
+        }
+        .pwa-banner .tip-heading {
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+        .pwa-banner .tip-text {
+            font-size: 14px;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .pwa-banner button {
+            background-color: var(--install-btn-bg);
+            color: var(--install-btn-text);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out, background-color 0.3s;
+        }
+        .pwa-banner button:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Media Query für Dark Mode */
         @media (prefers-color-scheme: dark) {
-            body:not(.light) { /* Wird angewendet, wenn body NICHT die 'light' Klasse hat (d.h. entweder 'dark' oder gar keine) */
+            body:not(.light) {
                 background-color: var(--dark-bg-primary);
                 color: var(--dark-text-primary);
-                
+
                 --bg-primary: var(--dark-bg-primary);
                 --bg-secondary: var(--dark-bg-secondary);
                 --text-primary: var(--dark-text-primary);
@@ -570,15 +675,10 @@
             }
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta8gBexs4prT2AXK2sL/c9oRjTzCq0K4M4T8P9903x7sK4Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body class="light">
 
-<div id="splash-screen" class="splash-screen">
-    <img src="https://i.imgur.com/oWyf5VR.png" alt="Xalostore Logo" class="splash-logo">
-</div>
-
-<div id="main-content" style="display: none;">
     <div class="top-bar">
         <div class="title-block">
             <img src="https://i.imgur.com/oWyf5VR.png" alt="Xalostore Logo">
@@ -589,501 +689,482 @@
         </div>
         <div class="toggle-mode" onclick="toggleMode()">🌙</div>
     </div>
-    
-    <div class="app-container">
-        <div id="exploreTab" class="tab-content active">
-            <div class="app-section">
-                <h2 data-type="featured">Featured</h2>
-            </div>
-            <div id="featuredAppContainer"></div>
-            <div class="app-section">
-                <h2 data-type="apps">Apps</h2>
-                <div id="appList"></div>
-            </div>
-        </div>
 
-        <div id="searchTab" class="tab-content">
-            <div class="search-container">
-                <input type="text" id="search" placeholder="App suchen...">
-            </div>
-            <div id="appListSearch" class="app-section">
-                <p id="search-prompt" class="no-apps-message">Beginne mit der Suche, um Apps zu finden.</p>
-            </div>
-        </div>
+    <div class="container">
+        <section id="explore-section" class="content-section active">
+            <h2 id="explore-section-title" class="section-title">Explore</h2>
+            <div class="featured-apps-container" id="featured-apps-container">
+                </div>
+            <h2 id="all-apps-section-title" class="section-title">All Apps</h2>
+            <div class="app-grid" id="all-apps-grid">
+                </div>
+        </section>
 
-        <div id="profileTab" class="tab-content">
-            <div class="app-section">
-                <h2 data-type="profileTitle">Profil</h2>
-                <p id="profile-welcome-title">Willkommen bei Xalostore!</p>
+        <section id="search-section" class="content-section">
+            <h2 id="search-section-title" class="section-title">Suchen</h2>
+            <input type="text" id="search-input" class="search-bar" placeholder="App suchen...">
+            <div id="search-results" class="search-results">
+                <p id="search-prompt" class="search-prompt">Beginne mit der Suche, um Apps zu finden.</p>
+                </div>
+        </section>
+
+        <section id="profile-section" class="content-section">
+            <div class="profile-content">
+                <h1 id="profile-welcome-title">Willkommen bei Xalostore!</h1>
                 <p id="profile-text-1">Dies ist dein einfacher und sicherer Ort, um Sideload-Apps zu finden und zu installieren.</p>
                 <p id="profile-text-2">Wir arbeiten ständig daran, dir neue Funktionen und die besten Apps zur Verfügung zu stellen.</p>
                 <p id="profile-text-3">Schau bald wieder vorbei für Updates und neue Inhalte!</p>
             </div>
-            <div class="app-section">
-                <h2 id="settings-title">Einstellungen</h2>
-                <ul class="settings-list">
-                    <li class="settings-item" onclick="openLanguageModal()">
-                        <p id="language-setting-label">Sprache</p>
-                        <span id="current-language-display">Deutsch</span>
-                    </li>
-                    <li class="settings-item">
-                        <p id="dark-mode-setting-label">Dark Mode</p>
-                        <button id="dark-mode-toggle-btn" onclick="toggleDarkModeFromSettings()">Aus</button>
-                    </li>
-                </ul>
+
+            <div class="settings-section">
+                <h3 id="settings-title">Einstellungen</h3>
+                <div class="setting-item">
+                    <label for="language-select" id="language-setting-label">Sprache</label>
+                    <select id="language-select">
+                        <option value="de">Deutsch</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label id="darkModeSettingLabel">Dark Mode</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="dark-mode-toggle">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
             </div>
+        </section>
+    </div>
+
+    <div id="pwa-banner" class="pwa-banner">
+        <div class="tip-heading" id="pwa-banner-tip"></div>
+        <div class="tip-text" id="pwa-banner-text"></div>
+        <button id="pwa-banner-button"></button>
+    </div>
+
+    <div id="app-modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <span class="modal-close-btn" onclick="closeModal()">&times;</span>
+            <img id="modal-app-icon" class="modal-icon" src="" alt="App Icon">
+            <h2 id="modal-app-name" class="modal-app-name"></h2>
+            <p id="modal-app-subtitle" class="modal-app-subtitle"></p>
+            <p id="modal-description" class="modal-description"></p>
+            <div class="modal-details">
+                <div>
+                    <span id="modal-version-label">Version:</span> <strong id="modal-version"></strong>
+                </div>
+                <div>
+                    <span id="modal-size-label">Größe:</span> <strong id="modal-size"></strong>
+                </div>
+            </div>
+            <a id="modal-install-btn" class="modal-install-btn" href="#" download>Installieren</a>
         </div>
     </div>
 
-</div>
-
-<div class="tab-bar" id="bottom-tab-bar">
-    <div id="tabExplore" class="tab-item" onclick="goTab('explore')">
-        <i class="fas fa-compass tab-icon active-icon"></i>
-        <span class="tab-text active-text" id="tab-explore-text">Explore</span>
-    </div>
-    <div id="tabSearch" class="tab-item" onclick="goTab('search')">
-        <i class="fas fa-search tab-icon"></i>
-        <span class="tab-text" id="tab-search-text">Suchen</span>
-    </div>
-    <div id="tabProfile" class="tab-item" onclick="goTab('profile')">
-        <i class="fas fa-user tab-icon"></i>
-        <span class="tab-text" id="tab-profile-text">Profil</span>
-    </div>
-</div>
-
-<div id="appModal" class="modal">
-    <div id="modalContent" class="modal-content"></div>
-</div>
-
-<div id="languageModal" class="modal" onclick="if(event.target.id === 'languageModal') closeLanguageModal()">
-    <div class="language-modal-content">
-        <span class="close-modal" onclick="closeLanguageModal()">&times;</span>
-        <h3 id="language-selection-title">Sprache wählen</h3>
-        <div id="lang-de" class="language-option active-lang" onclick="setLanguage('de')">
-            <span>Deutsch</span>
+    <div class="tab-bar">
+        <div id="explore-tab" class="tab-item active" onclick="showSection('explore')">
+            <i class="fas fa-compass"></i>
+            <span id="explore-tab-text">Explore</span>
         </div>
-        <div id="lang-en" class="language-option" onclick="setLanguage('en')">
-            <span>English</span>
+        <div id="search-tab" class="tab-item" onclick="showSection('search')">
+            <i class="fas fa-search"></i>
+            <span id="search-tab-text">Suchen</span>
+        </div>
+        <div id="profile-tab" class="tab-item" onclick="showSection('profile')">
+            <i class="fas fa-user"></i>
+            <span id="profile-tab-text">Profil</span>
         </div>
     </div>
-</div>
 
-<div id="pwaBanner" class="pwa-banner">
-    <p><span id="pwa-banner-tip">📲 Tipp:</span> <span id="pwa-banner-text">Du kannst <strong>Xalostore</strong> wie eine echte App nutzen!<br>Tippe unten auf das <strong>Teilen-Symbol</strong> und wähle <em>"Zum Home-Bildschirm hinzufügen"</em>.</span></p>
-    <button id="pwa-banner-button" onclick="hideBanner()">Nicht mehr anzeigen</button>
-</div>
-
-<script>
-    // Languages.js Content
-    const translations = {
-        "de": {
-            "title": "Xalostore",
-            "subtitle": "Sideload Apps. Simple. Secure.",
-            "searchPlaceholder": "App suchen...",
-            "searchPrompt": "Beginne mit der Suche, um Apps zu finden.",
-            "noAppsFound": "Keine Apps gefunden.",
-            "exploreTab": "Explore",
-            "searchTab": "Suchen",
-            "profileTab": "Profil",
-            "appsLoadError": "Fehler beim Laden der Apps. Bitte versuche es später erneut.",
-            "installButton": "Installieren",
-            "modalDefaultDescription": "Keine Beschreibung verfügbar.",
-            "modalVersion": "Version:",
-            "modalSize": "Größe:",
-            "modalInstallButton": "Installieren",
-            "pwaBannerTip": "📲 Tipp:",
-            "pwaBannerText": "Du kannst <strong>Xalostore</strong> wie eine echte App nutzen!<br>Tippe unten auf das <strong>Teilen-Symbol</strong> und wähle <em>\"Zum Home-Bildschirm hinzufügen\"</em>.",
-            "pwaBannerButton": "Nicht mehr anzeigen",
-            "profileWelcomeTitle": "Willkommen bei Xalostore!",
-            "profileText1": "Dies ist dein einfacher und sicherer Ort, um Sideload-Apps zu finden und zu installieren.",
-            "profileText2": "Wir arbeiten ständig daran, dir neue Funktionen und die besten Apps zur Verfügung zu stellen.",
-            "profileText3": "Schau bald wieder vorbei für Updates und neue Inhalte!",
-            "settingsTitle": "Einstellungen",
-            "languageSettingLabel": "Sprache",
-            "darkModeSettingLabel": "Dark Mode",
-            "languageSelectionTitle": "Sprache wählen",
-            "languageDe": "Deutsch",
-            "languageEn": "English",
-            "toggleModeButtonDark": "☀️",
-            "toggleModeButtonLight": "🌙"
-        },
-        "en": {
-            "title": "Xalostore",
-            "subtitle": "Sideload Apps. Simple. Secure.",
-            "searchPlaceholder": "Search for an app...",
-            "searchPrompt": "Start searching to find apps.",
-            "noAppsFound": "No apps found.",
-            "exploreTab": "Explore",
-            "searchTab": "Search",
-            "profileTab": "Profile",
-            "appsLoadError": "Error loading apps. Please try again later.",
-            "installButton": "Install",
-            "modalDefaultDescription": "No description available.",
-            "modalVersion": "Version:",
-            "modalSize": "Size:",
-            "modalInstallButton": "Install",
-            "pwaBannerTip": "📲 Tip:",
-            "pwaBannerText": "You can use <strong>Xalostore</strong> like a real app!<br>Tap the <strong>Share icon</strong> at the bottom and select <em>\"Add to Home Screen\"</em>.",
-            "pwaBannerButton": "Don't show again",
-            "profileWelcomeTitle": "Welcome to Xalostore!",
-            "profileText1": "This is your simple and secure place to find and install sideload apps.",
-            "profileText2": "We are constantly working to bring you new features and the best apps.",
-            "profileText3": "Check back soon for updates and new content!",
-            "settingsTitle": "Settings",
-            "languageSettingLabel": "Language",
-            "darkModeSettingLabel": "Dark Mode",
-            "languageSelectionTitle": "Select Language",
-            "languageDe": "Deutsch",
-            "languageEn": "English",
-            "toggleModeButtonDark": "☀️",
-            "toggleModeButtonLight": "🌙"
-        }
-    };
-    let currentLanguage = localStorage.getItem('appLanguage') || 'de';
-    function getTranslation(key) {
-        return translations[currentLanguage][key] || key;
-    }
-    function setLanguage(lang) {
-        currentLanguage = lang;
-        localStorage.setItem('appLanguage', lang);
-        translateUI();
-        closeLanguageModal();
-    }
-    function translateUI() {
-        document.querySelectorAll('[data-type]').forEach(element => {
-            const key = element.getAttribute('data-type');
-            if (translations[currentLanguage][key]) {
-                element.textContent = translations[currentLanguage][key];
+    <script>
+        // Sprach- und Übersetzungslogik
+        const translations = {
+            "de": {
+                "title": "Xalostore",
+                "subtitle": "Sideload Apps. Simple. Secure.",
+                "searchPlaceholder": "App suchen...",
+                "searchPrompt": "Beginne mit der Suche, um Apps zu finden.",
+                "noAppsFound": "Keine Apps gefunden.",
+                "exploreTab": "Explore",
+                "searchTab": "Suchen",
+                "profileTab": "Profil",
+                "appsLoadError": "Fehler beim Laden der Apps. Bitte versuche es später erneut.",
+                "installButton": "Installieren",
+                "modalDefaultDescription": "Keine Beschreibung verfügbar.",
+                "modalVersion": "Version:",
+                "modalSize": "Größe:",
+                "modalInstallButton": "Installieren",
+                "pwaBannerTip": "📲 Tipp:",
+                "pwaBannerText": "Du kannst <strong>Xalostore</strong> wie eine echte App nutzen!<br>Tippe unten auf das <strong>Teilen-Symbol</strong> und wähle <em>\"Zum Home-Bildschirm hinzufügen\"</em>.",
+                "pwaBannerButton": "Nicht mehr anzeigen",
+                "profileWelcomeTitle": "Willkommen bei Xalostore!",
+                "profileText1": "Dies ist dein einfacher und sicherer Ort, um Sideload-Apps zu finden und zu installieren.",
+                "profileText2": "Wir arbeiten ständig daran, dir neue Funktionen und die besten Apps zur Verfügung zu stellen.",
+                "profileText3": "Schau bald wieder vorbei für Updates und neue Inhalte!",
+                "settingsTitle": "Einstellungen",
+                "languageSettingLabel": "Sprache",
+                "darkModeSettingLabel": "Dark Mode",
+                "languageSelectionTitle": "Sprache wählen",
+                "languageDe": "Deutsch",
+                "languageEn": "English",
+                "toggleModeButtonDark": "☀️",
+                "toggleModeButtonLight": "🌙",
+                "downloadPageTitle": "App herunterladen - Xalostore", // NEU HINZUGEFÜGT
+                "ipaDownloadButton": "IPA herunterladen", // NEU HINZUGEFÜGT
+                "loadingMessage": "Deine App wird vorbereitet, bitte warten..." // NEU HINZUGEFÜGT
+            },
+            "en": {
+                "title": "Xalostore",
+                "subtitle": "Sideload Apps. Simple. Secure.",
+                "searchPlaceholder": "Search for an app...",
+                "searchPrompt": "Start searching to find apps.",
+                "noAppsFound": "No apps found.",
+                "exploreTab": "Explore",
+                "searchTab": "Search",
+                "profileTab": "Profile",
+                "appsLoadError": "Error loading apps. Please try again later.",
+                "installButton": "Install",
+                "modalDefaultDescription": "No description available.",
+                "modalVersion": "Version:",
+                "modalSize": "Size:",
+                "modalInstallButton": "Install",
+                "pwaBannerTip": "📲 Tip:",
+                "pwaBannerText": "You can use <strong>Xalostore</strong> like a real app!<br>Tap the <strong>Share icon</strong> at the bottom and select <em>\"Add to Home Screen\"</em>.",
+                "pwaBannerButton": "Don't show again",
+                "profileWelcomeTitle": "Welcome to Xalostore!",
+                "profileText1": "This is your simple and secure place to find and install sideload apps.",
+                "profileText2": "We are constantly working to bring you new features and the best apps.",
+                "profileText3": "Check back soon for updates and new content!",
+                "settingsTitle": "Settings",
+                "languageSettingLabel": "Language",
+                "darkModeSettingLabel": "Dark Mode",
+                "languageSelectionTitle": "Select Language",
+                "languageDe": "Deutsch",
+                "languageEn": "English",
+                "toggleModeButtonDark": "☀️",
+                "toggleModeButtonLight": "🌙",
+                "downloadPageTitle": "Download App - Xalostore", // NEU HINZUGEFÜGT
+                "ipaDownloadButton": "Download IPA", // NEU HINZUGEFÜGT
+                "loadingMessage": "Your app is being prepared, please wait..." // NEU HINZUGEFÜGT
             }
-        });
-        document.getElementById('header-title').textContent = getTranslation('title');
-        document.getElementById('header-subtitle').textContent = getTranslation('subtitle');
-        document.getElementById('search').placeholder = getTranslation('searchPlaceholder');
-        document.getElementById('tab-explore-text').textContent = getTranslation('exploreTab');
-        document.getElementById('tab-search-text').textContent = getTranslation('searchTab');
-        document.getElementById('tab-profile-text').textContent = getTranslation('profileTab');
-        document.getElementById('pwa-banner-tip').textContent = getTranslation('pwaBannerTip');
-        document.getElementById('pwa-banner-text').innerHTML = getTranslation('pwaBannerText');
-        document.getElementById('pwa-banner-button').textContent = getTranslation('pwaBannerButton');
-        document.getElementById('profile-welcome-title').textContent = getTranslation('profileWelcomeTitle');
-        document.getElementById('profile-text-1').textContent = getTranslation('profileText1');
-        document.getElementById('profile-text-2').textContent = getTranslation('profileText2');
-        document.getElementById('profile-text-3').textContent = getTranslation('profileText3');
-        document.getElementById('settings-title').textContent = getTranslation('settingsTitle');
-        document.getElementById('language-setting-label').textContent = getTranslation('languageSettingLabel');
-        document.getElementById('dark-mode-setting-label').textContent = getTranslation('darkModeSettingLabel'); /* Korrigiert - ID geändert */
-        document.getElementById('language-selection-title').textContent = getTranslation('languageSelectionTitle');
-        document.getElementById('lang-de').querySelector('span').textContent = getTranslation('languageDe');
-        document.getElementById('lang-en').querySelector('span').textContent = getTranslation('languageEn');
-        document.getElementById('current-language-display').textContent = translations[currentLanguage][`language${currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1)}`];
-        const searchModeToggle = document.querySelector('.top-bar .toggle-mode');
-        if (searchModeToggle) {
-          searchModeToggle.innerHTML = currentDarkModeState ? getTranslation('toggleModeButtonDark') : getTranslation('toggleModeButtonLight');
+        };
+
+        let currentLanguage = localStorage.getItem('appLanguage') || 'de'; // Standard auf Deutsch
+        let currentDarkModeState = localStorage.getItem('xalostore_dark_mode') === 'true'; // Dark Mode Zustand
+
+        function getTranslation(key) {
+            return translations[currentLanguage][key] || key;
         }
-    }
-    let currentDarkModeState = localStorage.getItem('xalostore_dark_mode') === 'true';
-    function loadPreferences() {
-        const storedLanguage = localStorage.getItem('appLanguage');
-        if (storedLanguage) {
-            currentLanguage = storedLanguage;
-        } else {
-            const browserLang = navigator.language.split('-')[0];
-            if (translations[browserLang]) {
-                currentLanguage = browserLang;
+
+        function translatePage() {
+            document.getElementById('page-title').textContent = getTranslation('title');
+            document.getElementById('header-title').textContent = getTranslation('title');
+            document.getElementById('header-subtitle').textContent = getTranslation('subtitle');
+            document.getElementById('explore-section-title').textContent = getTranslation('exploreTab');
+            document.getElementById('all-apps-section-title').textContent = "All Apps"; // Dieser Titel bleibt statisch, kann aber auch übersetzt werden
+            document.getElementById('search-section-title').textContent = getTranslation('searchTab');
+            document.getElementById('search-input').placeholder = getTranslation('searchPlaceholder');
+            document.getElementById('search-prompt').textContent = getTranslation('searchPrompt');
+            document.getElementById('explore-tab-text').textContent = getTranslation('exploreTab');
+            document.getElementById('search-tab-text').textContent = getTranslation('searchTab');
+            document.getElementById('profile-tab-text').textContent = getTranslation('profileTab');
+            document.getElementById('profile-welcome-title').textContent = getTranslation('profileWelcomeTitle');
+            document.getElementById('profile-text-1').textContent = getTranslation('profileText1');
+            document.getElementById('profile-text-2').textContent = getTranslation('profileText2');
+            document.getElementById('profile-text-3').textContent = getTranslation('profileText3');
+            document.getElementById('settings-title').textContent = getTranslation('settingsTitle');
+            document.getElementById('language-setting-label').textContent = getTranslation('languageSettingLabel');
+            document.getElementById('darkModeSettingLabel').textContent = getTranslation('darkModeSettingLabel');
+
+            const toggleModeBtn = document.querySelector('.top-bar .toggle-mode');
+            if (toggleModeBtn) {
+                toggleModeBtn.innerHTML = currentDarkModeState ? getTranslation('toggleModeButtonDark') : getTranslation('toggleModeButtonLight');
+            }
+
+            // PWA Banner Texte
+            document.getElementById('pwa-banner-tip').innerHTML = getTranslation('pwaBannerTip');
+            document.getElementById('pwa-banner-text').innerHTML = getTranslation('pwaBannerText');
+            document.getElementById('pwa-banner-button').textContent = getTranslation('pwaBannerButton');
+
+            // Modal Texte
+            document.getElementById('modal-version-label').textContent = getTranslation('modalVersion');
+            document.getElementById('modal-size-label').textContent = getTranslation('modalSize');
+            document.getElementById('modal-install-btn').textContent = getTranslation('modalInstallButton');
+
+            // Aktualisiere Install-Buttons in allen Karten (optional, da sie bei Neuerstellung aktualisiert werden)
+            document.querySelectorAll('.install-btn').forEach(btn => {
+                btn.textContent = getTranslation('installButton');
+            });
+        }
+
+        function applyDarkModeState() {
+            if (currentDarkModeState) {
+                document.body.classList.remove('light');
+                document.body.classList.add('dark');
             } else {
-                currentLanguage = 'de';
+                document.body.classList.remove('dark');
+                document.body.classList.add('light');
+            }
+            const toggleModeBtn = document.querySelector('.top-bar .toggle-mode');
+            if (toggleModeBtn) {
+                toggleModeBtn.innerHTML = currentDarkModeState ? getTranslation('toggleModeButtonDark') : getTranslation('toggleModeButtonLight');
+            }
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            if (darkModeToggle) {
+                darkModeToggle.checked = currentDarkModeState;
             }
         }
-        const storedDarkMode = localStorage.getItem('xalostore_dark_mode');
-        if (storedDarkMode !== null) {
-            currentDarkModeState = storedDarkMode === 'true';
-        }
-        applyDarkModeState();
-        translateUI();
-    }
-</script>
-<script>
-    // Dynamically load Source.json Content
-    let sourceData = null;
-    let apps = [];
 
-    function loadAppsFromSource() {
-        fetch('source.json')
-            .then(response => {
+        function toggleMode() {
+            currentDarkModeState = !currentDarkModeState;
+            localStorage.setItem('xalostore_dark_mode', currentDarkModeState);
+            applyDarkModeState();
+        }
+
+        function loadPreferences() {
+            const storedLanguage = localStorage.getItem('appLanguage');
+            if (storedLanguage) {
+                currentLanguage = storedLanguage;
+            } else {
+                const browserLang = navigator.language.split('-')[0];
+                if (translations[browserLang]) {
+                    currentLanguage = browserLang;
+                } else {
+                    currentLanguage = 'de'; // Fallback
+                }
+            }
+            document.getElementById('language-select').value = currentLanguage;
+
+            const storedDarkMode = localStorage.getItem('xalostore_dark_mode');
+            if (storedDarkMode !== null) {
+                currentDarkModeState = storedDarkMode === 'true';
+            } else {
+                // Initialer Dark Mode basierend auf Systemeinstellung
+                currentDarkModeState = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            }
+            applyDarkModeState();
+            translatePage();
+        }
+
+        // Event Listener für Sprache ändern
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPreferences();
+
+            document.getElementById('language-select').addEventListener('change', (event) => {
+                currentLanguage = event.target.value;
+                localStorage.setItem('appLanguage', currentLanguage);
+                translatePage();
+                loadApps(); // Apps neu laden, um die Beschreibungen in der neuen Sprache zu erhalten
+            });
+
+            document.getElementById('dark-mode-toggle').addEventListener('change', toggleMode);
+
+            // Listener für System Dark Mode Änderungen
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+                // Nur aktualisieren, wenn der Benutzer es nicht manuell überschrieben hat
+                if (localStorage.getItem('xalostore_dark_mode') === null) {
+                    currentDarkModeState = event.matches;
+                    applyDarkModeState();
+                }
+            });
+
+            loadApps();
+            showSection('explore'); // Standardmäßig Explore-Tab anzeigen
+            setupSearch();
+            showPwaBanner(); // PWA Banner anzeigen
+        });
+
+        // App Daten (Beispiel-Struktur)
+        let allApps = []; // Wird von fetchApps gefüllt
+        let featuredApps = []; // Wird von fetchApps gefüllt
+
+        async function fetchApps() {
+            try {
+                // Ersetzen Sie 'apps.json' durch den tatsächlichen Pfad zu Ihrer JSON-Datei
+                const response = await fetch('apps.json');
                 if (!response.ok) {
-                    // Log the full response status for better debugging
-                    console.error(`HTTP error! status: ${response.status}, text: ${response.statusText}`);
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                return response.json();
-            })
-            .then(data => {
-                sourceData = data;
-                apps = sourceData.apps;
-                renderExploreApps(apps);
-            })
-            .catch(error => {
-                console.error("Fehler beim Laden von source.json oder Parsing-Fehler:", error); // Eindeutigere Fehlermeldung
-                const errorMessageElement = document.createElement('p');
-                errorMessageElement.id = 'appsLoadError';
-                errorMessageElement.className = 'no-apps-message';
-                errorMessageElement.textContent = getTranslation('appsLoadError');
-                document.getElementById('exploreTab').appendChild(errorMessageElement);
+                const data = await response.json();
+                allApps = data.apps;
+                featuredApps = data.featuredApps; // Angenommen, Ihre JSON hat einen 'featuredApps'-Array
+                renderApps();
+            } catch (error) {
+                console.error("Fehler beim Laden der Apps:", error);
+                document.getElementById('all-apps-grid').innerHTML = `<p style="text-align: center; color: var(--text-secondary);">${getTranslation('appsLoadError')}</p>`;
+            }
+        }
+
+        function renderApps() {
+            const allAppsGrid = document.getElementById('all-apps-grid');
+            allAppsGrid.innerHTML = '';
+            allApps.forEach(app => {
+                allAppsGrid.appendChild(createCard(app));
             });
-    }
 
-    const appList = document.getElementById('appList');
-    const featuredAppContainer = document.getElementById('featuredAppContainer');
-    const searchInput = document.getElementById('search');
-    const appListSearch = document.getElementById('appListSearch');
-    const appModal = document.getElementById('appModal');
-    const modalContent = document.getElementById('modalContent');
-    const languageModal = document.getElementById('languageModal');
-
-    function formatSize(bytes) {
-      if (!bytes) return "";
-      const mb = (bytes / 1024 / 1024).toFixed(1);
-      return `${mb} MB`;
-    }
-    function createCard(app) {
-      let version = app.versions[0] || {};
-      let downloadURL = version.downloadURL || '#';
-      let size = formatSize(version.size);
-      const card = document.createElement('div');
-      card.className = 'app-card';
-      card.innerHTML = `
-        <img src="${app.iconURL}" alt="${app.name}">
-        <div class="app-info">
-          <h3>${app.name.trim()}</h3>
-          <p>${app.subtitle}</p>
-        </div>
-        <a href="${downloadURL}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
-      `;
-      card.onclick = () => {
-        appModal.classList.add('active');
-        modalContent.innerHTML = `
-          <span class="close-modal" onclick="closeModal()">&times;</span>
-          <h3>${app.name}</h3>
-          <p>${app.localizedDescription || getTranslation('modalDefaultDescription')}</p>
-          <p><strong>${getTranslation('modalVersion')}</strong> ${version.version || "?"}</p>
-          <p><strong>${getTranslation('modalSize')}</strong> ${size || "?"}</p>
-          <a href="${downloadURL}" class="install-btn">${getTranslation('modalInstallButton')}</a>
-        `;
-      };
-      return card;
-    }
-
-    function createFeaturedCard(app) {
-        let version = app.versions[0] || {};
-        let downloadURL = version.downloadURL || '#';
-        let size = formatSize(version.size);
-        const card = document.createElement('div');
-        card.className = 'featured-app-card';
-        card.innerHTML = `
-          <img src="${app.iconURL}" alt="${app.name}">
-          <h3>${app.name.trim()}</h3>
-          <p>${app.subtitle}</p>
-          <a href="${downloadURL}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
-        `;
-        card.onclick = () => {
-          appModal.classList.add('active');
-          modalContent.innerHTML = `
-            <span class="close-modal" onclick="closeModal()">&times;</span>
-            <h3>${app.name}</h3>
-            <p>${app.localizedDescription || getTranslation('modalDefaultDescription')}</p>
-            <p><strong>${getTranslation('modalVersion')}</strong> ${version.version || "?"}</p>
-            <p><strong>${getTranslation('modalSize')}</strong> ${size || "?"}</p>
-            <a href="${downloadURL}" class="install-btn">${getTranslation('modalInstallButton')}</a>
-          `;
-        };
-        return card;
-    }
-    function closeModal() {
-      appModal.classList.remove('active');
-    }
-    function applyDarkModeState() {
-      if (currentDarkModeState) {
-        document.body.classList.remove('light');
-        document.body.classList.add('dark');
-      } else {
-        document.body.classList.remove('dark');
-        document.body.classList.add('light');
-      }
-      updateDarkModeButtonText();
-      const searchModeToggle = document.querySelector('.top-bar .toggle-mode');
-      if (searchModeToggle) {
-          searchModeToggle.innerHTML = currentDarkModeState ? getTranslation('toggleModeButtonDark') : getTranslation('toggleModeButtonLight');
-      }
-    }
-    function toggleMode() {
-      currentDarkModeState = !currentDarkModeState;
-      localStorage.setItem('xalostore_dark_mode', currentDarkModeState);
-      applyDarkModeState();
-    }
-
-    function toggleDarkModeFromSettings() {
-      toggleMode();
-    }
-    function goTab(tabName) {
-      document.querySelectorAll('.tab-content').forEach(tabContent => {
-        tabContent.classList.remove('active');
-      });
-      document.querySelectorAll('.tab-icon').forEach(icon => {
-        icon.style.color = 'var(--tabbar-icon)';
-        icon.classList.remove('active-icon');
-      });
-      document.querySelectorAll('.tab-text').forEach(text => {
-        text.style.color = 'var(--tabbar-icon)';
-        text.classList.remove('active-text');
-      });
-      const selectedTabContent = document.getElementById(`${tabName}Tab`);
-      if (selectedTabContent) {
-        selectedTabContent.classList.add('active');
-      }
-      const selectedTabItem = document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
-      if (selectedTabItem) {
-          selectedTabItem.querySelector('.tab-icon').style.color = 'var(--tabbar-icon-active)';
-          selectedTabItem.querySelector('.tab-icon').classList.add('active-icon');
-          selectedTabItem.querySelector('.tab-text').style.color = 'var(--tabbar-icon-active)';
-          selectedTabItem.querySelector('.tab-text').classList.add('active-text');
-      }
-      if (tabName === 'search') {
-        renderApps(apps, appListSearch);
-        searchInput.value = '';
-        document.getElementById('search-prompt').textContent = getTranslation('searchPrompt');
-      } else if (tabName === 'explore') {
-          renderExploreApps(apps);
-      } else if (tabName === 'profile') {
-        document.getElementById('current-language-display').textContent = translations[currentLanguage][`language${currentLanguage.charAt(0).toUpperCase() + currentLanguage.slice(1)}`];
-        updateDarkModeButtonText();
-      }
-    }
-    function openLanguageModal() {
-      languageModal.classList.add('active');
-      document.querySelectorAll('.language-option').forEach(button => {
-          button.classList.remove('active-lang');
-      });
-      const activeLangButton = document.getElementById(`lang-${currentLanguage}`);
-      if (activeLangButton) {
-          activeLangButton.classList.add('active-lang');
-      }
-    }
-    function closeLanguageModal() {
-      languageModal.classList.remove('active');
-    }
-    function renderExploreApps(list) {
-        if (!sourceData || !sourceData.apps) { // Prüfe auch, ob sourceData.apps existiert
-            console.warn("sourceData oder sourceData.apps ist nicht verfügbar. Kann Apps nicht rendern.");
-            appList.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
-            featuredAppContainer.innerHTML = ''; // Leere auch den Featured-Container
-            return;
-        }
-        
-        appList.innerHTML = '';
-        featuredAppContainer.innerHTML = '';
-
-        if (list.length === 0) {
-            appList.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
-            return;
-        }
-
-        let featuredApp = null;
-        // Sicherstellen, dass featuredApps ein Array ist und Elemente enthält
-        if (sourceData.featuredApps && Array.isArray(sourceData.featuredApps) && sourceData.featuredApps.length > 0) {
-            // Finden der App im Haupt 'apps' Array
-            featuredApp = sourceData.apps.find(app => app.bundleIdentifier === sourceData.featuredApps[0]);
-        }
-        
-        const otherApps = [];
-        if (featuredApp) {
-            featuredAppContainer.appendChild(createFeaturedCard(featuredApp));
-            // Füge alle anderen Apps hinzu, die NICHT das Featured-App sind
-            list.forEach(app => {
-                if (app.bundleIdentifier !== featuredApp.bundleIdentifier) {
-                    otherApps.push(app);
-                }
+            const featuredAppsContainer = document.getElementById('featured-apps-container');
+            featuredAppsContainer.innerHTML = '';
+            featuredApps.forEach(app => {
+                featuredAppsContainer.appendChild(createFeaturedCard(app));
             });
-        } else {
-            // Wenn keine Featured App oder featuredApps leer ist, zeige alle Apps in der normalen Liste an
-            otherApps.push(...list);
         }
 
-        otherApps.forEach(app => {
-            appList.appendChild(createCard(app));
+        function createCard(app) {
+            const card = document.createElement('div');
+            card.classList.add('app-card');
+            card.onclick = () => openModal(app); // Öffnet Modal beim Klick auf die Karte
+
+            card.innerHTML = `
+                <img src="${app.iconURL}" alt="${app.name} Icon">
+                <h3>${app.name}</h3>
+                <p>${app.subtitle}</p>
+                <a href="download_page.html?appName=${encodeURIComponent(app.name)}&appSubtitle=${encodeURIComponent(app.subtitle)}&appIconUrl=${encodeURIComponent(app.iconURL)}&ipaDownloadUrl=${encodeURIComponent(app.downloadURL)}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
+            `;
+            return card;
+        }
+
+        function createFeaturedCard(app) {
+            const card = document.createElement('div');
+            card.classList.add('featured-app-card');
+            card.onclick = () => openModal(app); // Öffnet Modal beim Klick auf die Karte
+
+            card.innerHTML = `
+                <img src="${app.iconURL}" alt="${app.name} Icon">
+                <h3>${app.name}</h3>
+                <p>${app.subtitle}</p>
+                <a href="download_page.html?appName=${encodeURIComponent(app.name)}&appSubtitle=${encodeURIComponent(app.subtitle)}&appIconUrl=${encodeURIComponent(app.iconURL)}&ipaDownloadUrl=${encodeURIComponent(app.downloadURL)}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
+            `;
+            return card;
+        }
+
+        // Tab Switching Logic
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(`${sectionId}-section`).classList.add('active');
+
+            document.querySelectorAll('.tab-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.getElementById(`${sectionId}-tab`).classList.add('active');
+
+            // Speichern des aktiven Tabs im localStorage
+            localStorage.setItem('activeTab', sectionId);
+
+            // Spezielle Logik für den Such-Tab
+            if (sectionId === 'search') {
+                const searchResultsDiv = document.getElementById('search-results');
+                searchResultsDiv.innerHTML = `<p id="search-prompt" class="search-prompt">${getTranslation('searchPrompt')}</p>`;
+                document.getElementById('search-input').value = ''; // Suchfeld leeren
+            }
+        }
+
+        // Beim Laden der Seite den zuletzt aktiven Tab wiederherstellen
+        window.addEventListener('load', () => {
+            const lastActiveTab = localStorage.getItem('activeTab');
+            if (lastActiveTab) {
+                showSection(lastActiveTab);
+            } else {
+                showSection('explore'); // Standard, falls kein Tab gespeichert ist
+            }
         });
-    }
-    function renderApps(list, container) {
-      if (!sourceData) return;
-      container.innerHTML = '';
-      if (list.length === 0) {
-        container.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
-        return;
-      }
-      list.forEach(app => {
-        container.appendChild(createCard(app));
-      });
-    }
-    searchInput.addEventListener('input', () => {
-      const q = searchInput.value.toLowerCase();
-      const filtered = apps.filter(app =>
-          app.name.toLowerCase().includes(q) ||
-          app.subtitle.toLowerCase().includes(q) ||
-          (app.localizedDescription && app.localizedDescription.toLowerCase().includes(q))
-      );
-      renderApps(filtered, appListSearch);
-      if (filtered.length === 0 && q.length > 0) {
-          appListSearch.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
-      } else if (q.length === 0) {
-          appListSearch.innerHTML = `<p class="no-apps-message">${getTranslation('searchPrompt')}</p>`;
-      }
-    });
-    function hideBanner() {
-      document.getElementById("pwaBanner").style.display = "none";
-      sessionStorage.setItem("hidePWABannerTemp", "1");
-    }
-    function updateDarkModeButtonText() {
-        const darkModeBtn = document.getElementById('dark-mode-toggle-btn');
-        if (darkModeBtn) {
-            darkModeBtn.textContent = currentDarkModeState ? 'An' : 'Aus';
+
+
+        // Search Logic
+        let searchTimeout;
+        function setupSearch() {
+            const searchInput = document.getElementById('search-input');
+            const searchResultsDiv = document.getElementById('search-results');
+
+            searchInput.addEventListener('input', (event) => {
+                clearTimeout(searchTimeout);
+                const query = event.target.value.toLowerCase().trim();
+
+                if (query.length === 0) {
+                    searchResultsDiv.innerHTML = `<p id="search-prompt" class="search-prompt">${getTranslation('searchPrompt')}</p>`;
+                    return;
+                }
+
+                searchTimeout = setTimeout(() => {
+                    const filteredApps = allApps.filter(app =>
+                        app.name.toLowerCase().includes(query) ||
+                        app.subtitle.toLowerCase().includes(query) ||
+                        (app.description && app.description.toLowerCase().includes(query))
+                    );
+                    renderSearchResults(filteredApps);
+                }, 300); // Verzögerung, um nicht bei jeder Eingabe zu suchen
+            });
         }
-    }
-    window.addEventListener('load', () => {
-      loadPreferences();
-      // Rufe loadAppsFromSource hier auf, bevor der Splashscreen ausgeblendet wird,
-      // damit die Daten geladen sind, sobald die UI sichtbar wird.
-      loadAppsFromSource(); 
 
-      const isIOS = /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
-      const isInStandalone =
-        window.matchMedia('(display-mode: standalone)').matches ||
-        window.navigator.standalone;
-      const hideTemp = sessionStorage.getItem("hidePWABannerTemp");
-      if (isIOS && !isInStandalone && !hideTemp) {
-        document.getElementById("pwaBanner").style.display = "block";
-      }
-    });
-    
-    // Verzögerung des Splashscreens und Anzeige der Hauptinhalte
-    setTimeout(() => {
-      const splash = document.getElementById('splash-screen');
-      const mainContent = document.getElementById('main-content');
-      const tabBar = document.getElementById('bottom-tab-bar'); 
+        function renderSearchResults(results) {
+            const searchResultsDiv = document.getElementById('search-results');
+            searchResultsDiv.innerHTML = '';
+            if (results.length === 0) {
+                searchResultsDiv.innerHTML = `<p class="no-results">${getTranslation('noAppsFound')}</p>`;
+            } else {
+                results.forEach(app => {
+                    searchResultsDiv.appendChild(createCard(app));
+                });
+            }
+        }
 
-      if (splash) {
-          splash.classList.add('hidden');
-          setTimeout(() => {
-              splash.style.display = 'none';
-              if (mainContent) {
-                  mainContent.style.display = 'flex';
-              }
-              if (tabBar) {
-                  tabBar.style.display = 'flex'; 
-              }
-              goTab('explore'); // Jetzt den Explore-Tab nach dem Laden der Apps aktivieren
-          }, 500);
-      }
-    }, 1500); // 1.5 Sekunden Splash-Screen
-</script>
+
+        // Modal Logic
+        function openModal(app) {
+            const modalOverlay = document.getElementById('app-modal-overlay');
+            document.getElementById('modal-app-icon').src = app.iconURL;
+            document.getElementById('modal-app-name').textContent = app.name;
+            document.getElementById('modal-app-subtitle').textContent = app.subtitle;
+            document.getElementById('modal-description').textContent = app.description && app.description[currentLanguage] ? app.description[currentLanguage] : getTranslation('modalDefaultDescription'); // Beschreibungen sind jetzt sprachabhängig
+            document.getElementById('modal-version').textContent = app.version;
+            document.getElementById('modal-size').textContent = app.size;
+
+            // Wichtig: Der Install-Button im Modal muss auch auf die download_page.html verlinken
+            const modalInstallBtn = document.getElementById('modal-install-btn');
+            modalInstallBtn.href = `download_page.html?appName=${encodeURIComponent(app.name)}&appSubtitle=${encodeURIComponent(app.subtitle)}&appIconUrl=${encodeURIComponent(app.iconURL)}&ipaDownloadUrl=${encodeURIComponent(app.downloadURL)}`;
+            modalInstallBtn.download = app.name + ".ipa"; // Setzt den Dateinamen für den Download
+
+            modalOverlay.classList.add('visible');
+            document.body.style.overflow = 'hidden'; // Verhindert Scrollen des Hintergrunds
+        }
+
+        function closeModal() {
+            const modalOverlay = document.getElementById('app-modal-overlay');
+            modalOverlay.classList.remove('visible');
+            document.body.style.overflow = ''; // Ermöglicht Scrollen wieder
+        }
+
+        // PWA Banner Logic
+        function showPwaBanner() {
+            const pwaBanner = document.getElementById('pwa-banner');
+            const pwaDismissed = localStorage.getItem('pwaBannerDismissed');
+
+            // Zeigen Sie das Banner nur an, wenn es noch nicht abgelehnt wurde
+            // und wenn der Benutzer nicht bereits die PWA installiert hat (was via beforeinstallprompt schwer ist,
+            // aber wir können annehmen, dass er es nicht hat, wenn beforeinstallprompt ausgelöst wird).
+            // Für iOS Safari gibt es kein beforeinstallprompt, daher immer anzeigen, wenn nicht abgelehnt.
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+            if (!pwaDismissed) {
+                // Für Android und Desktop (Chrome, Edge etc.)
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault(); // Verhindert das Standard-Banner
+                    deferredPrompt = e; // Speichert das Event für spätere Nutzung
+                    pwaBanner.classList.add('show');
+                });
+
+                // Für iOS (da beforeinstallprompt dort nicht funktioniert)
+                if (isIOS) {
+                    pwaBanner.classList.add('show');
+                }
+            }
+
+            document.getElementById('pwa-banner-button').addEventListener('click', () => {
+                pwaBanner.classList.remove('show');
+                localStorage.setItem('pwaBannerDismissed', 'true');
+            });
+        }
+    </script>
 </body>
 </html>
