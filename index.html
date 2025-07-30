@@ -23,8 +23,8 @@
             --light-tabbar-border: #e0e0e0;
             --light-tabbar-icon: #8e8e93;
             --light-tabbar-icon-active: #007aff;
-            --light-modal-bg: rgba(255, 255, 255, 0.9);
-            --light-modal-content-bg: #ffffff;
+            --light-modal-overlay: rgba(0, 0, 0, 0.7); /* Extra Farbe für den Hintergrund */
+            --light-modal-bg: #ffffff;
             --light-input-bg: #e5e5e5;
             --light-input-text: #000000;
             --light-splash-bg: #ffffff;
@@ -46,8 +46,8 @@
             --dark-tabbar-border: #38383a;
             --dark-tabbar-icon: #8e8e93;
             --dark-tabbar-icon-active: #0a84ff;
-            --dark-modal-bg: rgba(0, 0, 0, 0.9);
-            --dark-modal-content-bg: #2c2c2e;
+            --dark-modal-overlay: rgba(0, 0, 0, 0.8); /* Extra Farbe für den Hintergrund */
+            --dark-modal-bg: #2c2c2e;
             --dark-input-bg: #3a3a3c;
             --dark-input-text: #ffffff;
             --dark-splash-bg: #000000;
@@ -58,7 +58,10 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
-            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
             transition: background-color 0.3s, color 0.3s;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -71,16 +74,23 @@
             background-color: var(--dark-bg-primary);
             color: var(--dark-text-primary);
         }
+        #main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: hidden;
+            padding-top: env(safe-area-inset-top);
+        }
         .app-container {
-            padding: 0 16px;
-            padding-bottom: 80px;
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 16px 16px 0 16px;
-            z-index: 1000;
             background: transparent;
             transition: background-color 0.3s;
         }
@@ -119,6 +129,7 @@
         }
         .app-section {
             margin-top: 16px;
+            padding: 0 16px;
         }
         .app-section h2 {
             font-size: 22px;
@@ -129,6 +140,7 @@
             overflow-x: scroll;
             white-space: nowrap;
             -webkit-overflow-scrolling: touch;
+            padding-left: 16px;
             padding-bottom: 16px;
             scrollbar-width: none;
             -ms-overflow-style: none;
@@ -149,7 +161,7 @@
             white-space: normal;
         }
         .featured-app-card:last-child {
-            margin-right: 0;
+            margin-right: 16px;
         }
         .featured-app-card img {
             width: 80px;
@@ -216,28 +228,34 @@
             text-overflow: ellipsis;
         }
         .install-btn {
-            background-color: var(--install-btn-bg);
-            color: var(--install-btn-text);
+            background-color: var(--light-install-btn-bg);
+            color: var(--light-install-btn-text);
             padding: 8px 16px;
             border-radius: 20px;
             text-decoration: none;
             font-size: 14px;
             font-weight: 600;
             white-space: nowrap;
+            border: none;
+        }
+        .dark .install-btn {
+            background-color: var(--dark-install-btn-bg);
+            color: var(--dark-install-btn-text);
         }
         .tab-bar {
             display: flex;
             justify-content: space-around;
             align-items: center;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
             background-color: var(--tabbar-bg);
             border-top: 1px solid var(--tabbar-border);
             padding-bottom: env(safe-area-inset-bottom);
             z-index: 1001;
-            transition: background-color 0.3s, border-color 0.3s;
+            height: 60px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+            flex-shrink: 0;
+        }
+        .dark .tab-bar {
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
         }
         .tab-item {
             display: flex;
@@ -246,6 +264,7 @@
             flex: 1;
             padding: 10px 0;
             cursor: pointer;
+            height: 100%;
         }
         .tab-icon {
             font-size: 24px;
@@ -264,13 +283,16 @@
         }
         .tab-content {
             display: none;
+            padding-top: 1px;
+            height: 100%;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .tab-content.active {
             display: block;
         }
         #searchTab .search-container {
             padding: 16px;
-            z-index: 999;
             background-color: var(--bg-primary);
             transition: background-color 0.3s;
         }
@@ -292,27 +314,33 @@
         }
         .modal {
             position: fixed;
-            z-index: 1002;
+            z-index: 999999;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: var(--modal-bg);
+            background-color: var(--modal-overlay);
             display: none;
             justify-content: center;
             align-items: center;
         }
+        .modal.active {
+            display: flex;
+        }
         .modal-content {
-            background-color: var(--modal-content-bg);
+            background-color: var(--modal-bg);
             padding: 20px;
             border-radius: 20px;
             width: 90%;
             max-width: 400px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
             text-align: center;
+            position: relative;
         }
         .close-modal {
-            float: right;
+            position: absolute;
+            top: 10px;
+            right: 15px;
             font-size: 28px;
             font-weight: bold;
             color: var(--text-secondary);
@@ -326,9 +354,21 @@
             font-size: 16px;
             color: var(--text-secondary);
         }
+        .modal-content .install-btn {
+            background-color: #555555;
+            color: #ffffff;
+            font-size: 16px;
+            padding: 12px 24px;
+            margin-top: 15px;
+            display: inline-block;
+        }
+        .dark .modal-content .install-btn {
+            background-color: #8e8e93;
+            color: #000000;
+        }
         .pwa-banner {
             position: fixed;
-            bottom: calc(env(safe-area-inset-bottom) + 60px);
+            bottom: calc(env(safe-area-inset-bottom) + 60px + 10px);
             left: 50%;
             transform: translateX(-50%);
             width: calc(100% - 32px);
@@ -338,7 +378,7 @@
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             display: none;
-            z-index: 1000;
+            z-index: 1002;
         }
         .pwa-banner p {
             margin: 0;
@@ -360,7 +400,7 @@
             padding: 0;
             margin: 20px 0;
         }
-        #profileTab .settings-item {
+        .settings-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -369,6 +409,11 @@
             border-radius: 15px;
             margin-bottom: 10px;
             box-shadow: 0 2px 5px var(--card-shadow);
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+        .settings-item:active {
+            transform: scale(0.98);
         }
         .settings-item p {
             margin: 0;
@@ -392,10 +437,11 @@
         }
         .language-modal-content {
             padding: 20px;
-            background-color: var(--modal-content-bg);
+            background-color: var(--modal-bg);
             border-radius: 20px;
             width: 90%;
             max-width: 300px;
+            position: relative;
         }
         .language-modal-content h3 {
             margin-top: 0;
@@ -422,11 +468,6 @@
         .language-option span {
             color: var(--text-primary);
         }
-        .language-modal-content .close-modal {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-        }
         .splash-screen {
             position: fixed;
             top: 0;
@@ -437,7 +478,7 @@
             justify-content: center;
             align-items: center;
             background-color: var(--splash-bg);
-            z-index: 9999;
+            z-index: 9999999;
             transition: opacity 0.5s ease-out;
             opacity: 1;
         }
@@ -484,7 +525,7 @@
                 color: var(--dark-search-bar-text);
             }
             body:not(.light) .modal-content {
-                background-color: var(--dark-modal-content-bg);
+                background-color: var(--dark-modal-bg);
             }
             body:not(.light) .settings-item {
                 background-color: var(--dark-card-bg);
@@ -509,74 +550,76 @@
     <img src="https://i.imgur.com/oWyf5VR.png" alt="Xalostore Logo" class="splash-logo">
 </div>
 
-<div class="top-bar">
-    <div class="title-block">
-        <img src="https://i.imgur.com/oWyf5VR.png" alt="Xalostore Logo">
-        <div>
-            <h1 id="header-title">Xalostore</h1>
-            <h2 id="header-subtitle">Sideload Apps. Simple. Secure.</h2>
+<div id="main-content" style="display: none;">
+    <div class="top-bar">
+        <div class="title-block">
+            <img src="https://i.imgur.com/oWyf5VR.png" alt="Xalostore Logo">
+            <div>
+                <h1 id="header-title">Xalostore</h1>
+                <h2 id="header-subtitle">Sideload Apps. Simple. Secure.</h2>
+            </div>
         </div>
+        <div class="toggle-mode" onclick="toggleMode()">🌙</div>
     </div>
-    <div class="toggle-mode" onclick="toggleMode()">🌙</div>
-</div>
-
-<div class="app-container">
-    <div id="exploreTab" class="tab-content active">
-        <div class="app-section">
-            <h2 data-type="featured">Featured</h2>
+    
+    <div class="app-container">
+        <div id="exploreTab" class="tab-content active">
+            <div class="app-section">
+                <h2 data-type="featured">Featured</h2>
+            </div>
             <div id="featuredAppContainer"></div>
+            <div class="app-section">
+                <h2 data-type="apps">Apps</h2>
+                <div id="appList"></div>
+            </div>
         </div>
-        <div class="app-section">
-            <h2 data-type="apps">Apps</h2>
-            <div id="appList"></div>
+
+        <div id="searchTab" class="tab-content">
+            <div class="search-container">
+                <input type="text" id="search" placeholder="App suchen...">
+            </div>
+            <div id="appListSearch" class="app-section">
+                <p id="search-prompt" class="no-apps-message">Beginne mit der Suche, um Apps zu finden.</p>
+            </div>
+        </div>
+
+        <div id="profileTab" class="tab-content">
+            <div class="app-section">
+                <h2 data-type="profileTitle">Profil</h2>
+                <p id="profile-welcome-title">Willkommen bei Xalostore!</p>
+                <p id="profile-text-1">Dies ist dein einfacher und sicherer Ort, um Sideload-Apps zu finden und zu installieren.</p>
+                <p id="profile-text-2">Wir arbeiten ständig daran, dir neue Funktionen und die besten Apps zur Verfügung zu stellen.</p>
+                <p id="profile-text-3">Schau bald wieder vorbei für Updates und neue Inhalte!</p>
+            </div>
+            <div class="app-section">
+                <h2 id="settings-title">Einstellungen</h2>
+                <ul class="settings-list">
+                    <li class="settings-item" onclick="openLanguageModal()">
+                        <p id="language-setting-label">Sprache</p>
+                        <span id="current-language-display">Deutsch</span>
+                    </li>
+                    <li class="settings-item">
+                        <p id="dark-mode-setting-label">Dark Mode</p>
+                        <button id="dark-mode-toggle-btn" onclick="toggleDarkModeFromSettings()">Aus</button>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 
-    <div id="searchTab" class="tab-content">
-        <div class="search-container">
-            <input type="text" id="search" placeholder="App suchen...">
+    <div class="tab-bar">
+        <div id="tabExplore" class="tab-item" onclick="goTab('explore')">
+            <i class="fas fa-compass tab-icon active-icon"></i>
+            <span class="tab-text active-text" id="tab-explore-text">Explore</span>
         </div>
-        <div id="appListSearch" class="app-section">
-            <p id="search-prompt" class="no-apps-message">Beginne mit der Suche, um Apps zu finden.</p>
+        <div id="tabSearch" class="tab-item" onclick="goTab('search')">
+            <i class="fas fa-search tab-icon"></i>
+            <span class="tab-text" id="tab-search-text">Suchen</span>
         </div>
-    </div>
-
-    <div id="profileTab" class="tab-content">
-        <div class="app-section">
-            <h2 data-type="profileTitle">Profil</h2>
-            <p id="profile-welcome-title">Willkommen bei Xalostore!</p>
-            <p id="profile-text-1">Dies ist dein einfacher und sicherer Ort, um Sideload-Apps zu finden und zu installieren.</p>
-            <p id="profile-text-2">Wir arbeiten ständig daran, dir neue Funktionen und die besten Apps zur Verfügung zu stellen.</p>
-            <p id="profile-text-3">Schau bald wieder vorbei für Updates und neue Inhalte!</p>
+        <div id="tabProfile" class="tab-item" onclick="goTab('profile')">
+            <i class="fas fa-user tab-icon"></i>
+            <span class="tab-text" id="tab-profile-text">Profil</span>
         </div>
-        <div class="app-section">
-            <h2 id="settings-title">Einstellungen</h2>
-            <ul class="settings-list">
-                <li class="settings-item" onclick="openLanguageModal()">
-                    <p id="language-setting-label">Sprache</p>
-                    <span id="current-language-display">Deutsch</span>
-                </li>
-                <li class="settings-item">
-                    <p id="dark-mode-setting-label">Dark Mode</p>
-                    <button id="dark-mode-toggle-btn" onclick="toggleDarkModeFromSettings()">Aus</button>
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-<div class="tab-bar">
-    <div id="tabExplore" class="tab-item" onclick="goTab('explore')">
-        <i class="fas fa-compass tab-icon active-icon"></i>
-        <span class="tab-text active-text" id="tab-explore-text">Explore</span>
-    </div>
-    <div id="tabSearch" class="tab-item" onclick="goTab('search')">
-        <i class="fas fa-search tab-icon"></i>
-        <span class="tab-text" id="tab-search-text">Suchen</span>
-    </div>
-    <div id="tabProfile" class="tab-item" onclick="goTab('profile')">
-        <i class="fas fa-user tab-icon"></i>
-        <span class="tab-text" id="tab-profile-text">Profil</span>
     </div>
 </div>
 
@@ -668,7 +711,7 @@
             "toggleModeButtonLight": "🌙"
         }
     };
-    let currentLanguage = localStorage.getItem('appLanguage') || 'de'; // Set 'de' as default
+    let currentLanguage = localStorage.getItem('appLanguage') || 'de';
     function getTranslation(key) {
         return translations[currentLanguage][key] || key;
     }
@@ -787,7 +830,7 @@
         <a href="${downloadURL}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
       `;
       card.onclick = () => {
-        appModal.style.display = 'flex';
+        appModal.classList.add('active');
         modalContent.innerHTML = `
           <span class="close-modal" onclick="closeModal()">&times;</span>
           <h3>${app.name}</h3>
@@ -813,7 +856,7 @@
           <a href="${downloadURL}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
         `;
         card.onclick = () => {
-          appModal.style.display = 'flex';
+          appModal.classList.add('active');
           modalContent.innerHTML = `
             <span class="close-modal" onclick="closeModal()">&times;</span>
             <h3>${app.name}</h3>
@@ -826,7 +869,7 @@
         return card;
     }
     function closeModal() {
-      appModal.style.display = 'none';
+      appModal.classList.remove('active');
     }
     function applyDarkModeState() {
       if (currentDarkModeState) {
@@ -886,7 +929,7 @@
       }
     }
     function openLanguageModal() {
-      languageModal.style.display = 'flex';
+      languageModal.classList.add('active');
       document.querySelectorAll('.language-option').forEach(button => {
           button.classList.remove('active-lang');
       });
@@ -896,7 +939,7 @@
       }
     }
     function closeLanguageModal() {
-      languageModal.style.display = 'none';
+      languageModal.classList.remove('active');
     }
     function renderExploreApps(list) {
         if (!sourceData) return;
@@ -978,7 +1021,16 @@
     });
     setTimeout(() => {
       const splash = document.getElementById('splash-screen');
-      if (splash) splash.classList.add('hidden');
+      const mainContent = document.getElementById('main-content');
+      if (splash) {
+          splash.classList.add('hidden');
+          setTimeout(() => {
+              splash.style.display = 'none';
+              if (mainContent) {
+                  mainContent.style.display = 'flex';
+              }
+          }, 500);
+      }
     }, 1500);
 </script>
 </body>
