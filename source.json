@@ -13,6 +13,52 @@
   "headerURL": "https://i.imgur.com/vFyAEQt.png",
   "apps": [
     {
+      "name": "Xalo WhatsApp",
+      "bundleIdentifier": "net.whatsapp.WhatsApp",
+      "marketplaceID": "",
+      "developerName": "Example Developer",
+      "subtitle": "An awesome app.",
+      "localizedDescription": "This is an awesome app only available on Xalostore.",
+      "iconURL": "https://i.imgur.com/lsOucYG.png",
+      "tintColor": "#5cf474",
+      "category": "other",
+      "screenshots": [],
+      "versions": [
+        {
+          "downloadURL": "https://github.com/Ihaveadream19/xalostore/releases/download/untagged-cc45664876956bb20544/WhatsAppAll_Xalo.ipa",
+          "size": 122400000,
+          "version": "25.20.5",
+          "buildVersion": null,
+          "date": "2025-07-30T21:56:00+02:00",
+          "localizedDescription": null,
+          "minOSVersion": null
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {
+          "NSBluetoothAlwaysUsageDescription": "This lets you connect to supported Bluetooth devices",
+          "NSBluetoothPeripheralUsageDescription": "This lets you connect to supported Bluetooth devices",
+          "NSCalendarsUsageDescription": "âThis lets you create events on your calendar.",
+          "NSCameraUsageDescription": "âThis lets you make video calls, take photos, and record videos.",
+          "NSContactsUsageDescription": "âUpload your contacts to WhatsApp's servers to help you quickly get in touch with your friends and help us provide a better experience.",
+          "NSFaceIDUsageDescription": "âUse Face ID to authenticate on WhatsApp.",
+          "NSLocalNetworkUsageDescription": "âThis will let you use WhatsApp to place and receive calls through devices that are on the same Wi-Fi or local access networks.",
+          "NSLocationAlwaysAndWhenInUseUsageDescription": "âIf you always allow access to your location, you can choose to share your live location, and it will update even when you're not using the app. If you only allow access while using the app, you can only send your current location or a nearby place.",
+          "NSLocationAlwaysUsageDescription": "âIf you always allow access to your location, you can choose to share your live location, and it will update even when you're not using the app. This also lets you send your current location or a nearby place.",
+          "NSLocationUsageDescription": "âThis lets you send your current location or nearby places in chats.",
+          "NSLocationWhenInUseUsageDescription": "âThis lets you send your current location or nearby places in chats.",
+          "NSMicrophoneUsageDescription": "âThis lets you make calls, send voice messages, and record videos with sound.",
+          "NSPhotoLibraryAddUsageDescription": "âThis lets you save photos and videos to your library.",
+          "NSPhotoLibraryUsageDescription": "âThis lets you send photos and videos from your library and save the ones you capture.",
+          "NSRemindersUsageDescription": "âThis lets you set reminders to call your friends back.",
+          "NSSiriUsageDescription": "âThis lets you use Siri to quickly send and read messages and make calls.",
+          "NSSpeechRecognitionUsageDescription": "WhatsApp does on-device recognition for Voice Messages. In this mode, no voice data is sent to Apple despite this alert, which is unexpected. Select \"Don't Allow\" and report to WhatsApp."
+        }
+      },
+      "patreon": {}
+    },
+    {
       "name": "Xalo YouTube+",
       "bundleIdentifier": "com.google.ios.youtube",
       "marketplaceID": "",
@@ -25,12 +71,12 @@
       "screenshots": [],
       "versions": [
         {
-          "downloadURL": "https://github.com/Ihaveadream19/xalostore/releases/download/untagged-119b68e50df6537afe3e/Xalo.YouTube.+.20.29.3.5.2beta.ipa",
-          "size": 115100000,
           "version": "20.29.3",
-          "buildVersion": null,
           "date": "2025-07-26T17:11:00+02:00",
           "localizedDescription": null,
+          "downloadURL": "https://github.com/Ihaveadream19/xalostore/releases/download/untagged-119b68e50df6537afe3e/Xalo.YouTube.+.20.29.3.5.2beta.ipa",
+          "size": 115100000,
+          "buildVersion": null,
           "minOSVersion": null
         }
       ],
@@ -223,9 +269,9 @@
           "NSCalendarsUsageDescription": "This will let Instagram sync events to your calendar.",
           "NSCalendarsWriteOnlyAccessUsageDescription": "This will let Instagram sync events to your calendar.",
           "NSCameraUsageDescription": "Instagram uses your device's camera to do things like help you take photos, record videos and use effects.",
-          "NSContactsUsageDescription": "Instagram will use your contacts to suggest people and things you care about, and offer a better service. Your contacts will be periodically synced and securely stored on Instagram’s servers.",
+          "NSContactsUsageDescription": "Instagram will use your contacts to suggest people and things you care about, and offer a better service. Your contacts will be periodically synced and securely stored on Instagramâs servers.",
           "NSFaceIDUsageDescription": "Enable Face ID for quick and secure authentication on Instagram.",
-          "NSFocusStatusUsageDescription": "This allows Instagram to check to see if you’ve been missing notifications from friends. You can always change this later in settings.",
+          "NSFocusStatusUsageDescription": "This allows Instagram to check to see if youâve been missing notifications from friends. You can always change this later in settings.",
           "NSLocationAlwaysAndWhenInUseUsageDescription": "Instagram uses this to make some features work, personalize content and help people find places. You can change your preferences at any time in your device settings.",
           "NSLocationUsageDescription": "Instagram uses this to make some features work, personalize content and help people find places. You can change your preferences at any time in your device settings.",
           "NSLocationWhenInUseUsageDescription": "Instagram uses this to make some features work, personalize content and help people find places. You can change your preferences at any time in your device settings.",
