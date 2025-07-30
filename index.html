@@ -10,6 +10,29 @@
     <link rel="apple-touch-icon" href="https://i.imgur.com/oWyf5VR.png">
     <style>
         :root {
+            /* Standard-Werte für Light Mode, diese werden von .dark überschrieben, wenn die Klasse aktiv ist */
+            --bg-primary: var(--light-bg-primary);
+            --bg-secondary: var(--light-bg-secondary);
+            --text-primary: var(--light-text-primary);
+            --text-secondary: var(--light-text-secondary);
+            --card-bg: var(--light-card-bg);
+            --install-btn-bg: var(--light-install-btn-bg);
+            --install-btn-text: var(--light-install-btn-text);
+            --card-shadow: var(--light-card-shadow);
+            --header-bg: var(--light-header-bg);
+            --tabbar-bg: var(--light-tabbar-bg);
+            --tabbar-border: var(--light-tabbar-border);
+            --tabbar-icon: var(--light-tabbar-icon);
+            --tabbar-icon-active: var(--light-tabbar-icon-active);
+            --modal-overlay: var(--light-modal-overlay);
+            --modal-bg: var(--light-modal-bg);
+            --input-bg: var(--light-input-bg);
+            --input-text: var(--light-input-text);
+            --splash-bg: var(--light-splash-bg);
+            --search-bar-bg: var(--light-search-bar-bg);
+            --search-bar-text: var(--light-search-bar-text);
+            --pwa-banner-bg: var(--light-pwa-banner-bg);
+
             --light-bg-primary: #ffffff;
             --light-bg-secondary: #f0f0f0;
             --light-text-primary: #000000;
@@ -23,7 +46,7 @@
             --light-tabbar-border: #e0e0e0;
             --light-tabbar-icon: #8e8e93;
             --light-tabbar-icon-active: #007aff;
-            --light-modal-overlay: rgba(0, 0, 0, 0.7); /* Extra Farbe für den Hintergrund */
+            --light-modal-overlay: rgba(0, 0, 0, 0.7);
             --light-modal-bg: #ffffff;
             --light-input-bg: #e5e5e5;
             --light-input-text: #000000;
@@ -33,6 +56,28 @@
             --light-pwa-banner-bg: #f0f0f0;
         }
         .dark {
+            --bg-primary: var(--dark-bg-primary);
+            --bg-secondary: var(--dark-bg-secondary);
+            --text-primary: var(--dark-text-primary);
+            --text-secondary: var(--dark-text-secondary);
+            --card-bg: var(--dark-card-bg);
+            --install-btn-bg: var(--dark-install-btn-bg);
+            --install-btn-text: var(--dark-install-btn-text);
+            --card-shadow: var(--dark-card-shadow);
+            --header-bg: var(--dark-header-bg);
+            --tabbar-bg: var(--dark-tabbar-bg);
+            --tabbar-border: var(--dark-tabbar-border);
+            --tabbar-icon: var(--dark-tabbar-icon);
+            --tabbar-icon-active: var(--dark-tabbar-icon-active);
+            --modal-overlay: var(--dark-modal-overlay);
+            --modal-bg: var(--dark-modal-bg);
+            --input-bg: var(--dark-input-bg);
+            --input-text: var(--dark-input-text);
+            --splash-bg: var(--dark-splash-bg);
+            --search-bar-bg: var(--dark-search-bar-bg);
+            --search-bar-text: var(--dark-search-bar-text);
+            --pwa-banner-bg: var(--dark-pwa-banner-bg);
+
             --dark-bg-primary: #1c1c1e;
             --dark-bg-secondary: #2c2c2e;
             --dark-text-primary: #ffffff;
@@ -46,7 +91,7 @@
             --dark-tabbar-border: #38383a;
             --dark-tabbar-icon: #8e8e93;
             --dark-tabbar-icon-active: #0a84ff;
-            --dark-modal-overlay: rgba(0, 0, 0, 0.8); /* Extra Farbe für den Hintergrund */
+            --dark-modal-overlay: rgba(0, 0, 0, 0.8);
             --dark-modal-bg: #2c2c2e;
             --dark-input-bg: #3a3a3c;
             --dark-input-text: #ffffff;
@@ -85,7 +130,7 @@
             flex: 1;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            padding-bottom: 75px; /* GEÄNDERT: Fügt Abstand hinzu, damit die fixe Leiste nichts verdeckt */
+            padding-bottom: 75px;
         }
         .top-bar {
             display: flex;
@@ -229,8 +274,8 @@
             text-overflow: ellipsis;
         }
         .install-btn {
-            background-color: var(--light-install-btn-bg);
-            color: var(--light-install-btn-text);
+            background-color: var(--install-btn-bg); /* Nutze die generische Variable */
+            color: var(--install-btn-text); /* Nutze die generische Variable */
             padding: 8px 16px;
             border-radius: 20px;
             text-decoration: none;
@@ -239,12 +284,8 @@
             white-space: nowrap;
             border: none;
         }
-        .dark .install-btn {
-            background-color: var(--dark-install-btn-bg);
-            color: var(--dark-install-btn-text);
-        }
         .tab-bar {
-            position: fixed; /* GEÄNDERT: Sorgt dafür, dass die Leiste immer am unteren Rand bleibt */
+            position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
@@ -257,8 +298,7 @@
             z-index: 1001;
             height: 60px;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-            /* NEU: Standardmäßig ausgeblendet */
-            display: none; 
+            display: none; /* Initial ausgeblendet, wird per JS eingeblendet */
         }
         .dark .tab-bar {
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
@@ -361,16 +401,12 @@
             color: var(--text-secondary);
         }
         .modal-content .install-btn {
-            background-color: #555555;
-            color: #ffffff;
+            background-color: var(--install-btn-bg); /* Nutze die generische Variable */
+            color: var(--install-btn-text); /* Nutze die generische Variable */
             font-size: 16px;
             padding: 12px 24px;
             margin-top: 15px;
             display: inline-block;
-        }
-        .dark .modal-content .install-btn {
-            background-color: #8e8e93;
-            color: #000000;
         }
         .pwa-banner {
             position: fixed;
@@ -502,49 +538,35 @@
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
+        /* Die @media (prefers-color-scheme: dark) Regel sollte erhalten bleiben,
+           da sie die Initialisierung des Dark Mode basierend auf Systemeinstellungen ermöglicht,
+           bevor JavaScript vollständig geladen ist. */
         @media (prefers-color-scheme: dark) {
-            body:not(.light) {
+            body:not(.light) { /* Wird angewendet, wenn body NICHT die 'light' Klasse hat (d.h. entweder 'dark' oder gar keine) */
                 background-color: var(--dark-bg-primary);
                 color: var(--dark-text-primary);
-            }
-            body:not(.light) .top-bar {
-                background-color: var(--dark-header-bg);
-            }
-            body:not(.light) .app-card {
-                background-color: var(--dark-card-bg);
-            }
-            body:not(.light) .install-btn {
-                background-color: var(--dark-install-btn-bg);
-            }
-            body:not(.light) .tab-bar {
-                background-color: var(--dark-tabbar-bg);
-                border-color: var(--dark-tabbar-border);
-            }
-            body:not(.light) .tab-icon, body:not(.light) .tab-text {
-                color: var(--dark-tabbar-icon);
-            }
-            body:not(.light) .active-icon, body:not(.light) .active-text {
-                color: var(--dark-tabbar-icon-active) !important;
-            }
-            body:not(.light) #search {
-                background-color: var(--dark-search-bar-bg);
-                color: var(--dark-search-bar-text);
-            }
-            body:not(.light) .modal-content {
-                background-color: var(--dark-modal-bg);
-            }
-            body:not(.light) .settings-item {
-                background-color: var(--dark-card-bg);
-            }
-            body:not(.light) .pwa-banner {
-                background-color: var(--dark-pwa-banner-bg);
-            }
-            body:not(.light) .language-option {
-                background-color: var(--dark-bg-secondary);
-            }
-            body:not(.light) .language-option.active-lang {
-                background-color: var(--dark-install-btn-bg);
-                color: var(--dark-install-btn-text);
+                
+                --bg-primary: var(--dark-bg-primary);
+                --bg-secondary: var(--dark-bg-secondary);
+                --text-primary: var(--dark-text-primary);
+                --text-secondary: var(--dark-text-secondary);
+                --card-bg: var(--dark-card-bg);
+                --install-btn-bg: var(--dark-install-btn-bg);
+                --install-btn-text: var(--dark-install-btn-text);
+                --card-shadow: var(--dark-card-shadow);
+                --header-bg: var(--dark-header-bg);
+                --tabbar-bg: var(--dark-tabbar-bg);
+                --tabbar-border: var(--dark-tabbar-border);
+                --tabbar-icon: var(--dark-tabbar-icon);
+                --tabbar-icon-active: var(--dark-tabbar-icon-active);
+                --modal-overlay: var(--dark-modal-overlay);
+                --modal-bg: var(--dark-modal-bg);
+                --input-bg: var(--dark-input-bg);
+                --input-text: var(--dark-input-text);
+                --splash-bg: var(--dark-splash-bg);
+                --search-bar-bg: var(--dark-search-bar-bg);
+                --search-bar-text: var(--dark-search-bar-text);
+                --pwa-banner-bg: var(--dark-pwa-banner-bg);
             }
         }
     </style>
@@ -750,7 +772,7 @@
         document.getElementById('profile-text-3').textContent = getTranslation('profileText3');
         document.getElementById('settings-title').textContent = getTranslation('settingsTitle');
         document.getElementById('language-setting-label').textContent = getTranslation('languageSettingLabel');
-        document.getElementById('darkModeSettingLabel').textContent = getTranslation('darkModeSettingLabel'); /* Korrigiert */
+        document.getElementById('dark-mode-setting-label').textContent = getTranslation('darkModeSettingLabel'); /* Korrigiert - ID geändert */
         document.getElementById('language-selection-title').textContent = getTranslation('languageSelectionTitle');
         document.getElementById('lang-de').querySelector('span').textContent = getTranslation('languageDe');
         document.getElementById('lang-en').querySelector('span').textContent = getTranslation('languageEn');
@@ -790,6 +812,8 @@
         fetch('source.json')
             .then(response => {
                 if (!response.ok) {
+                    // Log the full response status for better debugging
+                    console.error(`HTTP error! status: ${response.status}, text: ${response.statusText}`);
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 return response.json();
@@ -800,7 +824,7 @@
                 renderExploreApps(apps);
             })
             .catch(error => {
-                console.error("Could not load source.json:", error);
+                console.error("Fehler beim Laden von source.json oder Parsing-Fehler:", error); // Eindeutigere Fehlermeldung
                 const errorMessageElement = document.createElement('p');
                 errorMessageElement.id = 'appsLoadError';
                 errorMessageElement.className = 'no-apps-message';
@@ -949,28 +973,42 @@
       languageModal.classList.remove('active');
     }
     function renderExploreApps(list) {
-        if (!sourceData) return;
+        if (!sourceData || !sourceData.apps) { // Prüfe auch, ob sourceData.apps existiert
+            console.warn("sourceData oder sourceData.apps ist nicht verfügbar. Kann Apps nicht rendern.");
+            appList.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
+            featuredAppContainer.innerHTML = ''; // Leere auch den Featured-Container
+            return;
+        }
+        
         appList.innerHTML = '';
         featuredAppContainer.innerHTML = '';
-        if (!sourceData.apps || sourceData.apps.length === 0) {
+
+        if (list.length === 0) {
             appList.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
             return;
         }
+
         let featuredApp = null;
-        if (sourceData.featuredApps && sourceData.featuredApps.length > 0) {
+        // Sicherstellen, dass featuredApps ein Array ist und Elemente enthält
+        if (sourceData.featuredApps && Array.isArray(sourceData.featuredApps) && sourceData.featuredApps.length > 0) {
+            // Finden der App im Haupt 'apps' Array
             featuredApp = sourceData.apps.find(app => app.bundleIdentifier === sourceData.featuredApps[0]);
         }
+        
         const otherApps = [];
         if (featuredApp) {
             featuredAppContainer.appendChild(createFeaturedCard(featuredApp));
+            // Füge alle anderen Apps hinzu, die NICHT das Featured-App sind
             list.forEach(app => {
                 if (app.bundleIdentifier !== featuredApp.bundleIdentifier) {
                     otherApps.push(app);
                 }
             });
         } else {
+            // Wenn keine Featured App oder featuredApps leer ist, zeige alle Apps in der normalen Liste an
             otherApps.push(...list);
         }
+
         otherApps.forEach(app => {
             appList.appendChild(createCard(app));
         });
@@ -1012,8 +1050,10 @@
     }
     window.addEventListener('load', () => {
       loadPreferences();
-      applyDarkModeState();
-      translateUI();
+      // Rufe loadAppsFromSource hier auf, bevor der Splashscreen ausgeblendet wird,
+      // damit die Daten geladen sind, sobald die UI sichtbar wird.
+      loadAppsFromSource(); 
+
       const isIOS = /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
       const isInStandalone =
         window.matchMedia('(display-mode: standalone)').matches ||
@@ -1022,14 +1062,12 @@
       if (isIOS && !isInStandalone && !hideTemp) {
         document.getElementById("pwaBanner").style.display = "block";
       }
-
-      loadAppsFromSource();
-      goTab('explore');
     });
+    
+    // Verzögerung des Splashscreens und Anzeige der Hauptinhalte
     setTimeout(() => {
       const splash = document.getElementById('splash-screen');
       const mainContent = document.getElementById('main-content');
-      // NEU: Selektiere die tab-bar
       const tabBar = document.getElementById('bottom-tab-bar'); 
 
       if (splash) {
@@ -1039,13 +1077,13 @@
               if (mainContent) {
                   mainContent.style.display = 'flex';
               }
-              // NEU: Blende die tab-bar ein
               if (tabBar) {
-                  tabBar.style.display = 'flex';
+                  tabBar.style.display = 'flex'; 
               }
+              goTab('explore'); // Jetzt den Explore-Tab nach dem Laden der Apps aktivieren
           }, 500);
       }
-    }, 1500);
+    }, 1500); // 1.5 Sekunden Splash-Screen
 </script>
 </body>
 </html>
