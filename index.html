@@ -85,6 +85,7 @@
             flex: 1;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+            padding-bottom: 75px; /* GEÄNDERT: Fügt Abstand hinzu, damit die fixe Leiste nichts verdeckt */
         }
         .top-bar {
             display: flex;
@@ -243,6 +244,10 @@
             color: var(--dark-install-btn-text);
         }
         .tab-bar {
+            position: fixed; /* GEÄNDERT: Sorgt dafür, dass die Leiste immer am unteren Rand bleibt */
+            bottom: 0;
+            left: 0;
+            right: 0;
             display: flex;
             justify-content: space-around;
             align-items: center;
@@ -252,7 +257,6 @@
             z-index: 1001;
             height: 60px;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-            flex-shrink: 0;
         }
         .dark .tab-bar {
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
@@ -607,19 +611,20 @@
         </div>
     </div>
 
-    <div class="tab-bar">
-        <div id="tabExplore" class="tab-item" onclick="goTab('explore')">
-            <i class="fas fa-compass tab-icon active-icon"></i>
-            <span class="tab-text active-text" id="tab-explore-text">Explore</span>
-        </div>
-        <div id="tabSearch" class="tab-item" onclick="goTab('search')">
-            <i class="fas fa-search tab-icon"></i>
-            <span class="tab-text" id="tab-search-text">Suchen</span>
-        </div>
-        <div id="tabProfile" class="tab-item" onclick="goTab('profile')">
-            <i class="fas fa-user tab-icon"></i>
-            <span class="tab-text" id="tab-profile-text">Profil</span>
-        </div>
+</div>
+
+<div class="tab-bar">
+    <div id="tabExplore" class="tab-item" onclick="goTab('explore')">
+        <i class="fas fa-compass tab-icon active-icon"></i>
+        <span class="tab-text active-text" id="tab-explore-text">Explore</span>
+    </div>
+    <div id="tabSearch" class="tab-item" onclick="goTab('search')">
+        <i class="fas fa-search tab-icon"></i>
+        <span class="tab-text" id="tab-search-text">Suchen</span>
+    </div>
+    <div id="tabProfile" class="tab-item" onclick="goTab('profile')">
+        <i class="fas fa-user tab-icon"></i>
+        <span class="tab-text" id="tab-profile-text">Profil</span>
     </div>
 </div>
 
