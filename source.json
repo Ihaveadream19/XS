@@ -13,6 +13,38 @@
   "headerURL": "https://i.imgur.com/vFyAEQt.png",
   "apps": [
     {
+      "name": "Xalo Wallpapers",
+      "bundleIdentifier": "com.idevtal.Wallpapers",
+      "marketplaceID": "",
+      "developerName": "Example Developer",
+      "subtitle": "An awesome app.",
+      "localizedDescription": "This is an awesome app only available on Xalostore.",
+      "iconURL": "https://i.imgur.com/NoV8gVR.png",
+      "tintColor": "#7f7f7f",
+      "category": "other",
+      "screenshots": [],
+      "versions": [
+        {
+          "downloadURL": "https://github.com/Ihaveadream19/xalostore/releases/download/untagged-9125e94c8a78ec094c9f/ImgAI_AI_Image_Generator-Xalo.ipa",
+          "size": 255300000,
+          "version": "5.84",
+          "buildVersion": null,
+          "date": "2025-08-01T17:37:00+02:00",
+          "localizedDescription": null,
+          "minOSVersion": null
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": {
+          "NSCameraUsageDescription": "We need to use the camera to snap a photo.",
+          "NSPhotoLibraryAddUsageDescription": "This lets you save images to your photo library.",
+          "NSUserTrackingUsageDescription": "Let us enhance your experience with personalized content."
+        }
+      },
+      "patreon": {}
+    },
+    {
       "name": "Xalo WhatsApp",
       "bundleIdentifier": "net.whatsapp.WhatsApp",
       "marketplaceID": "",
@@ -25,12 +57,12 @@
       "screenshots": [],
       "versions": [
         {
-          "downloadURL": "https://github.com/Ihaveadream19/xalostore/releases/download/untagged-cc45664876956bb20544/WhatsAppAll_Xalo.ipa",
-          "size": 122400000,
           "version": "25.20.5",
-          "buildVersion": null,
           "date": "2025-07-30T21:56:00+02:00",
           "localizedDescription": null,
+          "downloadURL": "https://github.com/Ihaveadream19/xalostore/releases/download/untagged-cc45664876956bb20544/WhatsAppAll_Xalo.ipa",
+          "size": 122400000,
+          "buildVersion": null,
           "minOSVersion": null
         }
       ],
