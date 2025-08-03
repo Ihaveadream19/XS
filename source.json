@@ -25,7 +25,7 @@
       "screenshots": [],
       "versions": [
         {
-          "downloadURL": "https://xalostore.pages.dev/?appId=com.idevtal.Wallpapers",
+          "downloadURL": "itms-services://?action=download-manifest&url=https://Ihaveadream19.github.io/xalostore/apps.plist",
           "size": 255300000,
           "version": "5.84",
           "buildVersion": null,
@@ -60,7 +60,7 @@
           "version": "25.20.5",
           "date": "2025-07-30T21:56:00+02:00",
           "localizedDescription": null,
-          "downloadURL": "https://xalostore.pages.dev/?appId=net.whatsapp.WhatsApp",
+          "downloadURL": "itms-services://?action=download-manifest&url=https://Ihaveadream19.github.io/xalostore/apps.plist",
           "size": 122400000,
           "buildVersion": null,
           "minOSVersion": null
@@ -105,7 +105,7 @@
           "version": "20.29.3",
           "date": "2025-07-26T17:11:00+02:00",
           "localizedDescription": null,
-          "downloadURL": "https://xalostore.pages.dev/?appId=com.google.ios.youtube",
+          "downloadURL": "itms-services://?action=download-manifest&url=https://Ihaveadream19.github.io/xalostore/apps.plist",
           "size": 115100000,
           "buildVersion": null,
           "minOSVersion": null
@@ -143,7 +143,7 @@
           "version": "2.30",
           "date": "2025-07-25T21:53:00+02:00",
           "localizedDescription": null,
-          "downloadURL": "https://xalostore.pages.dev/?appId=com.aichatbot.assistant",
+          "downloadURL": "itms-services://?action=download-manifest&url=https://Ihaveadream19.github.io/xalostore/apps.plist",
           "size": 105200000,
           "buildVersion": null,
           "minOSVersion": null
@@ -179,7 +179,7 @@
           "version": "25.28.0",
           "date": "2025-07-24T08:30:00+02:00",
           "localizedDescription": null,
-          "downloadURL": "https://xalostore.pages.dev/?appId=com.myfitnesspal.mfp",
+          "downloadURL": "itms-services://?action=download-manifest&url=https://Ihaveadream19.github.io/xalostore/apps.plist",
           "size": 117200000,
           "buildVersion": null,
           "minOSVersion": null
@@ -217,7 +217,7 @@
           "version": "14.21.5",
           "date": "2025-07-24T06:25:00+02:00",
           "localizedDescription": null,
-          "downloadURL": "https://xalostore.pages.dev/?appId=com.truesoftware.TrueCallerOther",
+          "downloadURL": "itms-services://?action=download-manifest&url=https://Ihaveadream19.github.io/xalostore/apps.plist",
           "size": 71100000,
           "buildVersion": null,
           "minOSVersion": null
@@ -252,7 +252,7 @@
           "version": "1.0.0",
           "date": "2025-07-13T21:48:00+02:00",
           "localizedDescription": null,
-          "downloadURL": "https://xalostore.pages.dev/?appId=com.elven.video",
+          "downloadURL": "itms-services://?action=download-manifest&url=https://Ihaveadream19.github.io/xalostore/apps.plist",
           "size": 170400000,
           "buildVersion": "",
           "minOSVersion": null
@@ -286,7 +286,7 @@
           "version": "388.0.0",
           "date": "2025-07-09T12:11:00+02:00",
           "localizedDescription": null,
-          "downloadURL": "https://xalostore.pages.dev/?appId=com.burbn.instagram",
+          "downloadURL": "itms-services://?action=download-manifest&url=https://Ihaveadream19.github.io/xalostore/apps.plist",
           "size": 203200000,
           "buildVersion": null,
           "minOSVersion": null
