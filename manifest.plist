@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>items</key>
+    <array>
+        <dict>
+            <key>assets</key>
+            <array>
+                <dict>
+                    <key>kind</key>
+                    <string>software-package</string>
+                    <key>url</key>
+                    <string>https://github.com/Ihaveadream19/xalostore/releases/download/untagged-16c296fa5c1e64d7a745/Truecaller_Caller_ID_Lookup_v14_21_Xalo.ipa</string>
+                </dict>
+            </array>
+            <key>metadata</key>
+            <dict>
+                <key>bundle-identifier</key>
+                <string>com.truesoftware.TrueCallerOther</string>
+                <key>bundle-version</key>
+                <string>14.21.5</string>
+                <key>kind</key>
+                <string>software</string>
+                <key>title</key>
+                <string>Xalo Truecaller</string>
+            </dict>
+        </dict>
+    </array>
+</dict>
+</plist>
