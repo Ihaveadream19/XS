@@ -90,16 +90,19 @@
                         const title = foundApp.name || "App-Titel";
                         const description = foundApp.localizedDescription || "Keine Beschreibung verfügbar.";
                         const iconUrl = foundApp.iconURL || "https://example.com/default-icon.png";
-                        
-                        // Hier verlinken wir auf die neue Download-Seite
-                        const installerPageLink = `installer.html?appId=${appId}`;
+                        const downloadLink = foundApp.versions[0]?.downloadURL;
 
-                        appContainer.innerHTML = `
-                            <img src="${iconUrl}" alt="App-Icon" class="app-icon">
-                            <h1 class="app-title">${title}</h1>
-                            <p class="app-description">${description}</p>
-                            <a href="${installerPageLink}" class="install-btn">Download vorbereiten</a>
-                        `;
+                        if (downloadLink) {
+                            appContainer.innerHTML = `
+                                <img src="${iconUrl}" alt="App-Icon" class="app-icon">
+                                <h1 class="app-title">${title}</h1>
+                                <p class="app-description">${description}</p>
+                                <button class="install-btn" onclick="copyToClipboard('${downloadLink}')">Link kopieren & in Safari öffnen</button>
+                                <p class="copy-info">Der Download-Button funktioniert leider nicht direkt in Telegram. Klicke auf den Button, um den Link zu kopieren. Öffne dann Safari, füge den Link ein und drücke Enter.</p>
+                            `;
+                        } else {
+                            appContainer.innerHTML = "<p>Fehler: Kein Download-Link gefunden.</p>";
+                        }
                     } else {
                         appContainer.innerHTML = "<p>App nicht gefunden.</p>";
                     }
@@ -109,6 +112,14 @@
                     appContainer.innerHTML = "<p>Fehler beim Laden der App. Bitte versuche es später erneut.</p>";
                 });
         });
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Der Installationslink wurde in die Zwischenablage kopiert. Öffne jetzt Safari, um die Installation zu starten.");
+            }, (err) => {
+                alert("Fehler beim Kopieren des Links. Bitte versuche es manuell.");
+            });
+        }
     </script>
 </body>
 </html>
