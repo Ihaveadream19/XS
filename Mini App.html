@@ -55,6 +55,11 @@
         .install-btn:hover {
             background-color: #0056b3;
         }
+        .copy-info {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #888;
+        }
     </style>
 </head>
 <body>
@@ -85,18 +90,16 @@
                         const title = foundApp.name || "App-Titel";
                         const description = foundApp.localizedDescription || "Keine Beschreibung verfügbar.";
                         const iconUrl = foundApp.iconURL || "https://example.com/default-icon.png";
-                        const downloadLink = foundApp.versions[0]?.downloadURL;
+                        
+                        // Hier verlinken wir auf die neue Download-Seite
+                        const installerPageLink = `installer.html?appId=${appId}`;
 
-                        if (downloadLink) {
-                            appContainer.innerHTML = `
-                                <img src="${iconUrl}" alt="App-Icon" class="app-icon">
-                                <h1 class="app-title">${title}</h1>
-                                <p class="app-description">${description}</p>
-                                <a href="javascript:void(0)" onclick="window.location.href='${downloadLink}'" class="install-btn">Installieren</a>
-                            `;
-                        } else {
-                            appContainer.innerHTML = "<p>Fehler: Kein Download-Link gefunden.</p>";
-                        }
+                        appContainer.innerHTML = `
+                            <img src="${iconUrl}" alt="App-Icon" class="app-icon">
+                            <h1 class="app-title">${title}</h1>
+                            <p class="app-description">${description}</p>
+                            <a href="${installerPageLink}" class="install-btn">Download vorbereiten</a>
+                        `;
                     } else {
                         appContainer.innerHTML = "<p>App nicht gefunden.</p>";
                     }
