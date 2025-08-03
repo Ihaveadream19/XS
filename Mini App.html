@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xalostore Mini App</title>
+    <title>App-Installer</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -11,47 +11,42 @@
             padding: 20px;
             background-color: #f0f2f5;
             color: #333;
+            text-align: center;
         }
-        .app-card {
-            display: flex;
-            align-items: center;
+        .app-container {
+            max-width: 400px;
+            margin: 0 auto;
             background-color: #fff;
-            padding: 15px;
+            padding: 25px;
             border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 15px;
-            transition: transform 0.2s;
-        }
-        .app-card:hover {
-            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
         .app-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            margin-right: 15px;
-            object-fit: cover;
+            width: 100px;
+            height: 100px;
+            border-radius: 22%;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
         }
-        .app-details {
-            flex-grow: 1;
-        }
-        .app-details h3 {
+        .app-title {
+            font-size: 1.8em;
+            font-weight: 700;
             margin: 0;
-            font-size: 1.2em;
-            font-weight: 600;
         }
-        .app-details p {
-            margin: 5px 0 0;
-            font-size: 0.9em;
+        .app-description {
+            font-size: 1em;
             color: #666;
+            margin: 10px 0 30px;
         }
         .install-btn {
+            display: block;
+            width: 100%;
             background-color: #007bff;
             color: #fff;
             border: none;
-            border-radius: 25px;
-            padding: 8px 16px;
-            font-size: 0.9em;
+            border-radius: 50px;
+            padding: 15px 0;
+            font-size: 1.2em;
             font-weight: 600;
             text-decoration: none;
             cursor: pointer;
@@ -64,53 +59,53 @@
 </head>
 <body>
 
-    <h1>Deine Apps</h1>
-    <div id="app-list">
-        </div>
+    <div id="app-container">
+        <p>Lade App-Details...</p>
+    </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            const appList = document.getElementById("app-list");
-            
-            // Link zu deiner App.plist-Datei auf GitHub
-            const plistUrl = https://github.com/Ihaveadream19/xalostore/blob/cb170a83111c07e331a7e5977056a029236b9b42/App.plist// TODO: ERSETZE DIESEN LINK MIT DEINER EIGENEN PLIST-URL
+            const params = new URLSearchParams(window.location.search);
+            const appId = params.get('appId');
+            const appContainer = document.getElementById("app-container");
 
-            // Fetch the plist content
-            fetch(plistUrl)
-                .then(response => response.text())
-                .then(text => {
-                    const parser = new DOMParser();
-                    const xmlDoc = parser.parseFromString(text, "text/xml");
-                    
-                    const array = xmlDoc.querySelector("plist > dict > array");
-                    const appItems = array.querySelectorAll("dict");
+            if (!appId) {
+                appContainer.innerHTML = "<p>Keine App-ID im Link gefunden.</p>";
+                return;
+            }
 
-                    if (appItems.length > 0) {
-                        appItems.forEach(item => {
-                            const title = item.querySelector("key:contains('title') + string")?.textContent || "App-Titel";
-                            const bundleIdentifier = item.querySelector("key:contains('bundle-identifier') + string")?.textContent || "Bundle ID";
-                            const iconUrl = item.querySelector("key:contains('display-image') + string")?.textContent || "https://example.com/default-icon.png";
-                            const installUrl = item.querySelector("key:contains('url') + string")?.textContent || "#";
+            const sourceUrl = "https://raw.githubusercontent.com/Ihaveadream19/xalostore/40b870002c0e3f42e2a92a68629c8623a36819b7/source.json";
 
-                            const appCard = document.createElement("div");
-                            appCard.className = "app-card";
-                            appCard.innerHTML = `
+            fetch(sourceUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const foundApp = data.apps.find(app => app.bundleIdentifier === appId);
+
+                    if (foundApp) {
+                        const title = foundApp.name || "App-Titel";
+                        const description = foundApp.localizedDescription || "Keine Beschreibung verfügbar.";
+                        const iconUrl = foundApp.iconURL || "https://example.com/default-icon.png";
+                        
+                        // Der Link für die .plist wird weiterhin aus der source.json geholt
+                        const plistUrl = foundApp.versions[0]?.downloadURL;
+
+                        if (plistUrl) {
+                            appContainer.innerHTML = `
                                 <img src="${iconUrl}" alt="App-Icon" class="app-icon">
-                                <div class="app-details">
-                                    <h3>${title}</h3>
-                                    <p>${bundleIdentifier}</p>
-                                </div>
-                                <a href="itms-services://?action=download-manifest&url=${installUrl}" class="install-btn">Installieren</a>
+                                <h1 class="app-title">${title}</h1>
+                                <p class="app-description">${description}</p>
+                                <a href="${plistUrl}" class="install-btn">Installieren</a>
                             `;
-                            appList.appendChild(appCard);
-                        });
+                        } else {
+                            appContainer.innerHTML = "<p>Fehler: Kein Download-Link gefunden.</p>";
+                        }
                     } else {
-                        appList.innerHTML = "<p>Keine Apps gefunden.</p>";
+                        appContainer.innerHTML = "<p>App nicht gefunden.</p>";
                     }
                 })
                 .catch(error => {
                     console.error("Fehler beim Laden der Apps:", error);
-                    appList.innerHTML = "<p>Fehler beim Laden der Apps. Bitte versuche es später erneut.</p>";
+                    appContainer.innerHTML = "<p>Fehler beim Laden der App. Bitte versuche es später erneut.</p>";
                 });
         });
     </script>
