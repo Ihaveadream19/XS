@@ -63,7 +63,7 @@
         <p>Lade App-Details...</p>
     </div>
 
-    <script>
+        <script>
         document.addEventListener("DOMContentLoaded", () => {
             const params = new URLSearchParams(window.location.search);
             const appId = params.get('appId');
@@ -86,15 +86,15 @@
                         const description = foundApp.localizedDescription || "Keine Beschreibung verfügbar.";
                         const iconUrl = foundApp.iconURL || "https://example.com/default-icon.png";
                         
-                        // Der Link für die .plist wird weiterhin aus der source.json geholt
-                        const plistUrl = foundApp.versions[0]?.downloadURL;
+                        // Hier wird der korrekte Download-Link direkt aus der source.json geholt
+                        const downloadLink = foundApp.versions[0]?.downloadURL;
 
-                        if (plistUrl) {
+                        if (downloadLink) {
                             appContainer.innerHTML = `
                                 <img src="${iconUrl}" alt="App-Icon" class="app-icon">
                                 <h1 class="app-title">${title}</h1>
                                 <p class="app-description">${description}</p>
-                                <a href="${plistUrl}" class="install-btn">Installieren</a>
+                                <a href="${downloadLink}" class="install-btn">Installieren</a>
                             `;
                         } else {
                             appContainer.innerHTML = "<p>Fehler: Kein Download-Link gefunden.</p>";
@@ -109,5 +109,3 @@
                 });
         });
     </script>
-</body>
-</html>
