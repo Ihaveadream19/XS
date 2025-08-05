@@ -11,19 +11,19 @@
                     <key>kind</key>
                     <string>software-package</string>
                     <key>url</key>
-                    <string>https://github.com/lhaveadream19/xalostore/releases/download/untagged-792fed8dc6fb751e9b3c/ImgAL_Al_Image_Generator-Xalo.ipa</string>
+                    <string>https://github.com/Ihaveadream19/xalostore/releases/download/untagged-9125e94c8a78ec094c9f/ImgAI_AI_Image_Generator-Xalo.ipa</string>
                 </dict>
             </array>
             <key>metadata</key>
             <dict>
                 <key>bundle-identifier</key>
-                <string>com.imgai.imagegenerator</string>
+                <string>com.idevtal.Wallpapers</string>
                 <key>bundle-version</key>
-                <string>1.0</string>
+                <string>5.84</string>
                 <key>kind</key>
                 <string>software</string>
                 <key>title</key>
-                <string>ImgAI</string>
+                <string>Xalo ImgAi</string>
             </dict>
         </dict>
     </array>
