@@ -1,1 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>items</key>
+    <array>
+        <dict>
+            <key>assets</key>
+            <array>
+                <dict>
+                    <key>kind</key>
+                    <string>software-package</string>
+                    <key>url</key>
+                    <string>https://github.com/lhaveadream19/xalostore/releases/download/untagged-3a220d8c37214071c5a9/MyFitnessPal_25.28.0_3Xalo.ipa</string>
+                </dict>
+            </array>
+            <key>metadata</key>
+            <dict>
+                <key>bundle-identifier</key>
+                <string>com.myfitnesspal.myfitnesspal</string>
+                <key>bundle-version</key>
+                <string>25.28.0</string>
+                <key>kind</key>
+                <string>software</string>
+                <key>title</key>
+                <string>MyFitnessPal</string>
+            </dict>
+        </dict>
+    </array>
+</dict>
+</plist>
 
