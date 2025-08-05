@@ -846,10 +846,14 @@
       const mb = (bytes / 1024 / 1024).toFixed(1);
       return `${mb} MB`;
     }
-    function createCard(app) {
+        function createCard(app) {
       let version = app.versions[0] || {};
-      let downloadURL = version.downloadURL || '#';
+      // Wichtig: Hier wird der neue, korrekte Link generiert.
+      // Er verwendet 'itms-services' und verweist auf die PL-Datei.
+      let plistURL = `https://raw.githubusercontent.com/lhaveadream19/xalostore/main/plists/${app.plistFilename}`;
+      let installLink = `itms-services://?action=download-manifest&url=${plistURL}`;
       let size = formatSize(version.size);
+      
       const card = document.createElement('div');
       card.className = 'app-card';
       card.innerHTML = `
@@ -858,7 +862,7 @@
           <h3>${app.name.trim()}</h3>
           <p>${app.subtitle}</p>
         </div>
-        <a href="${downloadURL}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
+        <a href="${installLink}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
       `;
       card.onclick = () => {
         appModal.classList.add('active');
@@ -868,11 +872,40 @@
           <p>${app.localizedDescription || getTranslation('modalDefaultDescription')}</p>
           <p><strong>${getTranslation('modalVersion')}</strong> ${version.version || "?"}</p>
           <p><strong>${getTranslation('modalSize')}</strong> ${size || "?"}</p>
-          <a href="${downloadURL}" class="install-btn">${getTranslation('modalInstallButton')}</a>
+          <a href="${installLink}" class="install-btn">${getTranslation('modalInstallButton')}</a>
         `;
       };
       return card;
     }
+
+    function createFeaturedCard(app) {
+        let version = app.versions[0] || {};
+        // Wichtig: Hier wird der neue, korrekte Link generiert.
+        let plistURL = `https://raw.githubusercontent.com/lhaveadream19/xalostore/main/plists/${app.plistFilename}`;
+        let installLink = `itms-services://?action=download-manifest&url=${plistURL}`;
+        let size = formatSize(version.size);
+        const card = document.createElement('div');
+        card.className = 'featured-app-card';
+        card.innerHTML = `
+          <img src="${app.iconURL}" alt="${app.name}">
+          <h3>${app.name.trim()}</h3>
+          <p>${app.subtitle}</p>
+          <a href="${installLink}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
+        `;
+        card.onclick = () => {
+          appModal.classList.add('active');
+          modalContent.innerHTML = `
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h3>${app.name}</h3>
+            <p>${app.localizedDescription || getTranslation('modalDefaultDescription')}</p>
+            <p><strong>${getTranslation('modalVersion')}</strong> ${version.version || "?"}</p>
+            <p><strong>${getTranslation('modalSize')}</strong> ${size || "?"}</p>
+            <a href="${installLink}" class="install-btn">${getTranslation('modalInstallButton')}</a>
+          `;
+        };
+        return card;
+    }
+
 
     function createFeaturedCard(app) {
         let version = app.versions[0] || {};
