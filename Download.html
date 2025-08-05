@@ -45,7 +45,7 @@
             font-size: 16px;
             max-width: 80%;
         }
-        a.fallback-link {
+        .fallback-link {
             margin-top: 20px;
             padding: 10px 20px;
             background-color: #007aff;
@@ -53,8 +53,9 @@
             text-decoration: none;
             border-radius: 10px;
             font-weight: bold;
+            display: inline-block;
         }
-        .dark a.fallback-link {
+        .dark .fallback-link {
             background-color: #0a84ff;
         }
     </style>
@@ -70,8 +71,6 @@
     document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const downloadUrl = urlParams.get('url');
-        const appBundleIdentifier = urlParams.get('bundleId');
-        const appTitle = urlParams.get('name');
 
         // Dark Mode anwenden
         const storedDarkMode = localStorage.getItem('xalostore_dark_mode');
@@ -79,50 +78,31 @@
             document.body.classList.add('dark');
         }
 
-        if (downloadUrl && appBundleIdentifier && appTitle) {
-            // Setzt den href des Fallback-Links
-            document.getElementById('fallbackLink').href = downloadUrl;
-            
-            const plistContent = `<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>items</key>
-    <array>
-        <dict>
-            <key>assets</key>
-            <array>
-                <dict>
-                    <key>kind</key>
-                    <string>software-package</string>
-                    <key>url</key>
-                    <string>${downloadUrl}</string>
-                </dict>
-            </array>
-            <key>metadata</key>
-            <dict>
-                <key>bundle-identifier</key>
-                <string>${appBundleIdentifier}</string>
-                <key>bundle-version</key>
-                <string>1.0</string>
-                <key>kind</key>
-                <string>software</string>
-                <key>title</key>
-                <string>${decodeURIComponent(appTitle)}</string>
-            </dict>
-        </dict>
-    </array>
-</dict>
-</plist>`;
-            
-            const encodedPlist = btoa(plistContent);
-            const manifestUrl = `data:text/xml;base64,${encodedPlist}`;
-            
-            window.location.href = `itms-services://?action=download-manifest&url=${encodeURIComponent(manifestUrl)}`;
+        if (downloadUrl) {
+            // Setze den href des Fallback-Links direkt auf die IPA-URL
+            const fallbackLink = document.getElementById('fallbackLink');
+            fallbackLink.href = downloadUrl;
 
+            // Starte den Download automatisch, indem wir den Link direkt aufrufen
+            window.location.href = downloadUrl;
+
+            // Blende den Spinner aus und zeige den Button, falls der automatische Download fehlschlägt
+            setTimeout(() => {
+                const spinner = document.querySelector('.loading-spinner');
+                const title = document.querySelector('h1');
+                const paragraph = document.querySelector('p');
+                spinner.style.display = 'none';
+                title.textContent = 'Download nicht gestartet';
+                paragraph.textContent = 'Klicke auf den Button, um den Download manuell zu starten.';
+                fallbackLink.style.display = 'block';
+            }, 3000); // Gib dem automatischen Download 3 Sekunden Zeit
+            
         } else {
-            document.getElementById('fallbackLink').textContent = "Download-Link nicht gefunden";
-            document.getElementById('fallbackLink').href = "#";
+            // Wenn die URL fehlt, zeige eine Fehlermeldung
+            document.querySelector('.loading-spinner').style.display = 'none';
+            document.querySelector('h1').textContent = 'Fehler';
+            document.querySelector('p').textContent = 'Download-Link nicht gefunden.';
+            document.getElementById('fallbackLink').style.display = 'none';
         }
     });
 </script>
