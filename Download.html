@@ -45,7 +45,7 @@
             font-size: 16px;
             max-width: 80%;
         }
-        .fallback-link {
+        a.fallback-link {
             margin-top: 20px;
             padding: 10px 20px;
             background-color: #007aff;
@@ -53,9 +53,9 @@
             text-decoration: none;
             border-radius: 10px;
             font-weight: bold;
-            display: inline-block;
+            display: none; /* Initial versteckt */
         }
-        .dark .fallback-link {
+        .dark a.fallback-link {
             background-color: #0a84ff;
         }
     </style>
@@ -79,14 +79,10 @@
         }
 
         if (downloadUrl) {
-            // Setze den href des Fallback-Links direkt auf die IPA-URL
             const fallbackLink = document.getElementById('fallbackLink');
             fallbackLink.href = downloadUrl;
 
-            // Starte den Download automatisch, indem wir den Link direkt aufrufen
-            window.location.href = downloadUrl;
-
-            // Blende den Spinner aus und zeige den Button, falls der automatische Download fehlschlägt
+            // Zeigt den Fallback-Link an, falls der Download länger dauert
             setTimeout(() => {
                 const spinner = document.querySelector('.loading-spinner');
                 const title = document.querySelector('h1');
@@ -95,8 +91,51 @@
                 title.textContent = 'Download nicht gestartet';
                 paragraph.textContent = 'Klicke auf den Button, um den Download manuell zu starten.';
                 fallbackLink.style.display = 'block';
-            }, 3000); // Gib dem automatischen Download 3 Sekunden Zeit
-            
+            }, 5000); // Zeigt den Link nach 5 Sekunden
+
+            // Versuche den Download über einen direkten Fetch-Befehl zu starten
+            // Dies umgeht die Authentifizierungsanforderung von GitHub Releases
+            try {
+                fetch(downloadUrl, { mode: 'cors' })
+                    .then(response => response.blob())
+                    .then(blob => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        // Extrahiere den Dateinamen aus der URL
+                        const filename = downloadUrl.substring(downloadUrl.lastIndexOf('/') + 1);
+                        a.download = filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+
+                        // Download gestartet
+                        document.querySelector('h1').textContent = 'Download gestartet!';
+                        document.querySelector('p').textContent = 'Die Datei sollte in Kürze heruntergeladen werden.';
+                        document.querySelector('.loading-spinner').style.display = 'none';
+                        fallbackLink.style.display = 'none';
+
+                    })
+                    .catch(error => {
+                        console.error('Fetch error:', error);
+                        // Fallback auf den direkten Link, falls Fetch fehlschlägt
+                        window.location.href = downloadUrl;
+                        document.querySelector('h1').textContent = 'Download-Fehler';
+                        document.querySelector('p').textContent = 'Klicke auf den Button, um den Download manuell zu starten.';
+                        document.querySelector('.loading-spinner').style.display = 'none';
+                        fallbackLink.style.display = 'block';
+                    });
+            } catch (error) {
+                console.error('Download start error:', error);
+                // Fallback auf den direkten Link
+                window.location.href = downloadUrl;
+                document.querySelector('h1').textContent = 'Download-Fehler';
+                document.querySelector('p').textContent = 'Klicke auf den Button, um den Download manuell zu starten.';
+                document.querySelector('.loading-spinner').style.display = 'none';
+                fallbackLink.style.display = 'block';
+            }
+
         } else {
             // Wenn die URL fehlt, zeige eine Fehlermeldung
             document.querySelector('.loading-spinner').style.display = 'none';
