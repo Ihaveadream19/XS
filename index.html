@@ -842,7 +842,7 @@
     }
     function createCard(app) {
       let version = app.versions[0] || {};
-      const downloadURL = `itms-services://?action=download-manifest&url=${window.location.origin}/manifest.plist?appId=${app.bundleIdentifier}`;
+      const downloadURL = version.downloadURL; // Dies kommt direkt aus der source.json
       let size = formatSize(version.size);
       const card = document.createElement('div');
       card.className = 'app-card';
@@ -869,7 +869,7 @@
     }
     function createFeaturedCard(app) {
         let version = app.versions[0] || {};
-        const downloadURL = `itms-services://?action=download-manifest&url=${window.location.origin}/manifest.plist?appId=${app.bundleIdentifier}`;
+        const downloadURL = version.downloadURL; // Dies kommt direkt aus der source.json
         let size = formatSize(version.size);
         const card = document.createElement('div');
         card.className = 'featured-app-card';
