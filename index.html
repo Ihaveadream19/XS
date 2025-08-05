@@ -846,10 +846,9 @@
       const mb = (bytes / 1024 / 1024).toFixed(1);
       return `${mb} MB`;
     }
-        function createCard(app) {
+    
+    function createCard(app) {
       let version = app.versions[0] || {};
-      // Wichtig: Hier wird der neue, korrekte Link generiert.
-      // Er verwendet 'itms-services' und verweist auf die PL-Datei.
       let plistURL = `https://raw.githubusercontent.com/lhaveadream19/xalostore/main/plists/${app.plistFilename}`;
       let installLink = `itms-services://?action=download-manifest&url=${plistURL}`;
       let size = formatSize(version.size);
@@ -880,7 +879,6 @@
 
     function createFeaturedCard(app) {
         let version = app.versions[0] || {};
-        // Wichtig: Hier wird der neue, korrekte Link generiert.
         let plistURL = `https://raw.githubusercontent.com/lhaveadream19/xalostore/main/plists/${app.plistFilename}`;
         let installLink = `itms-services://?action=download-manifest&url=${plistURL}`;
         let size = formatSize(version.size);
@@ -906,32 +904,6 @@
         return card;
     }
 
-
-    function createFeaturedCard(app) {
-        let version = app.versions[0] || {};
-        let downloadURL = version.downloadURL || '#';
-        let size = formatSize(version.size);
-        const card = document.createElement('div');
-        card.className = 'featured-app-card';
-        card.innerHTML = `
-          <img src="${app.iconURL}" alt="${app.name}">
-          <h3>${app.name.trim()}</h3>
-          <p>${app.subtitle}</p>
-          <a href="${downloadURL}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
-        `;
-        card.onclick = () => {
-          appModal.classList.add('active');
-          modalContent.innerHTML = `
-            <span class="close-modal" onclick="closeModal()">&times;</span>
-            <h3>${app.name}</h3>
-            <p>${app.localizedDescription || getTranslation('modalDefaultDescription')}</p>
-            <p><strong>${getTranslation('modalVersion')}</strong> ${version.version || "?"}</p>
-            <p><strong>${getTranslation('modalSize')}</strong> ${size || "?"}</p>
-            <a href="${downloadURL}" class="install-btn">${getTranslation('modalInstallButton')}</a>
-          `;
-        };
-        return card;
-    }
     function closeModal() {
       appModal.classList.remove('active');
     }
@@ -1006,10 +978,10 @@
       languageModal.classList.remove('active');
     }
     function renderExploreApps(list) {
-        if (!sourceData || !sourceData.apps) { // Prüfe auch, ob sourceData.apps existiert
+        if (!sourceData || !sourceData.apps) {
             console.warn("sourceData oder sourceData.apps ist nicht verfügbar. Kann Apps nicht rendern.");
             appList.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
-            featuredAppContainer.innerHTML = ''; // Leere auch den Featured-Container
+            featuredAppContainer.innerHTML = '';
             return;
         }
         
@@ -1022,23 +994,19 @@
         }
 
         let featuredApp = null;
-        // Sicherstellen, dass featuredApps ein Array ist und Elemente enthält
         if (sourceData.featuredApps && Array.isArray(sourceData.featuredApps) && sourceData.featuredApps.length > 0) {
-            // Finden der App im Haupt 'apps' Array
             featuredApp = sourceData.apps.find(app => app.bundleIdentifier === sourceData.featuredApps[0]);
         }
         
         const otherApps = [];
         if (featuredApp) {
             featuredAppContainer.appendChild(createFeaturedCard(featuredApp));
-            // Füge alle anderen Apps hinzu, die NICHT das Featured-App sind
             list.forEach(app => {
                 if (app.bundleIdentifier !== featuredApp.bundleIdentifier) {
                     otherApps.push(app);
                 }
             });
         } else {
-            // Wenn keine Featured App oder featuredApps leer ist, zeige alle Apps in der normalen Liste an
             otherApps.push(...list);
         }
 
@@ -1083,8 +1051,6 @@
     }
     window.addEventListener('load', () => {
       loadPreferences();
-      // Rufe loadAppsFromSource hier auf, bevor der Splashscreen ausgeblendet wird,
-      // damit die Daten geladen sind, sobald die UI sichtbar wird.
       loadAppsFromSource(); 
 
       const isIOS = /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
@@ -1097,7 +1063,6 @@
       }
     });
     
-    // Verzögerung des Splashscreens und Anzeige der Hauptinhalte
     setTimeout(() => {
       const splash = document.getElementById('splash-screen');
       const mainContent = document.getElementById('main-content');
@@ -1113,10 +1078,10 @@
               if (tabBar) {
                   tabBar.style.display = 'flex'; 
               }
-              goTab('explore'); // Jetzt den Explore-Tab nach dem Laden der Apps aktivieren
+              goTab('explore');
           }, 500);
       }
-    }, 1500); // 1.5 Sekunden Splash-Screen
+    }, 1500);
 </script>
 </body>
 </html>
