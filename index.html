@@ -772,7 +772,7 @@
         document.getElementById('profile-text-3').textContent = getTranslation('profileText3');
         document.getElementById('settings-title').textContent = getTranslation('settingsTitle');
         document.getElementById('language-setting-label').textContent = getTranslation('languageSettingLabel');
-        document.getElementById('dark-mode-setting-label').textContent = getTranslation('darkModeSettingLabel'); /* Korrigiert - ID geändert */
+        document.getElementById('dark-mode-setting-label').textContent = getTranslation('darkModeSettingLabel');
         document.getElementById('language-selection-title').textContent = getTranslation('languageSelectionTitle');
         document.getElementById('lang-de').querySelector('span').textContent = getTranslation('languageDe');
         document.getElementById('lang-en').querySelector('span').textContent = getTranslation('languageEn');
@@ -802,17 +802,13 @@
         applyDarkModeState();
         translateUI();
     }
-</script>
-<script>
     // Dynamically load Source.json Content
     let sourceData = null;
     let apps = [];
-
     function loadAppsFromSource() {
         fetch('source.json')
             .then(response => {
                 if (!response.ok) {
-                    // Log the full response status for better debugging
                     console.error(`HTTP error! status: ${response.status}, text: ${response.statusText}`);
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -824,7 +820,7 @@
                 renderExploreApps(apps);
             })
             .catch(error => {
-                console.error("Fehler beim Laden von source.json oder Parsing-Fehler:", error); // Eindeutigere Fehlermeldung
+                console.error("Fehler beim Laden von source.json oder Parsing-Fehler:", error);
                 const errorMessageElement = document.createElement('p');
                 errorMessageElement.id = 'appsLoadError';
                 errorMessageElement.className = 'no-apps-message';
@@ -832,7 +828,6 @@
                 document.getElementById('exploreTab').appendChild(errorMessageElement);
             });
     }
-
     const appList = document.getElementById('appList');
     const featuredAppContainer = document.getElementById('featuredAppContainer');
     const searchInput = document.getElementById('search');
@@ -840,19 +835,15 @@
     const appModal = document.getElementById('appModal');
     const modalContent = document.getElementById('modalContent');
     const languageModal = document.getElementById('languageModal');
-
     function formatSize(bytes) {
       if (!bytes) return "";
       const mb = (bytes / 1024 / 1024).toFixed(1);
       return `${mb} MB`;
     }
-    
     function createCard(app) {
       let version = app.versions[0] || {};
-      let plistURL = `https://raw.githubusercontent.com/Ihaveadream19/xalostore/main/plists/${app.plistFilename}`;
-      let installLink = `itms-services://?action=download-manifest&url=${plistURL}`;
+      const downloadURL = `itms-services://?action=download-manifest&url=${window.location.origin}/manifest.plist?appId=${app.bundleIdentifier}`;
       let size = formatSize(version.size);
-      
       const card = document.createElement('div');
       card.className = 'app-card';
       card.innerHTML = `
@@ -861,7 +852,7 @@
           <h3>${app.name.trim()}</h3>
           <p>${app.subtitle}</p>
         </div>
-        <a href="${installLink}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
+        <a href="${downloadURL}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
       `;
       card.onclick = () => {
         appModal.classList.add('active');
@@ -871,16 +862,14 @@
           <p>${app.localizedDescription || getTranslation('modalDefaultDescription')}</p>
           <p><strong>${getTranslation('modalVersion')}</strong> ${version.version || "?"}</p>
           <p><strong>${getTranslation('modalSize')}</strong> ${size || "?"}</p>
-          <a href="${installLink}" class="install-btn">${getTranslation('modalInstallButton')}</a>
+          <a href="${downloadURL}" class="install-btn">${getTranslation('modalInstallButton')}</a>
         `;
       };
       return card;
     }
-
     function createFeaturedCard(app) {
         let version = app.versions[0] || {};
-        let plistURL = `https://raw.githubusercontent.com/lhaveadream19/xalostore/main/plists/${app.plistFilename}`;
-        let installLink = `itms-services://?action=download-manifest&url=${plistURL}`;
+        const downloadURL = `itms-services://?action=download-manifest&url=${window.location.origin}/manifest.plist?appId=${app.bundleIdentifier}`;
         let size = formatSize(version.size);
         const card = document.createElement('div');
         card.className = 'featured-app-card';
@@ -888,7 +877,7 @@
           <img src="${app.iconURL}" alt="${app.name}">
           <h3>${app.name.trim()}</h3>
           <p>${app.subtitle}</p>
-          <a href="${installLink}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
+          <a href="${downloadURL}" class="install-btn" onclick="event.stopPropagation()">${getTranslation('installButton')}</a>
         `;
         card.onclick = () => {
           appModal.classList.add('active');
@@ -898,12 +887,11 @@
             <p>${app.localizedDescription || getTranslation('modalDefaultDescription')}</p>
             <p><strong>${getTranslation('modalVersion')}</strong> ${version.version || "?"}</p>
             <p><strong>${getTranslation('modalSize')}</strong> ${size || "?"}</p>
-            <a href="${installLink}" class="install-btn">${getTranslation('modalInstallButton')}</a>
+            <a href="${downloadURL}" class="install-btn">${getTranslation('modalInstallButton')}</a>
           `;
         };
         return card;
     }
-
     function closeModal() {
       appModal.classList.remove('active');
     }
@@ -926,7 +914,6 @@
       localStorage.setItem('xalostore_dark_mode', currentDarkModeState);
       applyDarkModeState();
     }
-
     function toggleDarkModeFromSettings() {
       toggleMode();
     }
@@ -987,17 +974,14 @@
         
         appList.innerHTML = '';
         featuredAppContainer.innerHTML = '';
-
         if (list.length === 0) {
             appList.innerHTML = `<p class="no-apps-message">${getTranslation('noAppsFound')}</p>`;
             return;
         }
-
         let featuredApp = null;
         if (sourceData.featuredApps && Array.isArray(sourceData.featuredApps) && sourceData.featuredApps.length > 0) {
             featuredApp = sourceData.apps.find(app => app.bundleIdentifier === sourceData.featuredApps[0]);
         }
-        
         const otherApps = [];
         if (featuredApp) {
             featuredAppContainer.appendChild(createFeaturedCard(featuredApp));
@@ -1009,7 +993,6 @@
         } else {
             otherApps.push(...list);
         }
-
         otherApps.forEach(app => {
             appList.appendChild(createCard(app));
         });
@@ -1051,8 +1034,7 @@
     }
     window.addEventListener('load', () => {
       loadPreferences();
-      loadAppsFromSource(); 
-
+      loadAppsFromSource();
       const isIOS = /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
       const isInStandalone =
         window.matchMedia('(display-mode: standalone)').matches ||
@@ -1062,12 +1044,10 @@
         document.getElementById("pwaBanner").style.display = "block";
       }
     });
-    
     setTimeout(() => {
       const splash = document.getElementById('splash-screen');
       const mainContent = document.getElementById('main-content');
-      const tabBar = document.getElementById('bottom-tab-bar'); 
-
+      const tabBar = document.getElementById('bottom-tab-bar');
       if (splash) {
           splash.classList.add('hidden');
           setTimeout(() => {
@@ -1076,12 +1056,10 @@
                   mainContent.style.display = 'flex';
               }
               if (tabBar) {
-                  tabBar.style.display = 'flex'; 
+                  tabBar.style.display = 'flex';
               }
               goTab('explore');
           }, 500);
       }
     }, 1500);
 </script>
-</body>
-</html>
