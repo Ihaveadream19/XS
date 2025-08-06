@@ -72,6 +72,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const downloadUrl = urlParams.get('url');
 
+        // Dark Mode anwenden
         const storedDarkMode = localStorage.getItem('xalostore_dark_mode');
         if (storedDarkMode === 'true') {
             document.body.classList.add('dark');
@@ -81,10 +82,7 @@
             const fallbackLink = document.getElementById('fallbackLink');
             fallbackLink.href = downloadUrl;
 
-            // Versucht, den Download automatisch zu starten
-            window.location.href = downloadUrl;
-            
-            // Zeigt nach 3 Sekunden den manuellen Download-Button
+            // Zeige den Fallback-Link nach 5 Sekunden
             setTimeout(() => {
                 const spinner = document.querySelector('.loading-spinner');
                 const title = document.querySelector('h1');
@@ -93,8 +91,19 @@
                 title.textContent = 'Download nicht gestartet';
                 paragraph.textContent = 'Klicke auf den Button, um den Download manuell zu starten.';
                 fallbackLink.style.display = 'block';
-            }, 3000); 
+            }, 5000);
+
+            // Starte den Download direkt
+            window.location.href = downloadUrl;
+
+            // Download gestartet
+            document.querySelector('h1').textContent = 'Download gestartet!';
+            document.querySelector('p').textContent = 'Die Datei sollte in Kürze heruntergeladen werden.';
+            document.querySelector('.loading-spinner').style.display = 'none';
+            fallbackLink.style.display = 'none';
+
         } else {
+            // Wenn die URL fehlt, zeige eine Fehlermeldung
             document.querySelector('.loading-spinner').style.display = 'none';
             document.querySelector('h1').textContent = 'Fehler';
             document.querySelector('p').textContent = 'Download-Link nicht gefunden.';
@@ -102,5 +111,3 @@
         }
     });
 </script>
-</body>
-</html>
