@@ -7,17 +7,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">
-    <script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js').then((registration) => {
-                console.log('Service Worker registriert mit Scope:', registration.scope);
-            }).catch((error) => {
-                console.log('Service Worker Registrierung fehlgeschlagen:', error);
-            });
-        });
-    }
-</script>
     <link rel="apple-touch-icon" href="https://i.imgur.com/oWyf5VR.png">
     <style>
         :root {
