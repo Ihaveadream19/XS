@@ -79,10 +79,14 @@
         }
 
         if (downloadUrl) {
+            // Setze den href des Fallback-Links direkt auf die IPA-URL
             const fallbackLink = document.getElementById('fallbackLink');
             fallbackLink.href = downloadUrl;
 
-            // Zeige den Fallback-Link nach 5 Sekunden
+            // Starte den Download automatisch, indem wir den Link direkt aufrufen
+            window.location.href = downloadUrl;
+
+            // Blende den Spinner aus und zeige den Button, falls der automatische Download fehlschlägt
             setTimeout(() => {
                 const spinner = document.querySelector('.loading-spinner');
                 const title = document.querySelector('h1');
@@ -91,17 +95,8 @@
                 title.textContent = 'Download nicht gestartet';
                 paragraph.textContent = 'Klicke auf den Button, um den Download manuell zu starten.';
                 fallbackLink.style.display = 'block';
-            }, 5000);
-
-            // Starte den Download direkt
-            window.location.href = downloadUrl;
-
-            // Download gestartet
-            document.querySelector('h1').textContent = 'Download gestartet!';
-            document.querySelector('p').textContent = 'Die Datei sollte in Kürze heruntergeladen werden.';
-            document.querySelector('.loading-spinner').style.display = 'none';
-            fallbackLink.style.display = 'none';
-
+            }, 3000); 
+            
         } else {
             // Wenn die URL fehlt, zeige eine Fehlermeldung
             document.querySelector('.loading-spinner').style.display = 'none';
@@ -111,3 +106,5 @@
         }
     });
 </script>
+</body>
+</html>
