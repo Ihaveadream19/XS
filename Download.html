@@ -53,7 +53,7 @@
             text-decoration: none;
             border-radius: 10px;
             font-weight: bold;
-            display: inline-block;
+            display: none;
         }
         .dark .fallback-link {
             background-color: #0a84ff;
@@ -72,21 +72,19 @@
         const urlParams = new URLSearchParams(window.location.search);
         const downloadUrl = urlParams.get('url');
 
-        // Dark Mode anwenden
         const storedDarkMode = localStorage.getItem('xalostore_dark_mode');
         if (storedDarkMode === 'true') {
             document.body.classList.add('dark');
         }
 
         if (downloadUrl) {
-            // Setze den href des Fallback-Links direkt auf die IPA-URL
             const fallbackLink = document.getElementById('fallbackLink');
             fallbackLink.href = downloadUrl;
 
-            // Starte den Download automatisch, indem wir den Link direkt aufrufen
+            // Startet den Download direkt
             window.location.href = downloadUrl;
-
-            // Blende den Spinner aus und zeige den Button, falls der automatische Download fehlschlägt
+            
+            // Zeigt nach 3 Sekunden den manuellen Download-Button
             setTimeout(() => {
                 const spinner = document.querySelector('.loading-spinner');
                 const title = document.querySelector('h1');
@@ -95,10 +93,8 @@
                 title.textContent = 'Download nicht gestartet';
                 paragraph.textContent = 'Klicke auf den Button, um den Download manuell zu starten.';
                 fallbackLink.style.display = 'block';
-            }, 3000); 
-            
+            }, 3000);
         } else {
-            // Wenn die URL fehlt, zeige eine Fehlermeldung
             document.querySelector('.loading-spinner').style.display = 'none';
             document.querySelector('h1').textContent = 'Fehler';
             document.querySelector('p').textContent = 'Download-Link nicht gefunden.';
