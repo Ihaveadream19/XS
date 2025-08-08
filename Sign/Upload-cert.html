@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Zertifikat hochladen</title>
+</head>
+<body>
+<h1>Zertifikat hochladen</h1>
+<form action="/api/upload-cert" method="POST" enctype="multipart/form-data">
+    <input type="text" name="userId" placeholder="User-ID" required>
+    <input type="file" name="cert" accept=".p12" required>
+    <button type="submit">Hochladen</button>
+</form>
+</body>
+</html>
