@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Download startet...</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin-top: 100px;
+        }
+        .countdown {
+            font-size: 48px;
+            font-weight: bold;
+            color: #333;
+        }
+        .message {
+            font-size: 20px;
+            color: #555;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="message">Ihr Download startet in...</div>
+    <div class="countdown" id="countdown">5</div>
+    <div class="message">Bitte warten Sie.</div>
+
+    <script>
+        // Funktion zum Auslesen des URL-Parameters
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        // Countdown-Logik
+        var seconds = 5;
+        var countdownElement = document.getElementById('countdown');
+        var downloadUrl = getUrlParameter('url');
+
+        var countdownInterval = setInterval(function() {
+            seconds--;
+            countdownElement.innerText = seconds;
+
+            if (seconds <= 0) {
+                clearInterval(countdownInterval);
+                countdownElement.innerText = 'Download wird gestartet...';
+
+                // Leitet zum tatsächlichen Download-Link weiter
+                if (downloadUrl) {
+                    window.location.href = downloadUrl;
+                } else {
+                    alert('Download-URL nicht gefunden.');
+                }
+            }
+        }, 1000); // 1000 Millisekunden = 1 Sekunde
+    </script>
+
+</body>
+</html>
