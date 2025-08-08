@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Download wird gestartet...</title>
     <style>
         body {
@@ -16,10 +16,11 @@
             margin: 0;
             text-align: center;
             color: #333;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         .dark {
-            background-color: #1c1c1e;
-            color: #fff;
+            background-color: #121212; /* angepasst */
+            color: #ddd; /* heller für besseren Kontrast */
         }
         .loading-spinner {
             border: 4px solid rgba(0, 0, 0, 0.1);
@@ -44,6 +45,7 @@
         p {
             font-size: 16px;
             max-width: 80%;
+            margin-top: 10px;
         }
         .fallback-link {
             margin-top: 20px;
@@ -53,58 +55,94 @@
             text-decoration: none;
             border-radius: 10px;
             font-weight: bold;
-            display: inline-block;
+            display: none; /* erst sichtbar, wenn nötig */
         }
         .dark .fallback-link {
             background-color: #0a84ff;
         }
+        .error-message {
+            color: #ff3b30; /* typisches Rot für Fehler */
+            font-weight: bold;
+            margin-top: 20px;
+            display: none; /* nur bei Fehler sichtbar */
+        }
     </style>
 </head>
 <body>
+    <div class="loading-spinner"></div>
+    <h1 id="statusTitle">Download wird gestartet...</h1>
+    <p id="statusText">Bitte warten Sie, während der Download vorbereitet wird.</p>
+    <a id="fallbackLink" class="fallback-link" href="#" target="_blank" rel="noopener">Download manuell starten</a>
+    <div id="errorMessage" class="error-message">Download-URL nicht gefunden oder Datei existiert nicht.</div>
 
-<div class="loading-spinner"></div>
-<h1>Download wird gestartet...</h1>
-<p>Wenn der Download nicht automatisch beginnt, klicke bitte auf den Button unten.</p>
-<a id="fallbackLink" class="fallback-link" href="#">Download manuell starten</a>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const downloadUrl = urlParams.get('url');
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const downloadUrl = urlParams.get('url');
+            // Dark Mode anwenden
+            const storedDarkMode = localStorage.getItem('xalostore_dark_mode');
+            if (storedDarkMode === 'true') {
+                document.body.classList.add('dark');
+            }
 
-        // Dark Mode anwenden
-        const storedDarkMode = localStorage.getItem('xalostore_dark_mode');
-        if (storedDarkMode === 'true') {
-            document.body.classList.add('dark');
-        }
-
-        if (downloadUrl) {
-            // Setze den href des Fallback-Links direkt auf die IPA-URL
+            const statusTitle = document.getElementById('statusTitle');
+            const statusText = document.getElementById('statusText');
             const fallbackLink = document.getElementById('fallbackLink');
-            fallbackLink.href = downloadUrl;
+            const errorMessage = document.getElementById('errorMessage');
+            const spinner = document.querySelector('.loading-spinner');
 
-            // Starte den Download automatisch, indem wir den Link direkt aufrufen
-            window.location.href = downloadUrl;
-
-            // Blende den Spinner aus und zeige den Button, falls der automatische Download fehlschlägt
-            setTimeout(() => {
-                const spinner = document.querySelector('.loading-spinner');
-                const title = document.querySelector('h1');
-                const paragraph = document.querySelector('p');
+            if (!downloadUrl) {
+                // Keine URL vorhanden: Fehler anzeigen
                 spinner.style.display = 'none';
-                title.textContent = 'Download nicht gestartet';
-                paragraph.textContent = 'Klicke auf den Button, um den Download manuell zu starten.';
-                fallbackLink.style.display = 'block';
-            }, 3000); 
-            
-        } else {
-            // Wenn die URL fehlt, zeige eine Fehlermeldung
-            document.querySelector('.loading-spinner').style.display = 'none';
-            document.querySelector('h1').textContent = 'Fehler';
-            document.querySelector('p').textContent = 'Download-Link nicht gefunden.';
-            document.getElementById('fallbackLink').style.display = 'none';
-        }
-    });
-</script>
+                statusTitle.textContent = 'Fehler';
+                statusText.textContent = 'Download-Link nicht gefunden.';
+                fallbackLink.style.display = 'none';
+                return;
+            }
+
+            // Prüfe, ob die Datei existiert (HEAD-Request)
+            fetch(downloadUrl, { method: 'HEAD' })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Datei nicht gefunden');
+                    }
+
+                    // Datei existiert -> Link setzen und Download starten
+                    fallbackLink.href = downloadUrl;
+                    fallbackLink.style.display = 'none';
+
+                    let countdown = 3;
+                    statusText.textContent = `Download wird in ${countdown} Sekunden gestartet...`;
+
+                    const countdownInterval = setInterval(() => {
+                        countdown--;
+                        if (countdown > 0) {
+                            statusText.textContent = `Download wird in ${countdown} Sekunden gestartet...`;
+                        } else {
+                            clearInterval(countdownInterval);
+                            // Download starten
+                            window.location.href = downloadUrl;
+                            // Falls Download nicht startet, nach 3 Sek. Button zeigen
+                            setTimeout(() => {
+                                spinner.style.display = 'none';
+                                statusTitle.textContent = 'Download nicht gestartet';
+                                statusText.textContent = 'Klicke auf den Button, um den Download manuell zu starten.';
+                                fallbackLink.style.display = 'inline-block';
+                            }, 3000);
+                        }
+                    }, 1000);
+
+                })
+                .catch(() => {
+                    // Fehler: Datei existiert nicht oder andere Probleme
+                    spinner.style.display = 'none';
+                    statusTitle.textContent = 'Fehler';
+                    statusText.style.display = 'none';
+                    fallbackLink.style.display = 'none';
+                    errorMessage.style.display = 'block';
+                });
+        });
+    </script>
 </body>
 </html>
