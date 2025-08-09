@@ -1,111 +1,129 @@
-const express = require("express");
-const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
-const { execSync } = require("child_process");
-const storage = require("node-persist");
-const { v4: uuidv4 } = require("uuid");
+// server.js
+const express = require('express');
+const multer = require('multer');
+const fs = require('fs');
+const path = require('path');
+const { exec } = require('child_process');
+const storage = require('node-persist');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const port = 3000;
 
-const upload = multer({ dest: "uploads/" });
+// Basis-URL für Links
+const baseURL = "https://ihaveadream19.github.io/xalostore/";
 
-// Verzeichnisse anlegen
-["certs", "uploads", "signed"].forEach(dir => {
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+// Ordnerpfade
+const uploadsDir = path.join(__dirname, 'uploads');
+const certsDir = path.join(__dirname, 'certs');
+const signedDir = path.join(__dirname, 'signed');
+const certsStoreDir = path.join(__dirname, 'certs_store');
+
+// Upload-Ordner sicherstellen
+[uploadsDir, certsDir, signedDir, certsStoreDir].forEach(dir => {
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir);
+    }
 });
 
-// Speicher für Zertifikate initialisieren
-storage.init({ dir: "certs_store" });
+// node-persist initialisieren
+storage.init({ dir: certsStoreDir });
 
-// Upload-API für IPA + User-ID
-app.post("/api/sign", upload.single("ipa"), async (req, res) => {
-    try {
-        const { userId } = req.body;
-        if (!userId) return res.status(400).json({ error: "User-ID fehlt" });
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(__dirname));
 
-        // Zertifikat prüfen
-        const certData = await storage.getItem(userId);
-        if (!certData) {
-            return res.status(400).json({ error: "Kein Zertifikat hinterlegt. Bitte zuerst hochladen." });
+// Multer für IPA-Uploads
+const ipaUpload = multer({ dest: uploadsDir });
+const certUpload = multer({ dest: certsDir });
+
+// Zertifikat hochladen
+app.post('/upload-cert', certUpload.single('cert'), async (req, res) => {
+    const { password, certName } = req.body;
+
+    if (!req.file || !password || !certName) {
+        return res.status(400).json({ error: 'Fehlende Daten' });
+    }
+
+    const certPath = path.join(certsDir, req.file.originalname);
+    fs.renameSync(req.file.path, certPath);
+
+    // Metadaten speichern
+    await storage.setItem(certName, {
+        path: certPath,
+        password,
+        uploaded: Date.now()
+    });
+
+    res.json({ message: 'Zertifikat erfolgreich hochgeladen' });
+});
+
+// IPA signieren
+app.post('/sign-ipa', ipaUpload.single('ipa'), async (req, res) => {
+    const { certName } = req.body;
+    const certData = await storage.getItem(certName);
+
+    if (!req.file || !certData) {
+        return res.status(400).json({ error: 'Fehlende IPA oder Zertifikat' });
+    }
+
+    const ipaPath = path.join(uploadsDir, req.file.originalname);
+    fs.renameSync(req.file.path, ipaPath);
+
+    const signedFileName = `${path.parse(req.file.originalname).name}-signed`;
+    const signedIPAPath = path.join(signedDir, `${signedFileName}.ipa`);
+    const plistPath = path.join(signedDir, `${signedFileName}.plist`);
+
+    // Hier würdest du das echte Signier-Kommando einfügen
+    exec(`cp "${ipaPath}" "${signedIPAPath}"`, (err) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Fehler beim Signieren' });
         }
 
-        const ipaPath = req.file.path;
-        const signedIpaName = `${uuidv4()}.ipa`;
-        const signedIpaPath = path.join("signed", signedIpaName);
+        // PLIST-Datei erstellen
+        const plistContent = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+ "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>items</key>
+  <array>
+    <dict>
+      <key>assets</key>
+      <array>
+        <dict>
+          <key>kind</key>
+          <string>software-package</string>
+          <key>url</key>
+          <string>${baseURL}signed/${signedFileName}.ipa</string>
+        </dict>
+      </array>
+      <key>metadata</key>
+      <dict>
+        <key>bundle-identifier</key>
+        <string>com.example.app</string>
+        <key>bundle-version</key>
+        <string>1.0</string>
+        <key>kind</key>
+        <string>software</string>
+        <key>title</key>
+        <string>${signedFileName}</string>
+      </dict>
+    </dict>
+  </array>
+</dict>
+</plist>`;
 
-        // 🔹 Hier wird signiert (Beispiel mit ios-deploy/ldid oder Xcode)
-        // execSync(`sign-tool --cert ${certData.certPath} --ipa ${ipaPath} --output ${signedIpaPath}`);
-
-        fs.copyFileSync(ipaPath, signedIpaPath); // Platzhalter: nur Kopie, kein echtes Signieren
-
-        // Installations-PLIST erstellen
-        const plistName = `${uuidv4()}.plist`;
-        const plistPath = path.join("signed", plistName);
-        const plistContent = `
-        <?xml version="1.0" encoding="UTF-8"?>
-        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-        <plist version="1.0">
-          <dict>
-            <key>items</key>
-            <array>
-              <dict>
-                <key>assets</key>
-                <array>
-                  <dict>
-                    <key>kind</key>
-                    <string>software-package</string>
-                    <key>url</key>
-                    <string>https://DEIN-DOMAIN-NAME/signed/${signedIpaName}</string>
-                  </dict>
-                </array>
-                <key>metadata</key>
-                <dict>
-                  <key>bundle-identifier</key>
-                  <string>com.dein.app</string>
-                  <key>bundle-version</key>
-                  <string>1.0</string>
-                  <key>kind</key>
-                  <string>software</string>
-                  <key>title</key>
-                  <string>Deine App</string>
-                </dict>
-              </dict>
-            </array>
-          </dict>
-        </plist>
-        `;
         fs.writeFileSync(plistPath, plistContent);
 
-        // Installations-URL
-        const installUrl = `itms-services://?action=download-manifest&url=https://DEIN-DOMAIN-NAME/signed/${plistName}`;
-        res.json({ installUrl });
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Signierung fehlgeschlagen" });
-    }
+        res.json({
+            message: 'IPA signiert',
+            installLink: `itms-services://?action=download-manifest&url=${baseURL}signed/${signedFileName}.plist`
+        });
+    });
 });
 
-// API zum Zertifikat hochladen
-app.post("/api/upload-cert", upload.single("cert"), async (req, res) => {
-    try {
-        const { userId } = req.body;
-        if (!userId) return res.status(400).json({ error: "User-ID fehlt" });
-
-        const certPath = path.join("certs", `${userId}.p12`);
-        fs.renameSync(req.file.path, certPath);
-
-        await storage.setItem(userId, { certPath, created: Date.now() });
-
-        res.json({ success: true, message: "Zertifikat gespeichert" });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Upload fehlgeschlagen" });
-    }
+app.listen(port, () => {
+    console.log(`Server läuft auf Port ${port}`);
 });
-
-app.use("/signed", express.static("signed"));
-
-app.listen(PORT, () => console.log(`Server läuft auf Port ${PORT}`));
