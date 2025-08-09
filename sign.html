@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IPA signieren</title>
+<style>
+body {
+    font-family: sans-serif;
+    background: #1c1c1e;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+input, button {
+    padding: 10px;
+    margin: 5px;
+}
+button {
+    background: #0a84ff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+}
+</style>
+</head>
+<body>
+<h1>IPA signieren</h1>
+<form id="signForm" enctype="multipart/form-data">
+    <input type="file" name="ipa" accept=".ipa" required><br>
+    <input type="text" name="certName" placeholder="Zertifikat-Name" required><br>
+    <button type="submit">Signieren</button>
+</form>
+<p id="result"></p>
+
+<script>
+document.getElementById('signForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const res = await fetch('/sign-ipa', { method: 'POST', body: formData });
+    const data = await res.json();
+    document.getElementById('result').innerHTML =
+        data.installLink
+        ? `<a href="${data.installLink}">📲 Installieren</a>`
+        : `Fehler: ${data.error}`;
+});
+</script>
+</body>
+</html>
