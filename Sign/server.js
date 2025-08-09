@@ -5,11 +5,13 @@ const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
 const storage = require('node-persist');
+const forge = require('node-forge');
+const plist = require('plist');
 
 const app = express();
 const port = 3000;
 
-// Basis-URL für Links
+// Basis-URL für Links (anpassen)
 const baseURL = "https://ihaveadream19.github.io/xalostore/";
 
 // Ordnerpfade
@@ -17,9 +19,10 @@ const uploadsDir = path.join(__dirname, 'uploads');
 const certsDir = path.join(__dirname, 'certs');
 const signedDir = path.join(__dirname, 'signed');
 const certsStoreDir = path.join(__dirname, 'certs_store');
+const tempDir = path.join(__dirname, 'temp');
 
 // Upload-Ordner sicherstellen
-[uploadsDir, certsDir, signedDir, certsStoreDir].forEach(dir => {
+[uploadsDir, certsDir, signedDir, certsStoreDir, tempDir].forEach(dir => {
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
     }
@@ -33,58 +36,108 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 
-// Multer für IPA-Uploads
-const ipaUpload = multer({ dest: uploadsDir });
-const certUpload = multer({ dest: certsDir });
+// Multer für Uploads (temporär)
+const upload = multer({ dest: tempDir });
 
-// Zertifikat hochladen
-app.post('/upload-cert', certUpload.single('cert'), async (req, res) => {
+// Zertifikat und Provision hochladen und validieren
+app.post('/upload-cert', upload.fields([
+    { name: 'p12', maxCount: 1 },
+    { name: 'mobileprovision', maxCount: 1 }
+]), async (req, res) => {
     const { password, certName } = req.body;
+    const p12File = req.files['p12'] ? req.files['p12'][0] : null;
+    const provFile = req.files['mobileprovision'] ? req.files['mobileprovision'][0] : null;
 
-    if (!req.file || !password || !certName) {
-        return res.status(400).json({ error: 'Fehlende Daten' });
+    if (!p12File || !provFile || !password || !certName) {
+        return res.status(400).json({ error: 'Fehlende Daten (.p12, .mobileprovision, Passwort, Name)' });
     }
 
-    const certPath = path.join(certsDir, req.file.originalname);
-    fs.renameSync(req.file.path, certPath);
+    try {
+        // P12-Zertifikat verarbeiten
+        const p12Buffer = fs.readFileSync(p12File.path);
+        const p12Asn1 = forge.asn1.fromDer(p12Buffer.toString('binary'), false);
+        const p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, false, password);
+        const certBag = p12.getBags({ bagType: forge.pki.oids.certBag })[forge.pki.oids.certBag][0];
 
-    // Metadaten speichern
-    await storage.setItem(certName, {
-        path: certPath,
-        password,
-        uploaded: Date.now()
-    });
+        // Gültigkeitsprüfung des Zertifikats
+        const notAfter = certBag.cert.validity.notAfter;
+        const now = new Date();
+        if (now > notAfter) {
+            return res.status(400).json({ error: 'Zertifikat ist abgelaufen' });
+        }
 
-    res.json({ message: 'Zertifikat erfolgreich hochgeladen' });
+        // Mobileprovision-Datei verarbeiten
+        const provData = fs.readFileSync(provFile.path, 'utf8');
+        const plistStart = provData.indexOf('<?xml');
+        const plistEnd = provData.indexOf('</plist>') + 8;
+        const plistContent = provData.substring(plistStart, plistEnd);
+        const provObj = plist.parse(plistContent);
+        
+        // Team-ID prüfen (Beispiel)
+        const certTeamId = certBag.cert.subject.getField('O').value;
+        const provTeamId = provObj.TeamIdentifier[0];
+        if (certTeamId !== provTeamId) {
+            return res.status(400).json({ error: 'Zertifikat und Provision passen nicht zusammen' });
+        }
+
+        // Dateien dauerhaft speichern
+        const certPath = path.join(certsDir, `${certName}.p12`);
+        const provPath = path.join(certsDir, `${certName}.mobileprovision`);
+        fs.renameSync(p12File.path, certPath);
+        fs.renameSync(provFile.path, provPath);
+
+        // Metadaten speichern
+        await storage.setItem(certName, {
+            certPath,
+            provPath,
+            password,
+            expires: notAfter.getTime(),
+            bundleId: provObj.Entitlements['application-identifier'].split('.').slice(1).join('.')
+        });
+
+        res.json({ message: '✅ Zertifikat gültig und gespeichert', expires: notAfter });
+
+    } catch (err) {
+        console.error('Fehler beim Hochladen oder Verarbeiten:', err);
+        return res.status(500).json({ error: 'Fehler beim Verarbeiten: ' + err.message });
+    }
 });
 
 // IPA signieren
-app.post('/sign-ipa', ipaUpload.single('ipa'), async (req, res) => {
+app.post('/sign-ipa', upload.single('ipa'), async (req, res) => {
     const { certName } = req.body;
+    const ipaFile = req.file;
     const certData = await storage.getItem(certName);
 
-    if (!req.file || !certData) {
+    if (!ipaFile || !certData) {
         return res.status(400).json({ error: 'Fehlende IPA oder Zertifikat' });
     }
 
-    const ipaPath = path.join(uploadsDir, req.file.originalname);
-    fs.renameSync(req.file.path, ipaPath);
-
-    const signedFileName = `${path.parse(req.file.originalname).name}-signed`;
+    // Pfade festlegen
+    const ipaPath = ipaFile.path;
+    const signedFileName = `${path.parse(ipaFile.originalname).name}-signed`;
     const signedIPAPath = path.join(signedDir, `${signedFileName}.ipa`);
     const plistPath = path.join(signedDir, `${signedFileName}.plist`);
+    const tempExtractDir = path.join(tempDir, signedFileName);
 
-    // Hier würdest du das echte Signier-Kommando einfügen
-    exec(`cp "${ipaPath}" "${signedIPAPath}"`, (err) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: 'Fehler beim Signieren' });
-        }
+    try {
+        // IPA entpacken
+        execSync(`unzip -o "${ipaPath}" -d "${tempExtractDir}"`);
+        const appDir = path.join(tempExtractDir, 'Payload', `${path.parse(ipaFile.originalname).name}.app`);
+
+        // Provisioning Profile und Entitlements ersetzen
+        fs.copyFileSync(certData.provPath, path.join(appDir, 'embedded.mobileprovision'));
+
+        // Signieren mit `codesign`
+        // HINWEIS: Dieser Befehl erfordert ein macOS-System und ein installiertes Zertifikat.
+        execSync(`codesign --force --sign "${certName}" "${appDir}"`);
+
+        // Neue IPA packen
+        execSync(`cd "${tempExtractDir}" && zip -r --symlinks "${signedIPAPath}" Payload`);
 
         // PLIST-Datei erstellen
         const plistContent = `<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
- "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
   <key>items</key>
@@ -102,7 +155,7 @@ app.post('/sign-ipa', ipaUpload.single('ipa'), async (req, res) => {
       <key>metadata</key>
       <dict>
         <key>bundle-identifier</key>
-        <string>com.example.app</string>
+        <string>${certData.bundleId}</string>
         <key>bundle-version</key>
         <string>1.0</string>
         <key>kind</key>
@@ -114,87 +167,22 @@ app.post('/sign-ipa', ipaUpload.single('ipa'), async (req, res) => {
   </array>
 </dict>
 </plist>`;
-
         fs.writeFileSync(plistPath, plistContent);
 
         res.json({
             message: 'IPA signiert',
             installLink: `itms-services://?action=download-manifest&url=${baseURL}signed/${signedFileName}.plist`
         });
-    });
+
+    } catch (err) {
+        console.error('Fehler beim Signieren:', err);
+        return res.status(500).json({ error: 'Fehler beim Signieren: ' + err.message });
+    } finally {
+        fs.rmSync(ipaFile.path); // Temporäre IPA-Datei löschen
+        fs.rmSync(tempExtractDir, { recursive: true, force: true }); // Extrahierte Dateien löschen
+    }
 });
 
 app.listen(port, () => {
     console.log(`Server läuft auf Port ${port}`);
-});
-// Zusätzliche Module
-const forge = require('node-forge');
-const plist = require('plist');
-
-// Upload-Handler für Zertifikat + Provision
-const certAndProvUpload = multer({ dest: certsDir });
-app.post('/upload-cert', certAndProvUpload.fields([
-    { name: 'cert', maxCount: 1 },
-    { name: 'prov', maxCount: 1 }
-]), async (req, res) => {
-    const { password, certName } = req.body;
-
-    if (!req.files.cert || !req.files.prov || !password || !certName) {
-        return res.status(400).json({ error: 'Fehlende Daten (.p12, .mobileprovision, Passwort, Name)' });
-    }
-
-    try {
-        // Zertifikat laden
-        const p12Buffer = fs.readFileSync(req.files.cert[0].path);
-        const p12Asn1 = forge.asn1.fromDer(p12Buffer.toString('binary'), false);
-        const p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, false, password);
-
-        // Ablaufdatum prüfen
-        const certBag = p12.getBags({ bagType: forge.pki.oids.certBag })[forge.pki.oids.certBag][0];
-        const notAfter = certBag.cert.validity.notAfter;
-        const now = new Date();
-        if (now > notAfter) {
-            fs.unlinkSync(req.files.cert[0].path);
-            fs.unlinkSync(req.files.prov[0].path);
-            return res.status(400).json({ error: 'Zertifikat ist abgelaufen' });
-        }
-
-        // Mobileprovision prüfen
-        const provData = fs.readFileSync(req.files.prov[0].path, 'utf8');
-        const plistStart = provData.indexOf('<?xml');
-        const plistEnd = provData.indexOf('</plist>') + 8;
-        const plistContent = provData.substring(plistStart, plistEnd);
-        const provObj = plist.parse(plistContent);
-
-        const certTeamId = certBag.cert.subject.getField('O').value; // Team-ID aus Zertifikat
-        const provTeamId = provObj.TeamIdentifier[0];
-
-        if (certTeamId !== provTeamId) {
-            fs.unlinkSync(req.files.cert[0].path);
-            fs.unlinkSync(req.files.prov[0].path);
-            return res.status(400).json({ error: 'Zertifikat und Provision passen nicht zusammen' });
-        }
-
-        // Speichern
-        const certPath = path.join(certsDir, certName + '.p12');
-        const provPath = path.join(certsDir, certName + '.mobileprovision');
-        fs.renameSync(req.files.cert[0].path, certPath);
-        fs.renameSync(req.files.prov[0].path, provPath);
-
-        await storage.setItem(certName, {
-            certPath,
-            provPath,
-            password,
-            uploaded: Date.now(),
-            expires: notAfter
-        });
-
-        res.json({ message: '✅ Zertifikat gültig und gespeichert', expires: notAfter });
-
-    } catch (err) {
-        console.error(err);
-        fs.unlinkSync(req.files.cert[0].path);
-        fs.unlinkSync(req.files.prov[0].path);
-        return res.status(500).json({ error: 'Fehler beim Verarbeiten' });
-    }
 });
