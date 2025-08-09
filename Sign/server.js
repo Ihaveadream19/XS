@@ -127,3 +127,74 @@ app.post('/sign-ipa', ipaUpload.single('ipa'), async (req, res) => {
 app.listen(port, () => {
     console.log(`Server läuft auf Port ${port}`);
 });
+// Zusätzliche Module
+const forge = require('node-forge');
+const plist = require('plist');
+
+// Upload-Handler für Zertifikat + Provision
+const certAndProvUpload = multer({ dest: certsDir });
+app.post('/upload-cert', certAndProvUpload.fields([
+    { name: 'cert', maxCount: 1 },
+    { name: 'prov', maxCount: 1 }
+]), async (req, res) => {
+    const { password, certName } = req.body;
+
+    if (!req.files.cert || !req.files.prov || !password || !certName) {
+        return res.status(400).json({ error: 'Fehlende Daten (.p12, .mobileprovision, Passwort, Name)' });
+    }
+
+    try {
+        // Zertifikat laden
+        const p12Buffer = fs.readFileSync(req.files.cert[0].path);
+        const p12Asn1 = forge.asn1.fromDer(p12Buffer.toString('binary'), false);
+        const p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, false, password);
+
+        // Ablaufdatum prüfen
+        const certBag = p12.getBags({ bagType: forge.pki.oids.certBag })[forge.pki.oids.certBag][0];
+        const notAfter = certBag.cert.validity.notAfter;
+        const now = new Date();
+        if (now > notAfter) {
+            fs.unlinkSync(req.files.cert[0].path);
+            fs.unlinkSync(req.files.prov[0].path);
+            return res.status(400).json({ error: 'Zertifikat ist abgelaufen' });
+        }
+
+        // Mobileprovision prüfen
+        const provData = fs.readFileSync(req.files.prov[0].path, 'utf8');
+        const plistStart = provData.indexOf('<?xml');
+        const plistEnd = provData.indexOf('</plist>') + 8;
+        const plistContent = provData.substring(plistStart, plistEnd);
+        const provObj = plist.parse(plistContent);
+
+        const certTeamId = certBag.cert.subject.getField('O').value; // Team-ID aus Zertifikat
+        const provTeamId = provObj.TeamIdentifier[0];
+
+        if (certTeamId !== provTeamId) {
+            fs.unlinkSync(req.files.cert[0].path);
+            fs.unlinkSync(req.files.prov[0].path);
+            return res.status(400).json({ error: 'Zertifikat und Provision passen nicht zusammen' });
+        }
+
+        // Speichern
+        const certPath = path.join(certsDir, certName + '.p12');
+        const provPath = path.join(certsDir, certName + '.mobileprovision');
+        fs.renameSync(req.files.cert[0].path, certPath);
+        fs.renameSync(req.files.prov[0].path, provPath);
+
+        await storage.setItem(certName, {
+            certPath,
+            provPath,
+            password,
+            uploaded: Date.now(),
+            expires: notAfter
+        });
+
+        res.json({ message: '✅ Zertifikat gültig und gespeichert', expires: notAfter });
+
+    } catch (err) {
+        console.error(err);
+        fs.unlinkSync(req.files.cert[0].path);
+        fs.unlinkSync(req.files.prov[0].path);
+        return res.status(500).json({ error: 'Fehler beim Verarbeiten' });
+    }
+});
