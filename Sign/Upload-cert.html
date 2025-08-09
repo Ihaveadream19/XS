@@ -2,14 +2,47 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zertifikat hochladen</title>
+<style>
+body {
+    font-family: sans-serif;
+    background: #1c1c1e;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+input, button {
+    padding: 10px;
+    margin: 5px;
+}
+button {
+    background: #34c759;
+    color: white;
+    border: none;
+    border-radius: 8px;
+}
+</style>
 </head>
 <body>
 <h1>Zertifikat hochladen</h1>
-<form action="/api/upload-cert" method="POST" enctype="multipart/form-data">
-    <input type="text" name="userId" placeholder="User-ID" required>
-    <input type="file" name="cert" accept=".p12" required>
+<form id="certForm" enctype="multipart/form-data">
+    <input type="file" name="cert" accept=".p12" required><br>
+    <input type="text" name="certName" placeholder="Zertifikat-Name" required><br>
+    <input type="password" name="password" placeholder="Passwort" required><br>
     <button type="submit">Hochladen</button>
 </form>
+<p id="result"></p>
+
+<script>
+document.getElementById('certForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const res = await fetch('/upload-cert', { method: 'POST', body: formData });
+    const data = await res.json();
+    document.getElementById('result').innerText =
+        data.message || `Fehler: ${data.error}`;
+});
+</script>
 </body>
 </html>
