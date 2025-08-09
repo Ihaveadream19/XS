@@ -22,18 +22,45 @@ button {
     border: none;
     border-radius: 8px;
 }
+.success {
+    color: #34c759;
+    font-weight: bold;
+}
+.error {
+    color: #ff3b30;
+    font-weight: bold;
+}
 </style>
 </head>
 <body>
 <h1>IPA signieren</h1>
+<div id="certStatus">🔍 Zertifikat wird geprüft...</div>
 <form id="signForm" enctype="multipart/form-data">
     <input type="file" name="ipa" accept=".ipa" required><br>
     <input type="text" name="certName" placeholder="Zertifikat-Name" required><br>
-    <button type="submit">Signieren</button>
+    <button type="submit" id="signBtn" disabled>Signieren</button>
 </form>
 <p id="result"></p>
 
 <script>
+// Zertifikat-Check beim Laden
+async function checkCert() {
+    const res = await fetch('/check-cert');
+    const data = await res.json();
+    const statusEl = document.getElementById('certStatus');
+    const signBtn = document.getElementById('signBtn');
+
+    if (data.valid) {
+        statusEl.innerHTML = `✅ Zertifikat gültig bis ${new Date(data.expires).toLocaleDateString()}`;
+        statusEl.className = "success";
+        signBtn.disabled = false;
+    } else {
+        statusEl.innerHTML = `❌ Kein gültiges Zertifikat gefunden – bitte zuerst hochladen`;
+        statusEl.className = "error";
+        signBtn.disabled = true;
+    }
+}
+
 document.getElementById('signForm').addEventListener('submit', async e => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -44,6 +71,8 @@ document.getElementById('signForm').addEventListener('submit', async e => {
         ? `<a href="${data.installLink}">📲 Installieren</a>`
         : `Fehler: ${data.error}`;
 });
+
+checkCert();
 </script>
 </body>
 </html>
