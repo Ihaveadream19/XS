@@ -21,13 +21,25 @@ button {
     color: white;
     border: none;
     border-radius: 8px;
+    cursor: pointer;
+}
+#result {
+    font-weight: bold;
+    margin-top: 15px;
+}
+.success {
+    color: #34c759;
+}
+.error {
+    color: #ff3b30;
 }
 </style>
 </head>
 <body>
 <h1>Zertifikat hochladen</h1>
 <form id="certForm" enctype="multipart/form-data">
-    <input type="file" name="cert" accept=".p12" required><br>
+    <input type="file" name="p12" accept=".p12" required><br>
+    <input type="file" name="mobileprovision" accept=".mobileprovision" required><br>
     <input type="text" name="certName" placeholder="Zertifikat-Name" required><br>
     <input type="password" name="password" placeholder="Passwort" required><br>
     <button type="submit">Hochladen</button>
@@ -40,8 +52,15 @@ document.getElementById('certForm').addEventListener('submit', async e => {
     const formData = new FormData(e.target);
     const res = await fetch('/upload-cert', { method: 'POST', body: formData });
     const data = await res.json();
-    document.getElementById('result').innerText =
-        data.message || `Fehler: ${data.error}`;
+
+    const resultEl = document.getElementById('result');
+    resultEl.textContent = data.message || 'Unbekannter Fehler';
+
+    if (data.status === 'success') {
+        resultEl.className = 'success';
+    } else {
+        resultEl.className = 'error';
+    }
 });
 </script>
 </body>
