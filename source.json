@@ -1,5 +1,5 @@
 {
-  "name": "Xalostore ",
+  "name": "Xalostore",
   "subtitle": "A source for all of my apps",
   "description": "Welcome to my source! Here you'll find all of my apps.",
   "iconURL": "https://i.imgur.com/oWyf5VR.png",
@@ -25,7 +25,7 @@
       "screenshots": [],
       "versions": [
         {
-          "downloadURL": "Download.html?url=https://github.com/Ihaveadream19/xalostore/releases/download/untagged-631213c5e956165036a4/ImgAI_AI_Bildgenerator-Xalo.ipa",
+          "downloadURL": "https://github.com/Ihaveadream19/xalostore/releases/download/untagged-631213c5e956165036a4/ImgAI_AI_Bildgenerator-Xalo.ipa",
           "size": 255300000,
           "version": "5.84",
           "buildVersion": null,
@@ -60,7 +60,7 @@
           "version": "25.20.5",
           "date": "2025-07-30T21:56:00+02:00",
           "localizedDescription": null,
-          "downloadURL": "Download.html?url=https://github.com/Ihaveadream19/xalostore/releases/download/WhatsApp/WhatsAppAll_Xalo.ipa",
+          "downloadURL": "https://github.com/Ihaveadream19/xalostore/releases/download/WhatsApp/WhatsAppAll_Xalo.ipa",
           "size": 122400000,
           "buildVersion": null,
           "minOSVersion": null
@@ -78,7 +78,6 @@
           "NSLocalNetworkUsageDescription": "âThis will let you use WhatsApp to place and receive calls through devices that are on the same Wi-Fi or local access networks.",
           "NSLocationAlwaysAndWhenInUseUsageDescription": "âIf you always allow access to your location, you can choose to share your live location, and it will update even when you're not using the app. If you only allow access while using the app, you can only send your current location or a nearby place.",
           "NSLocationAlwaysUsageDescription": "âIf you always allow access to your location, you can choose to share your live location, and it will update even when you're not using the app. This also lets you send your current location or a nearby place.",
-          "NSLocationUsageDescription": "âThis lets you send your current location or nearby places in chats.",
           "NSLocationWhenInUseUsageDescription": "âThis lets you send your current location or nearby places in chats.",
           "NSMicrophoneUsageDescription": "âThis lets you make calls, send voice messages, and record videos with sound.",
           "NSPhotoLibraryAddUsageDescription": "âThis lets you save photos and videos to your library.",
@@ -106,7 +105,7 @@
           "version": "20.29.3",
           "date": "2025-07-26T17:11:00+02:00",
           "localizedDescription": null,
-          "downloadURL": "Download.html?url=https://github.com/Ihaveadream19/xalostore/releases/download/XaloYouTube/Xalo.YouTube.20.29.3.5.2beta.ipa",
+          "downloadURL": "https://github.com/Ihaveadream19/xalostore/releases/download/XaloYouTube/Xalo.YouTube.20.29.3.5.2beta.ipa",
           "size": 115100000,
           "buildVersion": null,
           "minOSVersion": null
@@ -144,7 +143,7 @@
           "version": "2.30",
           "date": "2025-07-25T21:53:00+02:00",
           "localizedDescription": null,
-          "downloadURL": "Download.html?url=https://github.com/Ihaveadream19/xalostore/releases/download/untagged-a13ca590c27d0eb0fba5/AI_ChatBot_Assistant_AskEasy_v2_30_Pro_Unlocked_Xalo.ipa",
+          "downloadURL": "https://github.com/Ihaveadream19/xalostore/releases/download/untagged-a13ca590c27d0eb0fba5/AI_ChatBot_Assistant_AskEasy_v2_30_Pro_Unlocked_Xalo.ipa",
           "size": 105200000,
           "buildVersion": null,
           "minOSVersion": null
@@ -180,7 +179,7 @@
           "version": "25.28.0",
           "date": "2025-07-24T08:30:00+02:00",
           "localizedDescription": null,
-          "downloadURL": "Download.html?url=https://github.com/Ihaveadream19/xalostore/releases/download/untagged-43fb80ecb4e8968f3964/MyFitnessPal_25.28.0_3Xalo.ipa",
+          "downloadURL": "https://github.com/Ihaveadream19/xalostore/releases/download/untagged-43fb80ecb4e8968f3964/MyFitnessPal_25.28.0_3Xalo.ipa",
           "size": 117200000,
           "buildVersion": null,
           "minOSVersion": null
@@ -218,7 +217,7 @@
           "version": "14.21.5",
           "date": "2025-07-24T06:25:00+02:00",
           "localizedDescription": null,
-          "downloadURL": "Download.html?url=https://github.com/Ihaveadream19/xalostore/releases/download/XaloTruecalla/Truecaller_Caller_ID_Lookup_v14_21_Xalo.ipa",
+          "downloadURL": "https://github.com/Ihaveadream19/xalostore/releases/download/XaloTruecalla/Truecaller_Caller_ID_Lookup_v14_21_Xalo.ipa",
           "size": 71100000,
           "buildVersion": null,
           "minOSVersion": null
@@ -253,7 +252,7 @@
           "version": "1.0.0",
           "date": "2025-07-13T21:48:00+02:00",
           "localizedDescription": null,
-          "downloadURL": "Download.html?url=https://github.com/Ihaveadream19/xalostore/releases/download/untagged-48a2279cb1de6656c1c9/VideoGPT_AI_Video_Generator_v3_1_Abonnement_Unlocked_Xalo.ipa",
+          "downloadURL": "https://github.com/Ihaveadream19/xalostore/releases/download/untagged-48a2279cb1de6656c1c9/VideoGPT_AI_Video_Generator_v3_1_Abonnement_Unlocked_Xalo.ipa",
           "size": 170400000,
           "buildVersion": "",
           "minOSVersion": null
@@ -287,7 +286,7 @@
           "version": "388.0.0",
           "date": "2025-07-09T12:11:00+02:00",
           "localizedDescription": null,
-          "downloadURL": "Download.html?url=https://github.com/Ihaveadream19/xalostore/releases/download/untagged-84f0fc530d8e8e66735e/Instagram--Xalo.2.ipa",
+          "downloadURL": "https://github.com/Ihaveadream19/xalostore/releases/download/untagged-84f0fc530d8e8e66735e/Instagram--Xalo.2.ipa",
           "size": 203200000,
           "buildVersion": null,
           "minOSVersion": null
